@@ -24,7 +24,8 @@ public class PaymentController {
 		// @AuthenticationPrincipal AuthUser user,
 		@Valid @RequestBody PaymentRequest paymentRequest
 	) {
-		paymentService.payment(paymentRequest.getBookId());
+		// todo : 유저 정보 연결하기
+		paymentService.payment(/*user.getId(), */paymentRequest.getBookId());
 		return ResponseEntity.ok().build();
 	}
 }

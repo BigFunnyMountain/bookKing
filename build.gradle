@@ -28,6 +28,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    // 순수 자바에서 사용됨
+//    implementation 'org.redisson:redisson:3.43.0'
+    implementation 'org.redisson:redisson-spring-data-34:3.45.1'
+//    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     runtimeOnly 'com.mysql:mysql-connector-j'
     runtimeOnly 'com.h2database:h2'
 
