@@ -17,15 +17,17 @@ public class UserResponse {
     private String profileImageUrl;
     private UserRole role;
     private Gender gender;
+    private String address;
 
     @Builder
-    private UserResponse(Long id, String email, String nickname, String profileImageUrl, UserRole role, Gender gender) {
+    private UserResponse(Long id, String email, String nickname, String profileImageUrl, UserRole role, Gender gender, String address) {
         this.id = id;
         this.email = email;
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
         this.role = role;
         this.gender = gender;
+        this.address = address;
     }
 
     public static UserResponse of(User user) {
@@ -36,6 +38,7 @@ public class UserResponse {
                 .profileImageUrl(user.getProfileImageUrl())
                 .role(user.getRole())
                 .gender(user.getGender())
+                .address(user.getAddress())
                 .build();
     }
 }
