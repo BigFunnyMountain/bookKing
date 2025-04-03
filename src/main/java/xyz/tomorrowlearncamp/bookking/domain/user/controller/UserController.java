@@ -4,11 +4,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.AuthUser;
+import xyz.tomorrowlearncamp.bookking.domain.user.dto.DeleteUserRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.UpdateUserRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.UpdateUserRoleRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.UserResponse;
@@ -44,5 +44,15 @@ public class UserController {
 
         UserResponse updateUser = userService.updateUserRole(userId, updateUserRoleRequest);
         return ResponseEntity.ok(updateUser);
+    }
+
+    @DeleteMapping("/v1/users/{userId}")
+    public ResponseEntity<String> deleteUser(
+            @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable Long userId,
+            @Valid @RequestBody DeleteUserRequest deleteUserRequest) {
+
+        userService.deleteUser(userId, authUser.getUserId(), deleteUserRequest.getPassword());
+        return ResponseEntity.ok("회원 탈퇴가 정상적으로 처리되었습니다");
     }
 }

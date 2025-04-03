@@ -56,4 +56,18 @@ public class UserService {
         userRepository.save(user);
         return UserResponse.of(user);
     }
+
+    public void deleteUser(Long userId, Long loginUserId, String checkPassword) {
+        if (!userId.equals(loginUserId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "본인 게정만 탈퇴가 가능합니다");
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+
+        if (!passwordEncoder.matches(checkPassword, user.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "비밀번호가 일치하지 않습니다");
+        }
+        userRepository.delete(user);
+    }
 }
