@@ -3,7 +3,7 @@ name: 테스트 및 빌드
 on:
   push:
     branches:
-      - feat/workflow
+      - feat/**
   pull_request:
     types:
       - opened
