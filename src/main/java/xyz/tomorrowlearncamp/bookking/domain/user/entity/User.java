@@ -90,4 +90,9 @@ public class User extends BaseEntity {
             this.address = address;
         }
     }
+
+    public void updateRole(UserRole newRole) {
+        this.role = newRole;
+    }
+
 }
