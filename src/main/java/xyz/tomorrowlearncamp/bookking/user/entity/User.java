@@ -9,6 +9,10 @@ import xyz.tomorrowlearncamp.bookking.domain.common.entity.BaseEntity;
 import xyz.tomorrowlearncamp.bookking.user.enums.Gender;
 import xyz.tomorrowlearncamp.bookking.user.enums.UserRole;
 
+/**
+ * 작성자 : 문성준
+ * 일시 : 2025.04.03 - v1
+ */
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -56,5 +60,19 @@ public class User extends BaseEntity {
         this.gender = gender;
         this.age = age;
         this.nickname = nickname;
+    }
+
+
+    public static User of(String email, String password, String name, UserRole roleUser, String address, Gender gender, int age, String nickname) {
+        return User.builder()
+                .email(email)
+                .password(password)
+                .name(name)
+                .role(roleUser)
+                .address(address)
+                .gender(gender)
+                .age(age)
+                .nickname(nickname)
+                .build();
     }
 }

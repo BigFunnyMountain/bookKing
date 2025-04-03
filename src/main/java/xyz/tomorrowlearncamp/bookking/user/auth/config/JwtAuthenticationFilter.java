@@ -18,6 +18,10 @@ import xyz.tomorrowlearncamp.bookking.user.enums.UserRole;
 
 import java.io.IOException;
 
+/**
+ * 작성자 : 문성준
+ * 일시 : 2025.04.03 - v1
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -43,24 +47,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             } catch (SecurityException | MalformedJwtException e) {
                 log.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.", e);
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "유효하지 않는 JWT 서명입니다.");
+                return;
             } catch (ExpiredJwtException e) {
                 log.error("Expired JWT token, 만료된 JWT token 입니다.", e);
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "만료된 JWT 토큰입니다.");
+                return;
             } catch (UnsupportedJwtException e) {
                 log.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.", e);
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "지원되지 않는 JWT 토큰입니다.");
+                return;
             } catch (Exception e) {
                 log.error("Internal server error", e);
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return;
             }
         }
-
+        filterChain.doFilter(request, response);
     }
 
     private void setAuthentication(Claims claims) {
         Long userId = Long.valueOf(claims.getSubject());
         String email = claims.get("email", String.class);
-        UserRole userRole = UserRole.of(claims.get("userRole", String.class));
+        UserRole userRole = UserRole.of(claims.get("role", String.class));
 
         AuthUser authUser = AuthUser.of(userId, email, userRole);
         JwtAuthenticationToken authenticationToken = JwtAuthenticationToken.of(authUser);

@@ -3,8 +3,8 @@ package xyz.tomorrowlearncamp.bookking.user.auth.config;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import xyz.tomorrowlearncamp.bookking.user.enums.UserRole;
 
@@ -13,6 +13,10 @@ import java.security.Signature;
 import java.util.Base64;
 import java.util.Date;
 
+/**
+ * 작성자 : 문성준
+ * 일시 : 2025.04.03 - v1
+ */
 @Slf4j
 @Component
 public class JwtProvider {

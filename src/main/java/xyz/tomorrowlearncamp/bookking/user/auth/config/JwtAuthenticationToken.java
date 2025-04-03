@@ -4,7 +4,8 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import xyz.tomorrowlearncamp.bookking.user.auth.dto.AuthUser;
 
 /**
- * security 인증 토큰
+ * 작성자 : 문성준
+ * 일시 : 2025.04.03 - v1
  */
 public class JwtAuthenticationToken extends AbstractAuthenticationToken {
 

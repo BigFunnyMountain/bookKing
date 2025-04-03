@@ -9,6 +9,8 @@ import java.util.Collection;
 import java.util.List;
 
 /**
+ * 작성자 : 문성준
+ * 일시 : 2025.04.03 - v1
  * 사용자 정보 보관용
  */
 @Getter
@@ -28,7 +30,7 @@ public class AuthUser {
         return new AuthUser(
                 userId,
                 email,
-                List.of(new SimpleGrantedAuthority("ROEL_" + userRole.name()))
+                List.of(new SimpleGrantedAuthority("ROLE_" + userRole.name()))
 
         );
     }

@@ -9,6 +9,10 @@ import xyz.tomorrowlearncamp.bookking.domain.common.entity.BaseEntity;
 
 import java.time.LocalDateTime;
 
+/**
+ * 작성자 : 문성준
+ * 일시 : 2025.04.03 - v1
+ */
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -22,7 +26,7 @@ public class RefreshToken extends BaseEntity {
     @Column(nullable = false, columnDefinition = "BIGINT UNSIGNED")
     private Long userId;
 
-    @Column(nullable = false, length = 512)
+    @Column(nullable = false, length = 512,unique = true)
     private String token;
 
     @Column(nullable = false)
@@ -33,5 +37,13 @@ public class RefreshToken extends BaseEntity {
         this.userId = userId;
         this.token = token;
         this.expiredAt = expiredAt;
+    }
+
+    public static RefreshToken of(Long userId, String token, LocalDateTime expiredAt) {
+        return RefreshToken.builder()
+                .userId(userId)
+                .token(token)
+                .expiredAt(expiredAt)
+                .build();
     }
 }
