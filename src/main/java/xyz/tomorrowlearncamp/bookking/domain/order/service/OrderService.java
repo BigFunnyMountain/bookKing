@@ -8,7 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
-import xyz.tomorrowlearncamp.bookking.domain.book.service.BookService;
+import xyz.tomorrowlearncamp.bookking.domain.book.repository.BookRepository;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.InvalidRequestException;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
 import xyz.tomorrowlearncamp.bookking.domain.order.dto.request.OrderRequest;
@@ -25,18 +25,26 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
-    private final BookService bookService;
+    private final BookRepository bookRepository;
 
     @Transactional
     public void createOrder(Long userId, OrderRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
-        Book book = bookService.getBookById(request.getBookId());
+
+        Book book = bookRepository.findById(request.getBookId())
+                .orElseThrow(() -> new NotFoundException("책을 찾을 수 없습니다."));
+
+        if (book.getStock() <= 0) {
+            throw new InvalidRequestException("재고가 부족합니다.");
+        }
+
+        book.updateStock(book.getStock() - 1);
 
         Order order = Order.builder()
                 .user(user)
                 .book(book)
-                .price(request.getPrice())
+                .price(book.getPrePrice())
                 .status(OrderStatus.COMPLETED)
                 .build();
 
@@ -58,6 +66,9 @@ public class OrderService {
         if (order.getStatus() == OrderStatus.CANCELLED) {
             throw new InvalidRequestException("이미 취소된 주문입니다.");
         }
+
+        Book book = order.getBook();
+        book.updateStock(book.getStock() + 1);
 
         order.cancel();
     }

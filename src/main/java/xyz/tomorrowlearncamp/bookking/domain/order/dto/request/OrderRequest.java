@@ -8,7 +8,4 @@ public class OrderRequest {
 
     @NotNull(message = "책 ID는 필수입니다.")
     private Long bookId;
-
-    @NotNull(message = "가격은 필수입니다.")
-    private Long price;
 }
