@@ -83,7 +83,7 @@ public class User extends BaseEntity {
         return null;
     }
 
-    public void update(String nickname, String address) {
+    public void updateUserInfo(String nickname, String address) {
         if (nickname != null && !nickname.isEmpty()) {
             this.nickname = nickname;
         }
