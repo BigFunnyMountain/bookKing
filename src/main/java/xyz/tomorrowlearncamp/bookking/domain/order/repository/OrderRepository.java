@@ -26,4 +26,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT o FROM Order o JOIN FETCH o.book WHERE o.orderId = :orderId AND o.user.id = :userId")
     Optional<Order> findByIdAndUserId(@Param("orderId") Long orderId,
                                       @Param("userId") Long userId);
+
+    // OrderRepository.java
+    @Query("SELECT o FROM Order o WHERE o.user.id = :userId AND o.book.bookId = :bookId AND o.status = :status AND o.isReviewed = false")
+    Optional<Order> findCompletedOrderByUserAndBook(@Param("userId") Long userId,
+                                                    @Param("bookId") Long bookId,
+                                                    @Param("status") OrderStatus status);
+
 }

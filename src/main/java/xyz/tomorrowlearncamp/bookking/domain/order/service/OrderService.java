@@ -70,6 +70,10 @@ public class OrderService {
         Book book = order.getBook();
         book.updateStock(book.getStock() + 1);
 
+        if (order.isReviewed()) {
+            order.unmarkAsReviewed();
+        }
+
         order.cancel();
     }
 
@@ -84,4 +88,19 @@ public class OrderService {
                 .orElseThrow(() -> new NotFoundException("주문을 찾을 수 없습니다."));
         order.markAsReviewed();
     }
+
+    @Transactional(readOnly = true)
+    public Order findCompletedOrder(Long userId, Long bookId) {
+        return orderRepository.findCompletedOrderByUserAndBook(userId, bookId, OrderStatus.COMPLETED)
+                .orElseThrow(() -> new NotFoundException("해당 책에 대한 완료된 주문이 없습니다."));
+    }
+
+    // OrderService.java
+    @Transactional
+    public void unmarkAsReviewed(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new NotFoundException("주문을 찾을 수 없습니다."));
+        order.unmarkAsReviewed();
+    }
+
 }

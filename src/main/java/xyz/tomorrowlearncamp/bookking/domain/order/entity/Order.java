@@ -53,4 +53,9 @@ public class Order extends BaseEntity {
     public void markAsReviewed() {
         this.isReviewed = true;
     }
+
+    public void unmarkAsReviewed() {
+        this.isReviewed = false;
+    }
+
 }
