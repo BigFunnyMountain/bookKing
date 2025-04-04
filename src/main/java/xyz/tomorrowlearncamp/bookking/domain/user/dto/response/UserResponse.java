@@ -1,4 +1,4 @@
-package xyz.tomorrowlearncamp.bookking.domain.user.dto;
+package xyz.tomorrowlearncamp.bookking.domain.user.dto.response;
 
 import lombok.AccessLevel;
 import lombok.Builder;

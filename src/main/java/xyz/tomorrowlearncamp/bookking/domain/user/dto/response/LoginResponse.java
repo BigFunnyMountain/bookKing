@@ -1,4 +1,4 @@
-package xyz.tomorrowlearncamp.bookking.domain.user.dto;
+package xyz.tomorrowlearncamp.bookking.domain.user.dto.response;
 
 import lombok.Getter;
 import xyz.tomorrowlearncamp.bookking.domain.user.entity.User;

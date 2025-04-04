@@ -1,4 +1,4 @@
-package xyz.tomorrowlearncamp.bookking.domain.user.dto;
+package xyz.tomorrowlearncamp.bookking.domain.user.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;

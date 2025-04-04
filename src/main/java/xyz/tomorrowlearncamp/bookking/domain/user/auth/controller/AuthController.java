@@ -12,8 +12,8 @@ import xyz.tomorrowlearncamp.bookking.domain.user.auth.config.JwtProvider;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.RefreshTokenResponse;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.SignupRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.SignupResponse;
-import xyz.tomorrowlearncamp.bookking.domain.user.dto.LoginRequest;
-import xyz.tomorrowlearncamp.bookking.domain.user.dto.LoginResponse;
+import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.LoginRequest;
+import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.LoginResponse;
 
 /**
  * 작성자 : 문성준

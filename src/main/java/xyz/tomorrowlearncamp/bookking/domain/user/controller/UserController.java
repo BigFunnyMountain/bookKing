@@ -8,10 +8,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.AuthUser;
-import xyz.tomorrowlearncamp.bookking.domain.user.dto.DeleteUserRequest;
-import xyz.tomorrowlearncamp.bookking.domain.user.dto.UpdateUserRequest;
-import xyz.tomorrowlearncamp.bookking.domain.user.dto.UpdateUserRoleRequest;
-import xyz.tomorrowlearncamp.bookking.domain.user.dto.UserResponse;
+import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.DeleteUserRequest;
+import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.UpdateUserRequest;
+import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.UpdateUserRoleRequest;
+import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.UserResponse;
 import xyz.tomorrowlearncamp.bookking.domain.user.service.UserService;
 
 @RestController
