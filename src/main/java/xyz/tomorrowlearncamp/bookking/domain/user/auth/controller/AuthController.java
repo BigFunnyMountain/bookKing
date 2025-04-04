@@ -54,14 +54,5 @@ public class AuthController {
 
         return ResponseEntity.ok(newTokenResponse);
     }
-
-
-//    @PostMapping("/v1/auth/logout")
-//    public ResponseEntity<Void> logout(@RequestHeader("Authorization") String refreshToken) {
-//        authService.logout(jwtProvider.removeBearerPrefix(refreshToken));
-//        return ResponseEntity.ok().build();
-//    }
-
-
 }
 

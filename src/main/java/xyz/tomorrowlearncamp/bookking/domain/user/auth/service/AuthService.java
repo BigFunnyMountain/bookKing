@@ -100,11 +100,6 @@ public class AuthService {
         return RefreshTokenResponse.of(newAccessToken);
     }
 
-//    추가 예정일 경우 추가
-//    public void logout(String refreshToken) {
-//        refreshTokenRepository.deleteByToken(refreshToken);
-//    }
-
     @Transactional
     public SignupResponse signup(SignupRequest request) {
         validateEmail(request.getEmail());

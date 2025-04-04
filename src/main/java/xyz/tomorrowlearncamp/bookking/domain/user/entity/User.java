@@ -50,8 +50,9 @@ public class User extends BaseEntity {
     @Column(nullable = false, length = 30)
     private String nickname;
 
+
     @Builder
-    public User(String email, String password, String name, UserRole role, String address, Gender gender, int age, String nickname) {
+    private User(String email, String password, String name, UserRole role, String address, Gender gender, int age, String nickname) {
         this.email = email;
         this.password = password;
         this.name = name;
