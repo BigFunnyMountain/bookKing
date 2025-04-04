@@ -1,3 +1,4 @@
+// Order.java
 package xyz.tomorrowlearncamp.bookking.domain.order.entity;
 
 import jakarta.persistence.*;
@@ -7,7 +8,7 @@ import lombok.NoArgsConstructor;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.common.entity.BaseEntity;
 import xyz.tomorrowlearncamp.bookking.domain.order.entity.enums.OrderStatus;
-import xyz.tomorrowlearncamp.bookking.user.entity.User;
+import xyz.tomorrowlearncamp.bookking.domain.user.entity.User;
 
 @Entity
 @Getter
@@ -32,22 +33,22 @@ public class Order extends BaseEntity {
     private OrderStatus status;
 
     @Column(nullable = false)
-    private Long price;
-
-    @Column(nullable = false)
     private boolean isReviewed;
 
     @Builder
-    public Order(User user, Book book, Long price, OrderStatus status) {
+    public Order(User user, Book book, OrderStatus status) {
         this.user = user;
         this.book = book;
-        this.price = price;
         this.status = status;
         this.isReviewed = false;
     }
 
     public void cancel() {
         this.status = OrderStatus.CANCELLED;
+    }
+
+    public void complete() {
+        this.status = OrderStatus.COMPLETED;
     }
 
     public void markAsReviewed() {
@@ -57,5 +58,4 @@ public class Order extends BaseEntity {
     public void unmarkAsReviewed() {
         this.isReviewed = false;
     }
-
 }
