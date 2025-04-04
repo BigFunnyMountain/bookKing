@@ -1,0 +1,60 @@
+name: 테스트 및 빌드
+
+on:
+  push:
+    branches:
+      - feat/**
+      - fix/**
+      - refactor/**
+      - test/**
+  pull_request:
+    types:
+      - opened
+    branches:
+      - main
+      - develop
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Java 17 setup
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: temurin
+
+      - name: Gradle setup
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Grant execute permission
+        run: chmod +x ./gradlew
+
+      - name: Clean and build gradle
+        run: ./gradlew clean build
+
+      - name: Jacoco report when open PR
+        id: jacoco
+        uses: madrapps/jacoco-report@v1.7.1
+        with:
+          paths: ${{ github.workspace }}/build/reports/jacoco/test/jacocoTestReport.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          min-coverage-overall: 40
+          min-coverage-changed-files: 40
+          title: Code Coverage
+          update-comment: true
+
+      - name: Upload jacoco HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: 'Jacoco HTML Report'
+          path: ${{ github.workspace }}/build/reports/jacoco/test/html
+
+      - name: Get the Coverage info
+        run: |
+          echo "Total coverage ${{ steps.jacoco.outputs.coverage-overall }}"
+          echo "Changed Files coverage ${{ steps.jacoco.outputs.coverage-changed-files }}"
