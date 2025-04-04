@@ -1,6 +1,6 @@
 spring:
   application:
-    name: count10shop
+    name: bookKing
   profiles:
     default: release
 
