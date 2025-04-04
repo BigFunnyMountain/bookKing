@@ -8,10 +8,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
-import xyz.tomorrowlearncamp.bookking.domain.book.service.BookService;
+import xyz.tomorrowlearncamp.bookking.domain.book.repository.BookRepository;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.InvalidRequestException;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
-import xyz.tomorrowlearncamp.bookking.domain.order.service.OrderService;
 import xyz.tomorrowlearncamp.bookking.domain.review.dto.request.ReviewRequest;
 import xyz.tomorrowlearncamp.bookking.domain.review.dto.request.ReviewUpdateRequest;
 import xyz.tomorrowlearncamp.bookking.domain.review.dto.response.ReviewCreateResponse;
@@ -28,14 +27,17 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
-    private final BookService bookService;
+    private final BookRepository bookRepository;
     private final OrderService orderService;
 
+    // ReviewService.java
     @Transactional
     public ReviewCreateResponse saveReview(Long userId, Long bookId, ReviewRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
-        Book book = bookService.getBookById(bookId);
+
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new NotFoundException("책을 찾을 수 없습니다."));
 
         boolean exists = reviewRepository.existsByUserAndBookAndState(userId, bookId, ReviewState.ACTIVE);
         if (exists) {
@@ -45,6 +47,10 @@ public class ReviewService {
         if (!orderService.hasUserPurchasedBook(userId, bookId)) {
             throw new InvalidRequestException("리뷰는 해당 책을 구매한 사용자만 작성할 수 있습니다.");
         }
+
+        // ✅ Order 상태 업데이트 추가
+        Order order = orderService.findCompletedOrder(userId, bookId);
+        orderService.markAsReviewed(order.getOrderId());
 
         Review review = Review.builder()
                 .user(user)
@@ -56,6 +62,7 @@ public class ReviewService {
 
         return ReviewCreateResponse.toDto(reviewRepository.save(review));
     }
+
 
     @Transactional(readOnly = true)
     public Page<ReviewResponse> getBookReviews(Long bookId, int page, int size) {
@@ -81,7 +88,11 @@ public class ReviewService {
     public void deleteReview(Long userId, Long bookId, Long reviewId) {
         Review review = getReviewOwnedByUser(reviewId, userId, bookId);
         review.deleteReview();
+
+        Order order = orderService.findCompletedOrder(userId, bookId);
+        orderService.unmarkAsReviewed(order.getOrderId());
     }
+
 
     private Review getReviewOwnedByUser(Long reviewId, Long userId, Long bookId) {
         return reviewRepository.findByIdAndUserIdAndBookIdAndState(reviewId, userId, bookId, ReviewState.ACTIVE)
