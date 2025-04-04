@@ -47,4 +47,9 @@ public class Book extends BaseEntity {
 
     @Column(nullable = false)
     private Long count;
+
+    // 한권 구매
+    public void CountMinusOne() {
+        this.count = this.count - 1;
+    }
 }

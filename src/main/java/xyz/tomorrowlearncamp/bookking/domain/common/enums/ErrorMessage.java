@@ -6,9 +6,11 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum ErrorMessage {
-
-	REDIS_ERROR("SERVER ERROR"),
+	OPENAPI_ERROR("OPENAPI ERROR"),
+	REDIS_ERROR("CACHE ERROR"),
+	ERROR("알 수 없는 에러가 발생했습니다."),
+	NOT_FOUND_BOOK("없는 책입니다."),
 	;
 
-	private final String errorMessage;
+	private final String message;
 }
