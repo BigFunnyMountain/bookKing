@@ -5,7 +5,6 @@ import java.util.concurrent.TimeUnit;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,10 +41,8 @@ public class PaymentService {
 			book = bookRepository.findById(bookId).orElseThrow(
 				() -> new NotFoundException(ErrorMessage.NOT_FOUND_BOOK.getMessage())
 			);
-			// log.info("" +book.getCount());
 			book.CountMinusOne();
-			log.info("" +book.getCount());
-			//오더 로직 들어갈 예정
+			// todo : 오더 로직
 		} catch (InterruptedException ex) {
 			throw new InvalidRequestException(ErrorMessage.REDIS_ERROR.getMessage());
 		} catch (Exception ex) {
