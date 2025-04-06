@@ -49,6 +49,8 @@ public class Book extends BaseEntity {
     private LocalDateTime publicationDate;
 
     @Column(nullable = false)
+    private Long count;
+
     private Long stock;
 
     @Builder
@@ -71,5 +73,8 @@ public class Book extends BaseEntity {
 
     public void updateStock(Long stock){
         this.stock = stock;
+        // 한권 구매
+    public void CountMinusOne() {
+        this.count = this.count - 1;
     }
 }
