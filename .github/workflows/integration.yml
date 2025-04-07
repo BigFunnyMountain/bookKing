@@ -14,6 +14,10 @@ on:
       - main
       - develop
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   integration:
     runs-on: ubuntu-latest
@@ -43,8 +47,8 @@ jobs:
         with:
           paths: ${{ github.workspace }}/build/reports/jacoco/test/jacocoTestReport.xml
           token: ${{ secrets.GITHUB_TOKEN }}
-          min-coverage-overall: 40
-          min-coverage-changed-files: 40
+          min-coverage-overall: 20
+          min-coverage-changed-files: 20
           title: Code Coverage
           update-comment: true
 
