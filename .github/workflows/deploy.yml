@@ -3,7 +3,7 @@ name: EC2 배포
 on:
   push:
     branches:
-      - test/deploy
+      - main
 
 env:
   DB_URL: ${{ secrets.DB_URL }}
