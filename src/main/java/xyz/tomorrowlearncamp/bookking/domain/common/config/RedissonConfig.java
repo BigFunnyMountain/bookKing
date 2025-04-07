@@ -1,6 +1,7 @@
 package xyz.tomorrowlearncamp.bookking.domain.common.config;
 
 import java.io.IOException;
+import java.net.URL;
 
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
@@ -14,7 +15,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 
 @Configuration
-@EnableCaching
 public class RedissonConfig {
 
 	@Bean
@@ -24,6 +24,10 @@ public class RedissonConfig {
 
 	@Bean(destroyMethod="shutdown")
 	public RedissonClient redissonClient() throws IOException {
-		return Redisson.create();
+		Config config = new Config();
+		config.useSingleServer()
+			.setAddress("redis://127.0.0.1:6379");
+		// 	.setAddress("redis://13.125.66.89:6379");
+		return Redisson.create(config);
 	}
 }

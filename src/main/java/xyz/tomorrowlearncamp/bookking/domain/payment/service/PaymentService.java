@@ -31,19 +31,18 @@ public class PaymentService {
 	
 	private final RedissonClient redissonClient;
 
-	@Transactional
-	public void payment(Long userId, Long bookId, Long buyStock, Long money, PayType payType) {
-		UserResponse user = userService.getMyInfo(userId);
+	public void payment(/*Long userId, */Long bookId, Long buyStock, Long money, PayType payType) {
+		// UserResponse user = userService.getMyInfo(userId);
 
-		Book book = bookRepository.findById(bookId).orElseThrow(()->new NotFoundException("Book not found"));
 
 		RLock lock = redissonClient.getFairLock("book:"+bookId);
 
 		try {
-			boolean acquired = lock.tryLock(10L, 1L, TimeUnit.SECONDS);
+			boolean acquired = lock.tryLock(100L, 10L, TimeUnit.SECONDS);
 			if (!acquired) {
 				throw new InterruptedException();
 			}
+			Book book = bookRepository.findById(bookId).orElseThrow(()->new NotFoundException("Book not found"));
 
 			// 책이 재고가 0개인 경우 || 구매하려는 개수 만큼 없는 경우
 			if( book.getStock() == 0 || book.getStock() < buyStock ) {
@@ -57,6 +56,8 @@ public class PaymentService {
 
 			// buyStock 만큼 구매
 			book.updateStock(book.getStock() - buyStock);
+
+			bookRepository.save(book);
 
 			// todo : 오더 로직
 
