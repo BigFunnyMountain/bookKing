@@ -29,7 +29,7 @@ import xyz.tomorrowlearncamp.bookking.domain.book.repository.BookRepository;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("dev")
-@ImportAutoConfiguration(exclude = {RedissonClient.class})
+@ImportAutoConfiguration(exclude = {RedisAutoConfiguration.class})
 class PaymentServiceTest {
 
 	@Mock
