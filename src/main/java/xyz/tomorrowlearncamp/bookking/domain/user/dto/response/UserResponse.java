@@ -9,7 +9,7 @@ import xyz.tomorrowlearncamp.bookking.domain.user.enums.Gender;
 import xyz.tomorrowlearncamp.bookking.domain.user.enums.UserRole;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class UserResponse {
     private Long id;
     private String email;
