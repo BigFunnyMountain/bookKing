@@ -40,6 +40,8 @@ out/
 .env
 *.env
 
-
 ### .DS_Store 추가 ###
 .DS_Store
+
+### application-local ###
+application-local.yml
