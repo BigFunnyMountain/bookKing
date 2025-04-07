@@ -1,14 +1,11 @@
-// Order.java
 package xyz.tomorrowlearncamp.bookking.domain.order.entity;
 
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.common.entity.BaseEntity;
 import xyz.tomorrowlearncamp.bookking.domain.order.entity.enums.OrderStatus;
-import xyz.tomorrowlearncamp.bookking.domain.user.entity.User;
 
 @Entity
 @Getter
@@ -20,13 +17,23 @@ public class Order extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "book_id")
-    private Book book;
+    @Column(name = "book_id", nullable = false)
+    private Long bookId;
+
+    @Column(nullable = false)
+    private Long prePrice;
+
+    @Column(nullable = false)
+    private Long stock;
+
+    @Column(nullable = false)
+    private String publisher;
+
+    @Column(nullable = false)
+    private String bookIntroductionUrl;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -36,26 +43,18 @@ public class Order extends BaseEntity {
     private boolean isReviewed;
 
     @Builder
-    public Order(User user, Book book, OrderStatus status) {
-        this.user = user;
-        this.book = book;
+    public Order(Long userId, Long bookId, Long prePrice, Long stock, String publisher, String bookIntroductionUrl, OrderStatus status) {
+        this.userId = userId;
+        this.bookId = bookId;
+        this.prePrice = prePrice;
+        this.stock = stock;
+        this.publisher = publisher;
+        this.bookIntroductionUrl = bookIntroductionUrl;
         this.status = status;
         this.isReviewed = false;
     }
 
-    public void cancel() {
-        this.status = OrderStatus.CANCELLED;
-    }
-
-    public void complete() {
-        this.status = OrderStatus.COMPLETED;
-    }
-
-    public void markAsReviewed() {
-        this.isReviewed = true;
-    }
-
-    public void unmarkAsReviewed() {
-        this.isReviewed = false;
+    public void toggleReviewed() {
+        this.isReviewed = !this.isReviewed;
     }
 }
