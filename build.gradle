@@ -43,6 +43,7 @@ dependencies {
     implementation 'org.redisson:redisson-spring-data-34:3.45.1'
     runtimeOnly 'com.mysql:mysql-connector-j'
     runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'org.redisson:redisson-spring-data-34:3.45.1'
 
     // security
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -79,14 +80,14 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
-    finalizedBy jacocoTestReport
+    finalizedBy jacocoTestReport, jacocoTestCoverageVerification
 }
 
 tasks.named('check') {
-    dependsOn jacocoTestCoverageVerification
+    dependsOn tasks.named('jacocoTestCoverageVerification')
 }
 
-jacocoTestCoverageVerification {
+tasks.named('jacocoTestCoverageVerification') {
     violationRules {
         rule {
             limit {

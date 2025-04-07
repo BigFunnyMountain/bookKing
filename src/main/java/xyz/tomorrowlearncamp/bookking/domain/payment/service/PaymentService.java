@@ -45,10 +45,9 @@ public class PaymentService {
 			book = bookRepository.findById(bookId).orElseThrow(
 				() -> new NotFoundException(ErrorMessage.NOT_FOUND_BOOK.getMessage())
 			);
-			book.CountMinusOne();
-			// todo : 유저 연결 후 해제해주시면 됩니다
-			//orderService.createOrder(userId, book.getBookId(), OrderStatus.COMPLETED);
-
+			book.updateStock(book.getStock()-1);
+      // todo : 오더 로직 유저 연결 후 해제해주시면 됩니다
+			//orderService.createOrder(userId, book.getBookId(), OrderStatus.COMPLETED);      
 		} catch (InterruptedException ex) {
 			throw new InvalidRequestException(ErrorMessage.REDIS_ERROR.getMessage());
 		} catch (Exception ex) {
