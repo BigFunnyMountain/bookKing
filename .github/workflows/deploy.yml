@@ -70,6 +70,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_KEY }}
           script: |
+            sudo chmod 666 /var/run/docker.sock
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO }}:latest
             sudo docker stop app || true
             sudo docker rm app || true
