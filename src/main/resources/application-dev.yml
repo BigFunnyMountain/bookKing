@@ -1,6 +1,4 @@
 spring:
-  redisson:
-    config: classpath:redisson.yml
   h2:
     console:
       settings:

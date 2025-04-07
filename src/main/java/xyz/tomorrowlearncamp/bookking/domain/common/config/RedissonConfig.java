@@ -22,8 +22,8 @@ public class RedissonConfig {
 	}
 
 	@Bean(destroyMethod="shutdown")
-	public RedissonClient redissonClient(@Value("classpath:/redisson.yml") Resource configFile) throws IOException {
-		Config config = Config.fromYAML(configFile.getInputStream());
+	public RedissonClient redissonClient() throws IOException {
+		Config config = new Config();
 		return Redisson.create(config);
 	}
 }
