@@ -11,3 +11,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+
+  jwt:
+    secret:
+      key: ${JWT_SECRET_KEY}
