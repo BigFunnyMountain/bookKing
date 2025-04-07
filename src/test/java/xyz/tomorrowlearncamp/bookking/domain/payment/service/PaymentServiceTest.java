@@ -45,7 +45,7 @@ class PaymentServiceTest {
 		//given
 		Book book = new Book();
 		ReflectionTestUtils.setField(book, "bookId", 1L);
-		ReflectionTestUtils.setField(book, "count", 1000L);
+		ReflectionTestUtils.setField(book, "stock", 1000L);
 
 		given(bookRepository.findById(anyLong())).willReturn(Optional.of(book));
 		given(redissonClient.getFairLock("book:"+book.getBookId())).willReturn(rlock);
@@ -57,7 +57,7 @@ class PaymentServiceTest {
 
 		// then
 		verify(bookRepository).findById(1L);
-		assertEquals(999, book.getCount());
+		assertEquals(999, book.getStock());
 	}
 
 
@@ -67,7 +67,7 @@ class PaymentServiceTest {
 		//given
 		Book book = new Book();
 		ReflectionTestUtils.setField(book, "bookId", 1L);
-		ReflectionTestUtils.setField(book, "count", 1000L);
+		ReflectionTestUtils.setField(book, "stock", 1000L);
 
 		int threadCount = 1000;
 		ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
@@ -94,6 +94,6 @@ class PaymentServiceTest {
 		latch.await();
 		executorService.shutdown();
 
-		assertEquals(0, book.getCount());
+		assertEquals(0, book.getStock());
 	}
 }

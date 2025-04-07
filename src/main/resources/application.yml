@@ -15,4 +15,4 @@ management:
 
 jwt:
   secret:
-    key: 64461f01e1af406da538b9c48d801ce59142452199ff112fb5404c8e7e98e3ff
+    key: aHJmZXNrbnJndWhrbmJyZ2ZkdmtodXlicmVmdWt5aGZldnVobGtydGdkdWxpaGpydGd1bGloamVmcnVpbGpoZmVodWxpZnh2dWlobGpucmdm
