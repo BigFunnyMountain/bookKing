@@ -22,11 +22,11 @@ public class PaymentController {
 
 	@PostMapping("/v1/payments")
 	public ResponseEntity<Void> payment(
-		// @AuthenticationPrincipal AuthUser user,
-		@Valid @RequestBody PaymentRequest paymentRequest
+			@AuthenticationPrincipal AuthUser user,
+			@Valid @RequestBody PaymentRequest paymentRequest
 	) {
 		paymentService.payment(
-			// user.getUserId(),
+			user.getUserId(),
 			paymentRequest.getBookId(),
 			paymentRequest.getBuyStock(),
 			paymentRequest.getMoney(),

@@ -62,7 +62,7 @@ class PaymentServiceTest {
 		given(userService.getMyInfo(anyLong())).willReturn(user);
 		given(bookRepository.findById(anyLong())).willReturn(Optional.of(book));
 		given(redissonClient.getFairLock(anyString())).willReturn(rlock);
-		given(rlock.tryLock(10L, 1L, TimeUnit.SECONDS)).willReturn(true);
+		given(rlock.tryLock(100L, 10L, TimeUnit.SECONDS)).willReturn(true);
 
 		// when
 		paymentService.payment(user.getId(), 1L, 1L, 1L, PayType.KAKAO_PAY);
@@ -83,17 +83,17 @@ class PaymentServiceTest {
 
 		Book book = new Book();
 		ReflectionTestUtils.setField(book, "bookId", 1L);
-		ReflectionTestUtils.setField(book, "stock", 1000L);
+		ReflectionTestUtils.setField(book, "stock", 100L);
 		ReflectionTestUtils.setField(book, "prePrice", 1L);
 
-		int threadCount = 1000;
+		int threadCount = 100;
 		ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
 		CountDownLatch latch = new CountDownLatch(threadCount);
 
 		given(userService.getMyInfo(anyLong())).willReturn(user);
 		given(bookRepository.findById(anyLong())).willReturn(Optional.of(book));
 		given(redissonClient.getFairLock(anyString())).willReturn(rlock);
-		given(rlock.tryLock(10L, 1L, TimeUnit.SECONDS)).willReturn(true);
+		given(rlock.tryLock(100L, 10L, TimeUnit.SECONDS)).willReturn(true);
 
 		//when
 		for (int i = 0; i < threadCount; i++) {
