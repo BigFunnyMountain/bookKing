@@ -89,7 +89,7 @@ tasks.named('check') {
 tasks.named('jacocoTestCoverageVerification') {
     violationRules {
         rule {
-            includes = ['package xyz.tomorrowlearncamp.bookking.domain..service.*']
+            includes = ['xyz.tomorrowlearncamp.bookking.domain..service.*']
             element = 'CLASS'
             limit {
                 counter = 'LINE'
