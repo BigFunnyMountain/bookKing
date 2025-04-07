@@ -1,6 +1,8 @@
 spring:
-  redisson:
-    config: classpath:redisson.yml
+  data:
+    redis:
+      host: localhost
+      port: 6379
   h2:
     console:
       settings:
