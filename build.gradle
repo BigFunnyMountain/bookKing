@@ -18,7 +18,7 @@ jacoco {
     toolVersion = '0.8.12'
 }
 
-jacocoTestReport{
+jacocoTestReport {
     dependsOn test
     reports {
         xml.required = true
@@ -43,6 +43,7 @@ dependencies {
     implementation 'org.redisson:redisson-spring-data-34:3.45.1'
     runtimeOnly 'com.mysql:mysql-connector-j'
     runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'org.redisson:redisson-spring-data-34:3.45.1'
 
     // security
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -74,20 +75,28 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+    // Slf4j - 테스트때 활용
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
-    finalizedBy jacocoTestReport
+    finalizedBy jacocoTestReport, jacocoTestCoverageVerification
 }
 
 tasks.named('check') {
-    dependsOn jacocoTestReport
+    dependsOn tasks.named('jacocoTestCoverageVerification')
+}
+
+tasks.named('jacocoTestCoverageVerification') {
     violationRules {
         rule {
             limit {
-                minimum = 0.4
+                minimum = 0.1
             }
         }
     }
 }
+

@@ -41,7 +41,7 @@ public class PaymentService {
 			book = bookRepository.findById(bookId).orElseThrow(
 				() -> new NotFoundException(ErrorMessage.NOT_FOUND_BOOK.getMessage())
 			);
-			book.CountMinusOne();
+			book.updateStock(book.getStock()-1);
 			// todo : 오더 로직
 		} catch (InterruptedException ex) {
 			throw new InvalidRequestException(ErrorMessage.REDIS_ERROR.getMessage());
