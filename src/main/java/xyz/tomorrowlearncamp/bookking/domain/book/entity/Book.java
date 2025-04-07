@@ -71,9 +71,11 @@ public class Book extends BaseEntity {
         this.stock = stock;
     }
 
-    public void updateStock(Long stock){
+    public void updateStock(Long stock) {
         this.stock = stock;
-        // 한권 구매
+    }
+
+    // 한권 구매
     public void CountMinusOne() {
         this.count = this.count - 1;
     }
