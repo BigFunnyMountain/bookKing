@@ -89,8 +89,12 @@ tasks.named('check') {
 tasks.named('jacocoTestCoverageVerification') {
     violationRules {
         rule {
+            includes = ['package xyz.tomorrowlearncamp.bookking.domain..service.*']
+            element = 'CLASS'
             limit {
-                minimum = 0.1
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.5
             }
         }
     }

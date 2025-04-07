@@ -48,13 +48,16 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_KEY }}
           script: |
-            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO }}:latest
-            sudo docker stop app || true
-            sudo docker rm app || true
-            sudo docker run -d \
-              --name app \
-              -e DB_URL=${{ secrets.DB_URL }} -e DB_USER=${{ secrets.DB_USER }} \
-              -e DB_USER_PASSWORD=${{ secrets.DB_USER_PASSWORD }} -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
-              --restart on-failure \
+            sudo usermod -aG docker ubuntu
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO }}:latest
+            docker stop app || true
+            docker rm app || true
+            docker run -d \
+              -e DB_URL=${{ secrets.DB_URL }} \ 
+              -e DB_USER=${{ secrets.DB_USER }} \
+              -e DB_USER_PASSWORD=${{ secrets.DB_USER_PASSWORD }} \ 
+              -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
               -p 80:8080 \
+              --restart on-failure \
+              --name app \
               ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO }}:latest
