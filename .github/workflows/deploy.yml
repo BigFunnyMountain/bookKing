@@ -75,8 +75,8 @@ jobs:
             sudo docker rm app || true
             sudo docker run -d \
               --name app \
-              -e DB_URL = ${{ secrets.DB_URL }} -e DB_USER=${{ secrets.DB_USER }} \
-              -e DB_USER_PASSWORD = ${{ secrets.DB_USER_PASSWORD }} -e JWT_SECRET_KEY = ${{ secrets.JWT_SECRET_KEY }} \
+              -e DB_URL=${{ secrets.DB_URL }} -e DB_USER=${{ secrets.DB_USER }} \
+              -e DB_USER_PASSWORD=${{ secrets.DB_USER_PASSWORD }} -e JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
               --restart on-failure \
               -p 80:8080 \
               ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO }}:latest
