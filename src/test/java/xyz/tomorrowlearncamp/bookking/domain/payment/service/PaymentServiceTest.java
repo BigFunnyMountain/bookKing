@@ -21,15 +21,19 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import xyz.tomorrowlearncamp.bookking.BookKingApplication;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.book.repository.BookRepository;
 
 @ExtendWith(MockitoExtension.class)
-@ActiveProfiles("dev")
-@ImportAutoConfiguration(exclude = {RedisAutoConfiguration.class})
 class PaymentServiceTest {
 
 	@Mock
@@ -53,9 +57,9 @@ class PaymentServiceTest {
 		ReflectionTestUtils.setField(book, "stock", 1000L);
 
 		given(bookRepository.findById(anyLong())).willReturn(Optional.of(book));
-		given(redissonClient.getFairLock("book:"+book.getBookId())).willReturn(rlock);
+		given(redissonClient.getFairLock(anyString())).willReturn(rlock);
 		given(rlock.tryLock(10L, 1L, TimeUnit.SECONDS)).willReturn(true);
-
+		given(rlock.isLocked()).willReturn(true);
 
 		// when
 		paymentService.payment(1L);
