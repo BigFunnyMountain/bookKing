@@ -79,14 +79,14 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
-    finalizedBy jacocoTestReport
+    finalizedBy jacocoTestReport, jacocoTestCoverageVerification
 }
 
 tasks.named('check') {
-    dependsOn jacocoTestCoverageVerification
+    dependsOn tasks.named('jacocoTestCoverageVerification')
 }
 
-jacocoTestCoverageVerification {
+tasks.named('jacocoTestCoverageVerification') {
     violationRules {
         rule {
             limit {

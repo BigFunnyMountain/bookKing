@@ -23,7 +23,6 @@ public class RedissonConfig {
 
 	@Bean(destroyMethod="shutdown")
 	public RedissonClient redissonClient() throws IOException {
-		Config config = new Config();
-		return Redisson.create(config);
+		return Redisson.create();
 	}
 }
