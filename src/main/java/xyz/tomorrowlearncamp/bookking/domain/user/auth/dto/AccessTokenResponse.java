@@ -1,15 +1,15 @@
 package xyz.tomorrowlearncamp.bookking.domain.user.auth.dto;
 
-public class RefreshTokenResponse {
+public class AccessTokenResponse {
 
     private final String accessToken;
 
-    private RefreshTokenResponse(String accessToken) {
+    private AccessTokenResponse(String accessToken) {
         this.accessToken = accessToken;
     }
 
-    public static RefreshTokenResponse of(String accessToken) {
-        return new RefreshTokenResponse(accessToken);
+    public static AccessTokenResponse of(String accessToken) {
+        return new AccessTokenResponse(accessToken);
     }
 
     public String getAccessToken() {

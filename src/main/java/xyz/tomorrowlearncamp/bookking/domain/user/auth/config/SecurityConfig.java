@@ -46,7 +46,6 @@ public class SecurityConfig {
                         .requestMatchers("/error").permitAll()
                         .requestMatchers(request -> request.getRequestURI().startsWith("/api/v1/auth")).permitAll()
                         .requestMatchers("/test").hasAuthority(UserRole.ROLE_ADMIN.name())
-                        .requestMatchers("/open").permitAll()
                         .requestMatchers(request -> request.getRequestURI().startsWith("/api/v1/users")).authenticated()
                         .anyRequest().authenticated()
                 )

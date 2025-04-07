@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import xyz.tomorrowlearncamp.bookking.domain.user.enums.UserRole;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.config.JwtProvider;
-import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.RefreshTokenResponse;
+import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.AccessTokenResponse;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.SignupRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.SignupResponse;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.entity.RefreshToken;
@@ -65,7 +65,7 @@ public class AuthService {
     }
 
     @Transactional(readOnly = true)
-    public RefreshTokenResponse refreshAccessToken(String refreshToken) {
+    public AccessTokenResponse refreshAccessToken(String refreshToken) {
         // 값 넘어온거 확인
         log.info(">>> [refresh] 클라이언트로부터 받은 refreshToken: {}", refreshToken);
 
@@ -77,7 +77,6 @@ public class AuthService {
         }
 
         RefreshToken token = optionalToken.get();
-
         //찾고 로그
         log.info(">>> [refresh] db 에서 찾은 refreshToken: {}", token.getToken());
         log.info(">>> [refresh] 토큰 만료 시간: {}", token.getExpiredAt());
@@ -97,7 +96,7 @@ public class AuthService {
 
         String newAccessToken = jwtProvider.createAccessToken(user.getId(), user.getEmail(), user.getRole());
 
-        return RefreshTokenResponse.of(newAccessToken);
+        return AccessTokenResponse.of(newAccessToken);
     }
 
     @Transactional
