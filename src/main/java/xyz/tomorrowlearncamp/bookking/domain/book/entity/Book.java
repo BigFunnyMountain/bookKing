@@ -49,9 +49,7 @@ public class Book extends BaseEntity {
     private LocalDateTime publicationDate;
 
     @Column(nullable = false)
-    private Long count;
-
-    private Long stock;
+    private Long stock = 0L;
 
     @Builder
     public Book(Long bookId, String isbn, String title, String subject, String author, String publisher,
@@ -71,10 +69,7 @@ public class Book extends BaseEntity {
         this.stock = stock;
     }
 
-    public void updateStock(Long stock){
+    public void updateStock(Long stock) {
         this.stock = stock;
-        // 한권 구매
-    public void CountMinusOne() {
-        this.count = this.count - 1;
     }
 }
