@@ -39,3 +39,7 @@ out/
 ### .env ###
 .env
 *.env
+
+
+### application-local ###
+application-local.yml

@@ -1,7 +1,7 @@
 package xyz.tomorrowlearncamp.bookking.domain.payment.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+// import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +24,8 @@ public class PaymentController {
 		// @AuthenticationPrincipal AuthUser user,
 		@Valid @RequestBody PaymentRequest paymentRequest
 	) {
-		paymentService.payment(paymentRequest.getBookId());
+		// todo : 유저 정보 연결하기
+		paymentService.payment(/*user.getId(), */paymentRequest.getBookId());
 		return ResponseEntity.ok().build();
 	}
 }
