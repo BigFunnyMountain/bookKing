@@ -59,8 +59,6 @@ public class PaymentService {
 
 			bookRepository.save(book);
 
-			// todo : 오더 로직
-
 		} catch (InterruptedException ex) {
 			throw new InvalidRequestException(ErrorMessage.REDIS_ERROR.getMessage());
 		} catch ( InvalidRequestException ex ) {
@@ -70,6 +68,8 @@ public class PaymentService {
 		} finally {
 			lock.unlock();
 		}
+
+		// todo : 오더 로직
 	}
 }
 
