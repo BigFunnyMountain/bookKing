@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.book.repository.BookRepository;
+import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
 import xyz.tomorrowlearncamp.bookking.domain.order.dto.OrderResponse;
 import xyz.tomorrowlearncamp.bookking.domain.order.entity.Order;
 import xyz.tomorrowlearncamp.bookking.domain.order.entity.enums.OrderStatus;
@@ -24,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -170,5 +172,81 @@ class OrderServiceTest {
         assertThat(result.getStatus()).isEqualTo(status);
 
         verify(orderRepository).save(any(Order.class));
+    }
+
+    @Test
+    void 사용자_구매_내역_존재시_true_반환() {
+        // given
+        Long userId = 1L;
+        Long bookId = 2L;
+
+        given(orderRepository.existsByUserIdAndBookIdAndStatus(userId, bookId, OrderStatus.COMPLETED))
+                .willReturn(true);
+
+        // when
+        boolean result = orderService.hasUserPurchasedBook(userId, bookId);
+
+        // then
+        assertThat(result).isTrue();
+        verify(orderRepository).existsByUserIdAndBookIdAndStatus(userId, bookId, OrderStatus.COMPLETED);
+    }
+
+    @Test
+    void 사용자_구매_내역_없을때_false_반환() {
+        // given
+        Long userId = 1L;
+        Long bookId = 2L;
+
+        given(orderRepository.existsByUserIdAndBookIdAndStatus(userId, bookId, OrderStatus.COMPLETED))
+                .willReturn(false);
+
+        // when
+        boolean result = orderService.hasUserPurchasedBook(userId, bookId);
+
+        // then
+        assertThat(result).isFalse();
+        verify(orderRepository).existsByUserIdAndBookIdAndStatus(userId, bookId, OrderStatus.COMPLETED);
+    }
+
+    @Test
+    void 리뷰_상태_토글_성공() {
+        // given
+        Long orderId = 1L;
+
+        Order order = Order.builder()
+                .userId(1L)
+                .bookId(2L)
+                .prePrice(15000L)
+                .stock(3L)
+                .publisher("테스트 출판사")
+                .bookIntroductionUrl("http://test-url.com")
+                .status(OrderStatus.COMPLETED)
+                .build();
+
+        ReflectionTestUtils.setField(order, "orderId", orderId);
+
+        given(orderRepository.findById(orderId)).willReturn(java.util.Optional.of(order));
+
+        // when
+        orderService.toggleReviewStatus(orderId);
+
+        // then
+        assertThat(order.isReviewed()).isTrue(); // 토글 한 번 -> true
+        verify(orderRepository).findById(orderId);
+    }
+
+    @Test
+    void 리뷰_상태_토글_실패_주문없음() {
+        // given
+        Long orderId = 999L;
+
+        given(orderRepository.findById(orderId)).willReturn(java.util.Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> orderService.toggleReviewStatus(orderId))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage("주문을 찾을 수 없습니다.");
+
+        verify(orderRepository).findById(orderId);
     }
 }
