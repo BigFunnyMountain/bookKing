@@ -9,8 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import xyz.tomorrowlearncamp.bookking.domain.payment.dto.PaymentRequest;
+import xyz.tomorrowlearncamp.bookking.domain.payment.dto.request.PaymentRequest;
 import xyz.tomorrowlearncamp.bookking.domain.payment.service.PaymentService;
+import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.AuthUser;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,10 +22,16 @@ public class PaymentController {
 
 	@PostMapping("/v1/payments")
 	public ResponseEntity<Void> payment(
-		// @AuthenticationPrincipal AuthUser user,
-		@Valid @RequestBody PaymentRequest paymentRequest
+			@AuthenticationPrincipal AuthUser user,
+			@Valid @RequestBody PaymentRequest paymentRequest
 	) {
-		paymentService.payment(paymentRequest.getBookId());
+		paymentService.payment(
+			user.getUserId(),
+			paymentRequest.getBookId(),
+			paymentRequest.getBuyStock(),
+			paymentRequest.getMoney(),
+			paymentRequest.getPayType()
+		);
 		return ResponseEntity.ok().build();
 	}
 }

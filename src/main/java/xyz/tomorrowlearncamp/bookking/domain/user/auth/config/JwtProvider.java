@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import xyz.tomorrowlearncamp.bookking.domain.user.enums.UserRole;
 
 import java.security.Key;
+import java.security.Signature;
 import java.util.Base64;
 import java.util.Date;
 
