@@ -22,6 +22,9 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.book.repository.BookRepository;
+import xyz.tomorrowlearncamp.bookking.domain.order.entity.Order;
+import xyz.tomorrowlearncamp.bookking.domain.order.entity.enums.OrderStatus;
+import xyz.tomorrowlearncamp.bookking.domain.order.service.OrderService;
 import xyz.tomorrowlearncamp.bookking.domain.payment.enums.PayType;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.UserResponse;
 import xyz.tomorrowlearncamp.bookking.domain.user.enums.UserRole;
@@ -41,6 +44,9 @@ class PaymentServiceTest {
 
 	@Mock
 	private RedissonClient redissonClient;
+
+	@Mock
+	private OrderService orderService;
 
 	@Mock
 	private RLock rlock;
@@ -68,6 +74,9 @@ class PaymentServiceTest {
 		paymentService.payment(user.getId(), 1L, 1L, 1L, PayType.KAKAO_PAY);
 
 		// then
+		verify(bookRepository, times(1)).save(any(book.getClass()));
+		verify(orderService, times(1))
+			.createOrder(1L, 1L, 1L, 0L, null, null, OrderStatus.COMPLETED);
 		assertEquals(0, book.getStock());
 	}
 
@@ -113,6 +122,7 @@ class PaymentServiceTest {
 		executorService.shutdown();
 
 		// then
+		verify(bookRepository, times(100)).save(any(book.getClass()));
 		assertEquals(0, book.getStock());
 	}
 }
