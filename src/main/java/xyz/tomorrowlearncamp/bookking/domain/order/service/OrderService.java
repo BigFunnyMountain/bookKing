@@ -43,7 +43,7 @@ public class OrderService {
     // review 작성시 필요
     @Transactional(readOnly = true)
     public Long getPurchasedOrderId(Long userId, Long bookId) {
-        return orderRepository.findCompletedOrdersByUserAndBook(userId, bookId, OrderStatus.COMPLETED).stream()
+        return orderRepository.findCompletedOrderByUserAndBook(userId, bookId, OrderStatus.COMPLETED).stream()
                 .findFirst()
                 .map(Order::getOrderId)
                 .orElseThrow(() -> new NotFoundException("구매 이력이 존재하지 않습니다."));
