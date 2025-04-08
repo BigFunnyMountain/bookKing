@@ -34,4 +34,8 @@ public class BookResponseDto {
 		this.publicationDate = book.getPublicationDate();
 		this.stock = book.getStock();
 	}
+
+	public static BookResponseDto of(Book book) {
+		return new BookResponseDto(book);
+	}
 }

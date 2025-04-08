@@ -5,6 +5,10 @@ import java.util.List;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import org.hibernate.query.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +17,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import reactor.core.publisher.Mono;
@@ -21,6 +27,7 @@ import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.SearchBookRequestD
 import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.UpdateBookStockRequestDto;
 import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.UpdateBookRequestDto;
 import xyz.tomorrowlearncamp.bookking.domain.book.dto.response.BookResponseDto;
+import xyz.tomorrowlearncamp.bookking.domain.book.dto.response.SearchBookResponseDto;
 import xyz.tomorrowlearncamp.bookking.domain.book.service.BookService;
 import xyz.tomorrowlearncamp.bookking.domain.book.service.SearchBookService;
 
@@ -33,9 +40,9 @@ public class BookController {
 
     //ToDo : 국립도서관API 호출 Post
     @PostMapping("/v1/books/search")
-    public ResponseEntity<String> searchBooks(@RequestBody SearchBookRequestDto requestDto){
-            String result = searchBookService.searchBooks(requestDto);
-            return ResponseEntity.ok(result);
+    @ResponseStatus(HttpStatus.OK)
+    public SearchBookResponseDto searchBooks(@RequestBody SearchBookRequestDto requestDto){
+        return searchBookService.searchBooks(requestDto);
     }
 
     //ToDo : 권한 체크 필요
@@ -72,8 +79,12 @@ public class BookController {
     }
 
     @GetMapping("/v1/books")
-    public ResponseEntity<List<BookResponseDto>> getAllBooks(){
-        return ResponseEntity.ok(bookService.getAllBooks());
+    public ResponseEntity<Page<BookResponseDto>> getAllBooks(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size
+    ){
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(bookService.getAllBooks(pageable));
     }
 
     @GetMapping("/v1/books/{bookId}")
