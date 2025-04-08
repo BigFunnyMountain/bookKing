@@ -11,6 +11,7 @@ import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.book.repository.BookRepository;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.InvalidRequestException;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
+import xyz.tomorrowlearncamp.bookking.domain.order.service.OrderService;
 import xyz.tomorrowlearncamp.bookking.domain.review.dto.request.ReviewRequest;
 import xyz.tomorrowlearncamp.bookking.domain.review.dto.request.ReviewUpdateRequest;
 import xyz.tomorrowlearncamp.bookking.domain.review.dto.response.ReviewCreateResponse;
@@ -18,8 +19,8 @@ import xyz.tomorrowlearncamp.bookking.domain.review.dto.response.ReviewResponse;
 import xyz.tomorrowlearncamp.bookking.domain.review.entity.Review;
 import xyz.tomorrowlearncamp.bookking.domain.review.enums.ReviewState;
 import xyz.tomorrowlearncamp.bookking.domain.review.repository.ReviewRepository;
-import xyz.tomorrowlearncamp.bookking.user.entity.User;
-import xyz.tomorrowlearncamp.bookking.user.repository.UserRepository;
+import xyz.tomorrowlearncamp.bookking.domain.user.entity.User;
+import xyz.tomorrowlearncamp.bookking.domain.user.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -44,13 +45,9 @@ public class ReviewService {
             throw new InvalidRequestException("이미 리뷰를 작성한 사용자입니다.");
         }
 
-        if (!orderService.hasUserPurchasedBook(userId, bookId)) {
-            throw new InvalidRequestException("리뷰는 해당 책을 구매한 사용자만 작성할 수 있습니다.");
-        }
+        Long orderId = orderService.getPurchasedOrderId(userId, bookId);
 
-        // ✅ Order 상태 업데이트 추가
-        Order order = orderService.findCompletedOrder(userId, bookId);
-        orderService.markAsReviewed(order.getOrderId());
+        orderService.switchReviewStatus(orderId);
 
         Review review = Review.builder()
                 .user(user)
@@ -62,7 +59,6 @@ public class ReviewService {
 
         return ReviewCreateResponse.toDto(reviewRepository.save(review));
     }
-
 
     @Transactional(readOnly = true)
     public Page<ReviewResponse> getBookReviews(Long bookId, int page, int size) {
@@ -89,10 +85,10 @@ public class ReviewService {
         Review review = getReviewOwnedByUser(reviewId, userId, bookId);
         review.deleteReview();
 
-        Order order = orderService.findCompletedOrder(userId, bookId);
-        orderService.unmarkAsReviewed(order.getOrderId());
-    }
+        Long orderId = orderService.getPurchasedOrderId(userId, bookId);
 
+        orderService.switchReviewStatus(orderId);
+    }
 
     private Review getReviewOwnedByUser(Long reviewId, Long userId, Long bookId) {
         return reviewRepository.findByIdAndUserIdAndBookIdAndState(reviewId, userId, bookId, ReviewState.ACTIVE)

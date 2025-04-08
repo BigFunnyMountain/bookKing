@@ -6,7 +6,7 @@ import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.common.entity.BaseEntity;
 import xyz.tomorrowlearncamp.bookking.domain.review.enums.ReviewState;
 import xyz.tomorrowlearncamp.bookking.domain.review.enums.StarRating;
-import xyz.tomorrowlearncamp.bookking.user.entity.User;
+import xyz.tomorrowlearncamp.bookking.domain.user.entity.User;
 
 @Entity
 @Getter

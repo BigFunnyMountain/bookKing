@@ -12,10 +12,10 @@ import java.util.Optional;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
-    @Query("SELECT r FROM Review r WHERE r.user.id = :userId AND r.book.bookId = :bookId AND r.reviewState = :reviewState")
+    @Query("SELECT COUNT(r) > 0 FROM Review r WHERE r.user.id = :userId AND r.book.bookId = :bookId AND r.reviewState = :state")
     boolean existsByUserAndBookAndState(@Param("userId") Long userId,
                                         @Param("bookId") Long bookId,
-                                        @Param("reviewState") ReviewState reviewState);
+                                        @Param("state") ReviewState state);
 
     @Query("SELECT r FROM Review r JOIN FETCH r.user JOIN FETCH r.book WHERE r.book.bookId = :bookId AND r.reviewState = :reviewState")
     Page<Review> findByBookIdAndState(@Param("bookId") Long bookId,

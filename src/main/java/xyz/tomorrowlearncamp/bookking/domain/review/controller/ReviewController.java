@@ -11,16 +11,16 @@ import xyz.tomorrowlearncamp.bookking.domain.review.dto.request.ReviewUpdateRequ
 import xyz.tomorrowlearncamp.bookking.domain.review.dto.response.ReviewCreateResponse;
 import xyz.tomorrowlearncamp.bookking.domain.review.dto.response.ReviewResponse;
 import xyz.tomorrowlearncamp.bookking.domain.review.service.ReviewService;
-import xyz.tomorrowlearncamp.bookking.user.auth.dto.AuthUser;
+import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.AuthUser;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @PostMapping("/books/{bookId}/reviews")
+    @PostMapping("/v1/books/{bookId}/reviews")
     public ResponseEntity<ReviewCreateResponse> saveReview(
             @PathVariable Long bookId,
             @Valid @RequestBody ReviewRequest request,
@@ -29,7 +29,7 @@ public class ReviewController {
         return ResponseEntity.ok(reviewService.saveReview(authUser.getUserId(), bookId, request));
     }
 
-    @GetMapping("/books/{bookId}/reviews")
+    @GetMapping("/v1/books/{bookId}/reviews")
     public ResponseEntity<Page<ReviewResponse>> getBookReviews(
             @PathVariable Long bookId,
             @RequestParam(defaultValue = "0") int page,
@@ -38,7 +38,7 @@ public class ReviewController {
         return ResponseEntity.ok(reviewService.getBookReviews(bookId, page, size));
     }
 
-    @PatchMapping("/books/{bookId}/reviews/{reviewId}")
+    @PatchMapping("/v1/books/{bookId}/reviews/{reviewId}")
     public ResponseEntity<String> updateReview(
             @PathVariable Long bookId,
             @PathVariable Long reviewId,
@@ -49,7 +49,7 @@ public class ReviewController {
         return ResponseEntity.ok("리뷰가 성공적으로 수정되었습니다.");
     }
 
-    @DeleteMapping("/books/{bookId}/reviews/{reviewId}")
+    @DeleteMapping("/v1/books/{bookId}/reviews/{reviewId}")
     public ResponseEntity<String> deleteReview(
             @PathVariable Long bookId,
             @PathVariable Long reviewId,
@@ -59,7 +59,7 @@ public class ReviewController {
         return ResponseEntity.ok("리뷰가 성공적으로 삭제되었습니다.");
     }
 
-    @GetMapping("/reviews/me")
+    @GetMapping("/v1/reviews/myinfo")
     public ResponseEntity<Page<ReviewResponse>> getMyReviews(
             @AuthenticationPrincipal AuthUser authUser,
             @RequestParam(defaultValue = "0") int page,
