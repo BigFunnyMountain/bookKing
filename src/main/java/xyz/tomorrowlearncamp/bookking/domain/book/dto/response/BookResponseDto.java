@@ -14,10 +14,10 @@ public class BookResponseDto {
 	private final String author;
 	private final String publisher;
 	private final String bookIntroductionUrl;
-	private final Long prePrice;
-	private final Long page;
+	private final String prePrice;
+	private final String page;
 	private final String titleUrl;
-	private final LocalDateTime publicationDate;
+	private final String publicationDate;
 	private final Long stock;
 
 	public BookResponseDto(Book book) {

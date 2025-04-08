@@ -2,6 +2,9 @@ package xyz.tomorrowlearncamp.bookking.domain.book.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.Getter;
+
+@Getter
 public class BookDto {
 	@JsonProperty("PUBLISHER")
 	private String publisher;

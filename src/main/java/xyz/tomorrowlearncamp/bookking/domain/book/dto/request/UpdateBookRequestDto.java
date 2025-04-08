@@ -12,8 +12,8 @@ public class UpdateBookRequestDto {
 	private String author;
 	private String publisher;
 	private String bookIntroductionUrl;
-	private Long prePrice;
-	private Long page;
+	private String prePrice;
+	private String page;
 	private String titleUrl;
-	private LocalDateTime publicationDate;
+	private String publicationDate;
 }

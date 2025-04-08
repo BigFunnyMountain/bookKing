@@ -20,9 +20,9 @@ public class AddBookRequestDto {
 	@NotNull
 	private String bookIntroductionUrl;
 	@NotNull
-	private Long prePrice;
+	private String prePrice;
 	@NotNull
-	private Long page;
+	private String page;
 	@NotNull
 	private String titleUrl;
 	@NotNull

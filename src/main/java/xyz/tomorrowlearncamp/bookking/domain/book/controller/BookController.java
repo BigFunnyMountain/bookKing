@@ -41,6 +41,15 @@ public class BookController {
 		return searchBookService.searchBooks(requestDto);
 	}
 
+	@PostMapping("/v1/books/import")
+	public ResponseEntity<Void> importBooks(
+		@RequestParam(defaultValue = "100") int pageSize,
+		@RequestParam(defaultValue = "100") int totalPage
+	){
+		searchBookService.fetchBooksFromLibraryApi(pageSize, totalPage);
+		return ResponseEntity.ok().build();
+	}
+
 	//ToDo : 권한 체크 필요
 	@PostMapping("/v1/books")
 	public ResponseEntity<Long> addBook(@RequestBody @Valid AddBookRequestDto requestDto) {
