@@ -42,12 +42,14 @@ public class OrderService {
 
     // review 작성시 필요
     @Transactional(readOnly = true)
-    public boolean hasUserPurchasedBook(Long userId, Long bookId) {
-        return orderRepository.existsByUserIdAndBookIdAndStatus(userId, bookId, OrderStatus.COMPLETED);
+    public Long getPurchasedOrderId(Long userId, Long bookId) {
+        return orderRepository.findCompletedOrderByUserAndBook(userId, bookId, OrderStatus.COMPLETED)
+                .map(Order::getOrderId)
+                .orElseThrow(() -> new NotFoundException("구매 이력이 존재하지 않습니다."));
     }
 
     @Transactional
-    public void toggleReviewStatus(Long orderId) {
+    public void switchReviewStatus(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new NotFoundException("주문을 찾을 수 없습니다."));
         order.toggleReviewed();
