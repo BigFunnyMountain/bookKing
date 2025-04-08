@@ -6,13 +6,15 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import xyz.tomorrowlearncamp.bookking.domain.review.enums.StarRating;
 
+import static xyz.tomorrowlearncamp.bookking.domain.review.constant.ReviewConstants.*;
+
 @Getter
 public class ReviewUpdateRequest {
 
-    @NotNull(message = "별점은 필수입니다.")
+    @NotNull(message = RATING_REQUIRED_MESSAGE)
     private StarRating rating;
 
-    @NotBlank(message = "리뷰 내용은 비어 있을 수 없습니다.")
-    @Size(max = 1000, message = "리뷰 내용은 1000자 이내로 작성해주세요.")
+    @NotBlank(message = CONTENT_NOT_BLANK_MESSAGE)
+    @Size(max = REVIEW_CONTENT_MAX_LENGTH, message = CONTENT_SIZE_MESSAGE)
     private String content;
 }
