@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.book.repository.BookRepository;
 import xyz.tomorrowlearncamp.bookking.domain.common.enums.ErrorMessage;
@@ -13,6 +12,8 @@ import xyz.tomorrowlearncamp.bookking.domain.common.exception.InvalidRequestExce
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
 import xyz.tomorrowlearncamp.bookking.domain.payment.enums.PayType;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.UserResponse;
+import xyz.tomorrowlearncamp.bookking.domain.order.entity.enums.OrderStatus;
+import xyz.tomorrowlearncamp.bookking.domain.order.service.OrderService;
 import xyz.tomorrowlearncamp.bookking.domain.user.service.UserService;
 
 import java.util.concurrent.TimeUnit;
@@ -26,11 +27,10 @@ public class PaymentService {
 
 	private final BookRepository bookRepository;
 
-	// private final OrderService orderService;
+	private final OrderService orderService;
 	
 	private final RedissonClient redissonClient;
 
-	@Transactional
 	public void payment(Long userId, Long bookId, Long buyStock, Long money, PayType payType) {
 		UserResponse user = userService.getMyInfo(userId);
 
@@ -41,7 +41,9 @@ public class PaymentService {
 			if (!acquired) {
 				throw new InterruptedException();
 			}
-			Book book = bookRepository.findById(bookId).orElseThrow(()->new NotFoundException("Book not found"));
+			Book book = bookRepository.findById(bookId).orElseThrow(
+				() -> new NotFoundException(ErrorMessage.NOT_FOUND_BOOK.getMessage())
+			);
 			// 책이 재고가 0개인 경우 || 구매하려는 개수 만큼 없는 경우
 			if( book.getStock() == 0 || book.getStock() < buyStock ) {
 				throw new InvalidRequestException(ErrorMessage.ZERO_BOOK_STOCK.getMessage());
