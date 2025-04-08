@@ -128,4 +128,47 @@ class OrderServiceTest {
 
         verify(orderRepository).findByUserId(eq(userId), any(Pageable.class));
     }
+
+    @Test
+    void 주문_생성_성공() {
+        // given
+        Long userId = 1L;
+        Long bookId = 2L;
+        Long prePrice = 15000L;
+        Long stock = 5L;
+        String publisher = "테스트 출판사";
+        String bookIntroductionUrl = "http://test-url.com";
+        OrderStatus status = OrderStatus.COMPLETED;
+
+        Order savedOrder = Order.builder()
+                .userId(userId)
+                .bookId(bookId)
+                .prePrice(prePrice)
+                .stock(stock)
+                .publisher(publisher)
+                .bookIntroductionUrl(bookIntroductionUrl)
+                .status(status)
+                .build();
+
+        ReflectionTestUtils.setField(savedOrder, "orderId", 100L);
+        ReflectionTestUtils.setField(savedOrder, "createdAt", LocalDateTime.now());
+
+        given(orderRepository.save(any(Order.class))).willReturn(savedOrder);
+
+        // when
+        Order result = orderService.createOrder(userId, bookId, prePrice, stock, publisher, bookIntroductionUrl, status);
+
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result.getOrderId()).isEqualTo(100L);
+        assertThat(result.getUserId()).isEqualTo(userId);
+        assertThat(result.getBookId()).isEqualTo(bookId);
+        assertThat(result.getPrePrice()).isEqualTo(prePrice);
+        assertThat(result.getStock()).isEqualTo(stock);
+        assertThat(result.getPublisher()).isEqualTo(publisher);
+        assertThat(result.getBookIntroductionUrl()).isEqualTo(bookIntroductionUrl);
+        assertThat(result.getStatus()).isEqualTo(status);
+
+        verify(orderRepository).save(any(Order.class));
+    }
 }
