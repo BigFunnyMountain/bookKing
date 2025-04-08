@@ -1,6 +1,5 @@
 package xyz.tomorrowlearncamp.bookking.domain.review.dto.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import xyz.tomorrowlearncamp.bookking.domain.review.entity.Review;
@@ -10,21 +9,22 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class ReviewResponse {
     private Long reviewId;
-    private String nickname;
+    private Long userId;
     private StarRating rating;
     private String content;
     private LocalDateTime createdAt;
+    private Long bookId;
 
-    public static ReviewResponse from(Review review) {
-        return new ReviewResponse(
-                review.getReviewId(),
-                review.getUser().getNickname(),
-                review.getRating(),
-                review.getContent(),
-                review.getCreatedAt()
-        );
+    public static ReviewResponse of(Review review) {
+        ReviewResponse response = new ReviewResponse();
+        response.reviewId = review.getReviewId();
+        response.userId = review.getUserId();
+        response.rating = review.getRating();
+        response.content = review.getContent();
+        response.createdAt = review.getCreatedAt();
+        response.bookId = review.getBookId();
+        return response;
     }
 }

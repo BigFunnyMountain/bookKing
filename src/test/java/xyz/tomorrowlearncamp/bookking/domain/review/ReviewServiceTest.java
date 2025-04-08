@@ -12,7 +12,7 @@ import xyz.tomorrowlearncamp.bookking.domain.common.exception.InvalidRequestExce
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
 import xyz.tomorrowlearncamp.bookking.domain.order.service.OrderService;
 import xyz.tomorrowlearncamp.bookking.domain.review.dto.request.ReviewRequest;
-import xyz.tomorrowlearncamp.bookking.domain.review.dto.response.ReviewCreateResponse;
+import xyz.tomorrowlearncamp.bookking.domain.review.dto.response.ReviewResponse;
 import xyz.tomorrowlearncamp.bookking.domain.review.entity.Review;
 import xyz.tomorrowlearncamp.bookking.domain.review.enums.ReviewState;
 import xyz.tomorrowlearncamp.bookking.domain.review.enums.StarRating;
@@ -69,18 +69,20 @@ class ReviewServiceTest {
         given(orderService.getPurchasedOrderId(userId, bookId)).willReturn(orderId);
 
         Review savedReview = Review.builder()
-                .reviewId(10L)
-                .user(user)
-                .book(book)
+                .userId(userId)
+                .bookId(bookId)
                 .rating(StarRating.FIVE)
                 .content("좋은 책이에요!")
                 .reviewState(ReviewState.ACTIVE)
                 .build();
 
+        ReflectionTestUtils.setField(savedReview, "reviewId", 10L);
+
+
         given(reviewRepository.save(any(Review.class))).willReturn(savedReview);
 
         // when
-        ReviewCreateResponse response = reviewService.saveReview(userId, bookId, request);
+        ReviewResponse response = reviewService.saveReview(userId, bookId, request);
 
         // then
         assertThat(response).isNotNull();
@@ -158,22 +160,26 @@ class ReviewServiceTest {
 
         Book book = Book.builder().bookId(bookId).build();
 
-        Review review = Review.builder()
-                .reviewId(reviewId)
-                .user(user)
-                .book(book)
+        Review savedReview = Review.builder()
+                .userId(userId)
+                .bookId(bookId)
+                .rating(StarRating.FIVE)
+                .content("좋은 책이에요!")
                 .reviewState(ReviewState.ACTIVE)
                 .build();
 
+        ReflectionTestUtils.setField(savedReview, "reviewId", 10L);
+
+
         given(reviewRepository.findByIdAndUserIdAndBookIdAndState(reviewId, userId, bookId, ReviewState.ACTIVE))
-                .willReturn(Optional.of(review));
+                .willReturn(Optional.of(savedReview));
         given(orderService.getPurchasedOrderId(userId, bookId)).willReturn(orderId);
 
         // when
         reviewService.deleteReview(userId, bookId, reviewId);
 
         // then
-        assertThat(review.getReviewState()).isEqualTo(ReviewState.INACTIVE);
+        assertThat(savedReview.getReviewState()).isEqualTo(ReviewState.INACTIVE);
         verify(orderService).switchReviewStatus(orderId);
     }
 

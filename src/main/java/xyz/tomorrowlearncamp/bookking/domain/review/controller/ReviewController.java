@@ -8,7 +8,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import xyz.tomorrowlearncamp.bookking.domain.review.dto.request.ReviewRequest;
 import xyz.tomorrowlearncamp.bookking.domain.review.dto.request.ReviewUpdateRequest;
-import xyz.tomorrowlearncamp.bookking.domain.review.dto.response.ReviewCreateResponse;
 import xyz.tomorrowlearncamp.bookking.domain.review.dto.response.ReviewResponse;
 import xyz.tomorrowlearncamp.bookking.domain.review.service.ReviewService;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.AuthUser;
@@ -21,7 +20,7 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping("/v1/books/{bookId}/reviews")
-    public ResponseEntity<ReviewCreateResponse> saveReview(
+    public ResponseEntity<ReviewResponse> saveReview(
             @PathVariable Long bookId,
             @Valid @RequestBody ReviewRequest request,
             @AuthenticationPrincipal AuthUser authUser

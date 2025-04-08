@@ -14,7 +14,6 @@ import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
 import xyz.tomorrowlearncamp.bookking.domain.order.service.OrderService;
 import xyz.tomorrowlearncamp.bookking.domain.review.dto.request.ReviewRequest;
 import xyz.tomorrowlearncamp.bookking.domain.review.dto.request.ReviewUpdateRequest;
-import xyz.tomorrowlearncamp.bookking.domain.review.dto.response.ReviewCreateResponse;
 import xyz.tomorrowlearncamp.bookking.domain.review.dto.response.ReviewResponse;
 import xyz.tomorrowlearncamp.bookking.domain.review.entity.Review;
 import xyz.tomorrowlearncamp.bookking.domain.review.enums.ReviewState;
@@ -31,9 +30,8 @@ public class ReviewService {
     private final BookRepository bookRepository;
     private final OrderService orderService;
 
-    // ReviewService.java
     @Transactional
-    public ReviewCreateResponse saveReview(Long userId, Long bookId, ReviewRequest request) {
+    public ReviewResponse saveReview(Long userId, Long bookId, ReviewRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
 
@@ -50,28 +48,28 @@ public class ReviewService {
         orderService.switchReviewStatus(orderId);
 
         Review review = Review.builder()
-                .user(user)
-                .book(book)
+                .userId(userId)
+                .bookId(bookId)
                 .rating(request.getRating())
                 .content(request.getContent())
                 .reviewState(ReviewState.ACTIVE)
                 .build();
 
-        return ReviewCreateResponse.toDto(reviewRepository.save(review));
+        return ReviewResponse.of(reviewRepository.save(review));
     }
 
     @Transactional(readOnly = true)
     public Page<ReviewResponse> getBookReviews(Long bookId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         return reviewRepository.findByBookIdAndState(bookId, ReviewState.ACTIVE, pageable)
-                .map(ReviewResponse::from);
+                .map(ReviewResponse::of);
     }
 
     @Transactional(readOnly = true)
     public Page<ReviewResponse> getMyReviews(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         return reviewRepository.findByUserIdAndState(userId, ReviewState.ACTIVE, pageable)
-                .map(ReviewResponse::from);
+                .map(ReviewResponse::of);
     }
 
     @Transactional
