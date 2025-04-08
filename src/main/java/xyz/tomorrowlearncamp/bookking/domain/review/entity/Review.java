@@ -2,17 +2,13 @@ package xyz.tomorrowlearncamp.bookking.domain.review.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.common.entity.BaseEntity;
 import xyz.tomorrowlearncamp.bookking.domain.review.enums.ReviewState;
 import xyz.tomorrowlearncamp.bookking.domain.review.enums.StarRating;
-import xyz.tomorrowlearncamp.bookking.domain.user.entity.User;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 @Table(name = "reviews")
 public class Review extends BaseEntity {
 
@@ -31,13 +27,21 @@ public class Review extends BaseEntity {
     @Column(nullable = false)
     private ReviewState reviewState;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "book_id")
-    private Book book;
+    @Column(name = "book_id", nullable = false)
+    private Long bookId;
+
+    @Builder
+    public Review(Long userId, Long bookId, StarRating rating, String content, ReviewState reviewState) {
+        this.userId = userId;
+        this.bookId = bookId;
+        this.rating = rating;
+        this.content = content;
+        this.reviewState = reviewState;
+    }
+
 
     public void updateReview(String content, StarRating rating) {
         this.content = content;
