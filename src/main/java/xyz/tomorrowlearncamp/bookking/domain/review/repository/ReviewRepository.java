@@ -12,22 +12,22 @@ import java.util.Optional;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
-    @Query("SELECT COUNT(r) > 0 FROM Review r WHERE r.user.id = :userId AND r.book.bookId = :bookId AND r.reviewState = :state")
+    @Query("SELECT COUNT(r) > 0 " + "FROM Review r " + "WHERE r.userId = :userId " + "AND r.bookId = :bookId " + "AND r.reviewState = :state")
     boolean existsByUserAndBookAndState(@Param("userId") Long userId,
                                         @Param("bookId") Long bookId,
                                         @Param("state") ReviewState state);
 
-    @Query("SELECT r FROM Review r JOIN FETCH r.user JOIN FETCH r.book WHERE r.book.bookId = :bookId AND r.reviewState = :reviewState")
+    @Query("SELECT r " + "FROM Review r " + "WHERE r.bookId = :bookId " + "AND r.reviewState = :reviewState " + "ORDER BY r.createdAt DESC")
     Page<Review> findByBookIdAndState(@Param("bookId") Long bookId,
                                       @Param("reviewState") ReviewState reviewState,
                                       Pageable pageable);
 
-    @Query("SELECT r FROM Review r JOIN FETCH r.user JOIN FETCH r.book WHERE r.user.id = :userId AND r.reviewState = :reviewState")
+    @Query("SELECT r " + "FROM Review r " + "WHERE r.userId = :userId " + "AND r.reviewState = :reviewState " + "ORDER BY r.createdAt DESC")
     Page<Review> findByUserIdAndState(@Param("userId") Long userId,
                                       @Param("reviewState") ReviewState reviewState,
                                       Pageable pageable);
 
-    @Query("SELECT r FROM Review r WHERE r.reviewId = :reviewId AND r.user.id = :userId AND r.book.bookId = :bookId AND r.reviewState = :reviewState")
+    @Query("SELECT r " + "FROM Review r " + "WHERE r.reviewId = :reviewId " + "AND r.userId = :userId " + "AND r.bookId = :bookId " + "AND r.reviewState = :reviewState")
     Optional<Review> findByIdAndUserIdAndBookIdAndState(@Param("reviewId") Long reviewId,
                                                         @Param("userId") Long userId,
                                                         @Param("bookId") Long bookId,
