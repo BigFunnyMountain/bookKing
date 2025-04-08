@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.AuthUser;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.DeleteUserRequest;
@@ -54,5 +55,14 @@ public class UserController {
 
         userService.deleteUser(userId, authUser.getUserId(), deleteUserRequest.getPassword());
         return ResponseEntity.ok("회원 탈퇴가 정상적으로 처리되었습니다");
+    }
+
+    @PostMapping("/v1/users/profile-image")
+    public ResponseEntity<String> uploadProfileImage(
+            @AuthenticationPrincipal AuthUser authUser,
+            @RequestParam("image") MultipartFile image) throws Exception {
+
+        String imageUrl = userService.updateProfileImage(authUser.getUserId(), image);
+        return ResponseEntity.ok(imageUrl);
     }
 }
