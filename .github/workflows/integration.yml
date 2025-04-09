@@ -1,12 +1,6 @@
 name: 테스트 및 빌드
 
 on:
-  push:
-    branches:
-      - feat/**
-      - fix/**
-      - refactor/**
-      - test/**
   pull_request:
     types:
       - opened
@@ -33,6 +27,7 @@ jobs:
         with:
           java-version: 17
           distribution: temurin
+          cache: gradle
 
       - name: Gradle setup
         uses: gradle/actions/setup-gradle@v4
@@ -64,3 +59,12 @@ jobs:
         run: |
           echo "Total coverage ${{ steps.jacoco.outputs.coverage-overall }}"
           echo "Changed Files coverage ${{ steps.jacoco.outputs.coverage-changed-files }}"
+
+      - name: send to notice from slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took,pullRequest
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()
