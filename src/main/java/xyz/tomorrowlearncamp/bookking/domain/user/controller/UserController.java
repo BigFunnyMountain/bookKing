@@ -18,6 +18,9 @@ import xyz.tomorrowlearncamp.bookking.domain.user.service.UserService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
+/*
+TODO : ResponseEntity를 컨트롤러 곳곳에서 직접 생성하는 중, 추후 리팩토링 진행 시, 공통된 응답 형식을 따로 클래스나 유틸로 만들어서 거기서 만들어주는 것
+ */
 public class UserController {
     private final UserService userService;
 
