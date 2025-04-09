@@ -20,6 +20,7 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
+    // todo user soft delete 구현되면 고려하여 수정
     @Override
     public Page<Order> findByUserId(Long userId, Pageable pageable) {
         List<Order> content = queryFactory
