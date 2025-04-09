@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import xyz.tomorrowlearncamp.bookking.domain.common.entity.BaseEntity;
-import xyz.tomorrowlearncamp.bookking.domain.order.entity.enums.OrderStatus;
+import xyz.tomorrowlearncamp.bookking.domain.order.enums.OrderStatus;
 
 @Entity
 @Getter

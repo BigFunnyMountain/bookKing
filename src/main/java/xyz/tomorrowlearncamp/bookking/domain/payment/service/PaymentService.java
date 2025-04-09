@@ -10,9 +10,9 @@ import xyz.tomorrowlearncamp.bookking.domain.book.repository.BookRepository;
 import xyz.tomorrowlearncamp.bookking.domain.common.enums.ErrorMessage;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.InvalidRequestException;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
+import xyz.tomorrowlearncamp.bookking.domain.order.enums.OrderStatus;
 import xyz.tomorrowlearncamp.bookking.domain.payment.enums.PayType;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.UserResponse;
-import xyz.tomorrowlearncamp.bookking.domain.order.entity.enums.OrderStatus;
 import xyz.tomorrowlearncamp.bookking.domain.order.service.OrderService;
 import xyz.tomorrowlearncamp.bookking.domain.user.service.UserService;
 
@@ -59,6 +59,8 @@ public class PaymentService {
 
 			bookRepository.save(book);
 
+			orderService.createOrder(userId, book.getBookId(), book.getPrePrice(), book.getStock(), book.getPublisher(), book.getBookIntroductionUrl(), OrderStatus.COMPLETED);
+
 		} catch (InterruptedException ex) {
 			throw new InvalidRequestException(ErrorMessage.REDIS_ERROR.getMessage());
 		} catch ( InvalidRequestException ex ) {
@@ -68,8 +70,6 @@ public class PaymentService {
 		} finally {
 			lock.unlock();
 		}
-
-		// todo : 오더 로직
 	}
 }
 
