@@ -194,7 +194,7 @@ class OrderServiceTest {
 
         ReflectionTestUtils.setField(order, "orderId", expectedOrderId);
 
-        given(orderRepository.findCompletedOrderByUserAndBook(userId, bookId, OrderStatus.COMPLETED))
+        given(orderRepository.findCompletedOrder(userId, bookId, OrderStatus.COMPLETED))
                 .willReturn(Optional.of(order));
 
         // when
@@ -202,7 +202,7 @@ class OrderServiceTest {
 
         // then
         assertThat(result).isEqualTo(expectedOrderId);
-        verify(orderRepository).findCompletedOrderByUserAndBook(userId, bookId, OrderStatus.COMPLETED);
+        verify(orderRepository).findCompletedOrder(userId, bookId, OrderStatus.COMPLETED);
     }
 
 
@@ -212,7 +212,7 @@ class OrderServiceTest {
         Long userId = 1L;
         Long bookId = 2L;
 
-        given(orderRepository.findCompletedOrderByUserAndBook(userId, bookId, OrderStatus.COMPLETED))
+        given(orderRepository.findCompletedOrder(userId, bookId, OrderStatus.COMPLETED))
                 .willReturn(Optional.empty());
 
         // when & then
@@ -220,7 +220,7 @@ class OrderServiceTest {
                 .isInstanceOf(NotFoundException.class)
                 .hasMessage("구매 이력이 존재하지 않습니다.");
 
-        verify(orderRepository).findCompletedOrderByUserAndBook(userId, bookId, OrderStatus.COMPLETED);
+        verify(orderRepository).findCompletedOrder(userId, bookId, OrderStatus.COMPLETED);
     }
 
 
