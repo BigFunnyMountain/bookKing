@@ -60,6 +60,9 @@ jobs:
           echo "Total coverage ${{ steps.jacoco.outputs.coverage-overall }}"
           echo "Changed Files coverage ${{ steps.jacoco.outputs.coverage-changed-files }}"
 
+  slack-notification:
+    runs-on: ubuntu-latest
+    steps:
       - name: send to notice from slack
         uses: 8398a7/action-slack@v3
         with:
