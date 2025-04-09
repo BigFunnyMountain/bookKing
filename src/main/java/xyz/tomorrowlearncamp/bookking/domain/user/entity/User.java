@@ -100,5 +100,6 @@ public class User extends BaseEntity {
     public void updateRole(UserRole newRole) {
         this.role = newRole;
     }
+    // TODO : soft 딜리트 구현 (리팩토링 시에 진행할 예정)
 
 }
