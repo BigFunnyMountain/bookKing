@@ -62,7 +62,7 @@ class PaymentServiceTest {
 		Book book = new Book();
 		ReflectionTestUtils.setField(book, "bookId", 1L);
 		ReflectionTestUtils.setField(book, "stock", 1L);
-		ReflectionTestUtils.setField(book, "prePrice", 1L);
+		ReflectionTestUtils.setField(book, "prePrice", "1");
 
 		given(userService.getMyInfo(anyLong())).willReturn(user);
 		given(bookRepository.findById(anyLong())).willReturn(Optional.of(book));
@@ -92,7 +92,7 @@ class PaymentServiceTest {
 		Book book = new Book();
 		ReflectionTestUtils.setField(book, "bookId", 1L);
 		ReflectionTestUtils.setField(book, "stock", 100L);
-		ReflectionTestUtils.setField(book, "prePrice", 1L);
+		ReflectionTestUtils.setField(book, "prePrice", "1");
 
 		int threadCount = 100;
 		ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
