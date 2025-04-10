@@ -12,6 +12,7 @@ public enum ErrorMessage {
 	NOT_FOUND_BOOK("없는 책입니다."),
 	ZERO_BOOK_STOCK("남은 책이 없습니다."),
 	SHORT_ON_MONEY("돈이 부족합니다."),
+	CALL_ADMIN("어드민을 호출하여주세요.")
 	;
 
 	private final String message;

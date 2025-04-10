@@ -13,13 +13,13 @@ public class OrderResponse {
     private String status;
     private boolean isReviewed;
     private LocalDateTime createdAt;
-    private Long prePrice;
+    private String prePrice;
     private Long stock;
     private String publisher;
     private String bookIntroductionUrl;
 
     public OrderResponse(Long orderId, Long bookId, Long userId, String status, boolean isReviewed, LocalDateTime createdAt,
-                         Long prePrice, Long stock, String publisher, String bookIntroductionUrl) {
+                         String prePrice, Long stock, String publisher, String bookIntroductionUrl) {
         this.orderId = orderId;
         this.bookId = bookId;
         this.userId = userId;

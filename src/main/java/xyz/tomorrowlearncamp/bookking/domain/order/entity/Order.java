@@ -24,7 +24,7 @@ public class Order extends BaseEntity {
     private Long bookId;
 
     @Column(nullable = false)
-    private Long prePrice;
+    private String prePrice;
 
     @Column(nullable = false)
     private Long stock;
@@ -43,7 +43,7 @@ public class Order extends BaseEntity {
     private boolean isReviewed;
 
     @Builder
-    public Order(Long userId, Long bookId, Long prePrice, Long stock, String publisher, String bookIntroductionUrl, OrderStatus status) {
+    public Order(Long userId, Long bookId, String prePrice, Long stock, String publisher, String bookIntroductionUrl, OrderStatus status) {
         this.userId = userId;
         this.bookId = bookId;
         this.prePrice = prePrice;

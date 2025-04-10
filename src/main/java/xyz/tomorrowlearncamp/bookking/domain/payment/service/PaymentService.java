@@ -16,6 +16,7 @@ import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.UserResponse;
 import xyz.tomorrowlearncamp.bookking.domain.order.service.OrderService;
 import xyz.tomorrowlearncamp.bookking.domain.user.service.UserService;
 
+import java.math.BigDecimal;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -50,7 +51,8 @@ public class PaymentService {
 			}
 
 			// 돈이 부족한 경우
-			if( money < buyStock * book.getPrePrice() ) {
+			long price = Long.parseLong(book.getPrePrice());
+			if( price > money ) {
 				throw new InvalidRequestException(ErrorMessage.SHORT_ON_MONEY.getMessage());
 			}
 
@@ -63,6 +65,8 @@ public class PaymentService {
 
 		} catch (InterruptedException ex) {
 			throw new InvalidRequestException(ErrorMessage.REDIS_ERROR.getMessage());
+		} catch (NumberFormatException ex) {
+			throw new InvalidRequestException(ErrorMessage.CALL_ADMIN.getMessage());
 		} catch ( InvalidRequestException ex ) {
 			throw new InvalidRequestException(ex.getMessage());
 		} catch (Exception ex) {
