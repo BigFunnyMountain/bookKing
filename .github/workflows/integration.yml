@@ -1,18 +1,18 @@
 name: 테스트 및 빌드
 
 on:
-  push:
-    branches:
-      - feat/**
-      - fix/**
-      - refactor/**
-      - test/**
   pull_request:
     types:
       - opened
+      - synchronize
+      - reopened
     branches:
       - main
       - develop
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   integration:
@@ -27,6 +27,7 @@ jobs:
         with:
           java-version: 17
           distribution: temurin
+          cache: gradle
 
       - name: Gradle setup
         uses: gradle/actions/setup-gradle@v4
@@ -43,8 +44,8 @@ jobs:
         with:
           paths: ${{ github.workspace }}/build/reports/jacoco/test/jacocoTestReport.xml
           token: ${{ secrets.GITHUB_TOKEN }}
-          min-coverage-overall: 40
-          min-coverage-changed-files: 40
+          min-coverage-overall: 50
+          min-coverage-changed-files: 50
           title: Code Coverage
           update-comment: true
 
@@ -58,3 +59,15 @@ jobs:
         run: |
           echo "Total coverage ${{ steps.jacoco.outputs.coverage-overall }}"
           echo "Changed Files coverage ${{ steps.jacoco.outputs.coverage-changed-files }}"
+
+  slack-notification:
+    runs-on: ubuntu-latest
+    steps:
+      - name: send to notice from slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,commit,author,workflow,job,pullRequest
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()
