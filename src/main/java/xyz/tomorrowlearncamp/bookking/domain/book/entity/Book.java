@@ -49,7 +49,7 @@ public class Book extends BaseEntity {
     @Column
     private String publicationDate;
 
-    @Column
+    @Column(nullable = false)
     private Long stock = 0L;
 
     @Builder
