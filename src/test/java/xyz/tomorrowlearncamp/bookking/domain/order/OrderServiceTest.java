@@ -105,7 +105,7 @@ class OrderServiceTest {
         assertThat(result.getContent().get(1).getOrderId()).isEqualTo(1L);
         assertThat(result.getContent().get(0).getBookId()).isEqualTo(1L);
         // 추가된 필드에 대한 검증 (필요한 경우)
-        assertThat(result.getContent().get(0).getPrePrice()).isEqualTo(10000L);
+        assertThat(result.getContent().get(0).getPrePrice()).isEqualTo("10000");
         assertThat(result.getContent().get(0).getPublisher()).isEqualTo("Some Publisher");
 
         verify(orderRepository).findByUserId(eq(userId), any(Pageable.class));

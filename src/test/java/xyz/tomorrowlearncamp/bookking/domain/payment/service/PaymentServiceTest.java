@@ -75,7 +75,7 @@ class PaymentServiceTest {
 		// then
 		verify(bookRepository, times(1)).save(any(book.getClass()));
 		verify(orderService, times(1))
-			.createOrder(1L, 1L, 1L, 0L, null, null, OrderStatus.COMPLETED);
+			.createOrder(1L, 1L, "1", 0L, null, null, OrderStatus.COMPLETED);
 		assertEquals(0, book.getStock());
 	}
 
