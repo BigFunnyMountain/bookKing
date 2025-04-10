@@ -28,12 +28,12 @@ public class BookService {
 	private final JdbcTemplate jdbcTemplate;
 
 	private static final String INSERT_SQL = """
-        INSERT INTO book (
-            isbn, title, subject, author, publisher,
-            book_introduction_url, pre_price, page, title_url,
-            publication_date, stock, created_at, modified_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """;
+		    INSERT INTO book (
+		        isbn, title, subject, author, publisher,
+		        book_introduction_url, pre_price, page, title_url,
+		        publication_date, stock, created_at, modified_at
+		    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+		""";
 
 	public void saveBooksInBatch(List<Book> books, int batchSize) {
 		LocalDateTime now = LocalDateTime.now();
@@ -91,8 +91,4 @@ public class BookService {
 		Book book = bookRepository.findById(id).orElseThrow(() -> new NotFoundException("Book not found"));
 		return new BookResponseDto(book);
 	}
-
-
-
-
 }

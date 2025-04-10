@@ -27,7 +27,8 @@ public class Book extends BaseEntity {
     @Column
     private String subject;
 
-    @Column
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String author;
 
     @Column

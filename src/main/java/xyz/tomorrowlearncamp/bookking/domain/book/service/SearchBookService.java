@@ -1,6 +1,5 @@
 package xyz.tomorrowlearncamp.bookking.domain.book.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,7 +17,6 @@ import xyz.tomorrowlearncamp.bookking.domain.book.dto.response.BookDto;
 import xyz.tomorrowlearncamp.bookking.domain.book.dto.response.SearchBookResponseDto;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.book.mapper.BookMapper;
-import xyz.tomorrowlearncamp.bookking.domain.book.repository.BookRepository;
 
 @Slf4j
 @Service
@@ -59,8 +57,10 @@ public class SearchBookService {
 		return builder.build().toUriString();
 	}
 
-	public void fetchBooksFromLibraryApi(int pageSize, int totalPage){
-		for(int page =1; page <= totalPage; page++){
+	public void fetchBooksFromLibraryApi(int pageSize, int totalPage) {
+		long start = System.currentTimeMillis();
+		int bookCount = 0;
+		for (int page = 1; page <= totalPage; page++) {
 			log.info("Fetching page {}/{}", page, totalPage);
 			SearchBookRequestDto requestDto = new SearchBookRequestDto();
 			requestDto.setPageNo(page);
@@ -75,11 +75,15 @@ public class SearchBookService {
 
 			bookService.saveBooksInBatch(books, pageSize);
 
-			try{
+			bookCount += books.size();
+
+			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 			}
 		}
+		long end = System.currentTimeMillis();
+		log.info("Inserted {} books! Duration of time: {} ms", bookCount,(end - start));
 	}
 }

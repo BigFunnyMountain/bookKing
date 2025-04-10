@@ -44,7 +44,7 @@ dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j'
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'org.redisson:redisson-spring-data-34:3.45.1'
-    runtimeOnly 'org.springframework.boot:spring-book-starter-jdbc'
+    runtimeOnly 'org.springframework.boot:spring-boot-starter-jdbc'
 
     // security
     implementation 'org.springframework.boot:spring-boot-starter-security'
