@@ -7,17 +7,9 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
 
-  jwt:
-    secret:
-      key: ${JWT_SECRET_KEY}
 
-logging:
-  level:
-    root: info
-    org.springframework.jdbc.core.JdbcTemplate: debug
-    org.springframework.jdbc.core.StatementCreatorUtils: trace

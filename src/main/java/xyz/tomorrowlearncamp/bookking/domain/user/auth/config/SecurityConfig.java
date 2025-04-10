@@ -44,7 +44,6 @@ public class SecurityConfig {
                 .rememberMe(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/error").permitAll()
-                        .requestMatchers("/api/v1/books/**").permitAll()
                         .requestMatchers(request -> request.getRequestURI().startsWith("/api/v1/auth")).permitAll()
                         .requestMatchers("/test").hasAuthority(UserRole.ROLE_ADMIN.name())
                         .requestMatchers(request -> request.getRequestURI().startsWith("/api/v1/users")).authenticated()
