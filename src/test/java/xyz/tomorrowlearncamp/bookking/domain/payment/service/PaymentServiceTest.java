@@ -64,7 +64,6 @@ class PaymentServiceTest {
 		ReflectionTestUtils.setField(book, "stock", 1L);
 		ReflectionTestUtils.setField(book, "prePrice", "1");
 
-		given(userService.getMyInfo(anyLong())).willReturn(user);
 		given(bookRepository.findById(anyLong())).willReturn(Optional.of(book));
 		given(redissonClient.getFairLock(anyString())).willReturn(rlock);
 		given(rlock.tryLock(100L, 10L, TimeUnit.SECONDS)).willReturn(true);
@@ -98,7 +97,6 @@ class PaymentServiceTest {
 		ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
 		CountDownLatch latch = new CountDownLatch(threadCount);
 
-		given(userService.getMyInfo(anyLong())).willReturn(user);
 		given(bookRepository.findById(anyLong())).willReturn(Optional.of(book));
 		given(redissonClient.getFairLock(anyString())).willReturn(rlock);
 		given(rlock.tryLock(100L, 10L, TimeUnit.SECONDS)).willReturn(true);
