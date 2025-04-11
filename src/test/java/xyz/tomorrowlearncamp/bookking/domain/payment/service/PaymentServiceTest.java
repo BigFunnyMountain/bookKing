@@ -62,9 +62,8 @@ class PaymentServiceTest {
 		Book book = new Book();
 		ReflectionTestUtils.setField(book, "bookId", 1L);
 		ReflectionTestUtils.setField(book, "stock", 1L);
-		ReflectionTestUtils.setField(book, "prePrice", 1L);
+		ReflectionTestUtils.setField(book, "prePrice", "1");
 
-		given(userService.getMyInfo(anyLong())).willReturn(user);
 		given(bookRepository.findById(anyLong())).willReturn(Optional.of(book));
 		given(redissonClient.getFairLock(anyString())).willReturn(rlock);
 		given(rlock.tryLock(100L, 10L, TimeUnit.SECONDS)).willReturn(true);
@@ -75,7 +74,7 @@ class PaymentServiceTest {
 		// then
 		verify(bookRepository, times(1)).save(any(book.getClass()));
 		verify(orderService, times(1))
-			.createOrder(1L, 1L, 1L, 0L, null, null, OrderStatus.COMPLETED);
+			.createOrder(1L, 1L, "1", 0L, null, null, OrderStatus.COMPLETED);
 		assertEquals(0, book.getStock());
 	}
 
@@ -92,13 +91,12 @@ class PaymentServiceTest {
 		Book book = new Book();
 		ReflectionTestUtils.setField(book, "bookId", 1L);
 		ReflectionTestUtils.setField(book, "stock", 100L);
-		ReflectionTestUtils.setField(book, "prePrice", 1L);
+		ReflectionTestUtils.setField(book, "prePrice", "1");
 
 		int threadCount = 100;
 		ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
 		CountDownLatch latch = new CountDownLatch(threadCount);
 
-		given(userService.getMyInfo(anyLong())).willReturn(user);
 		given(bookRepository.findById(anyLong())).willReturn(Optional.of(book));
 		given(redissonClient.getFairLock(anyString())).willReturn(rlock);
 		given(rlock.tryLock(100L, 10L, TimeUnit.SECONDS)).willReturn(true);

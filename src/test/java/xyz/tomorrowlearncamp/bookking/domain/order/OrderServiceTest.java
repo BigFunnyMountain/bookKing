@@ -69,7 +69,7 @@ class OrderServiceTest {
         Order order1 = Order.builder()
                 .userId(user.getId())
                 .bookId(book.getBookId())
-                .prePrice(10000L)
+                .prePrice("10000")
                 .stock(book.getStock())
                 .publisher("Some Publisher")
                 .bookIntroductionUrl("http://example.com/book")
@@ -81,7 +81,7 @@ class OrderServiceTest {
         Order order2 = Order.builder()
                 .userId(user.getId())
                 .bookId(book.getBookId())
-                .prePrice(10000L)
+                .prePrice("10000")
                 .stock(book.getStock())
                 .publisher("Some Publisher")
                 .bookIntroductionUrl("http://example.com/book")
@@ -105,7 +105,7 @@ class OrderServiceTest {
         assertThat(result.getContent().get(1).getOrderId()).isEqualTo(1L);
         assertThat(result.getContent().get(0).getBookId()).isEqualTo(1L);
         // 추가된 필드에 대한 검증 (필요한 경우)
-        assertThat(result.getContent().get(0).getPrePrice()).isEqualTo(10000L);
+        assertThat(result.getContent().get(0).getPrePrice()).isEqualTo("10000");
         assertThat(result.getContent().get(0).getPublisher()).isEqualTo("Some Publisher");
 
         verify(orderRepository).findByUserId(eq(userId), any(Pageable.class));
@@ -137,7 +137,7 @@ class OrderServiceTest {
         // given
         Long userId = 1L;
         Long bookId = 2L;
-        Long prePrice = 15000L;
+        String prePrice = "15000";
         Long stock = 5L;
         String publisher = "테스트 출판사";
         String bookIntroductionUrl = "http://test-url.com";
@@ -185,7 +185,7 @@ class OrderServiceTest {
         Order order = Order.builder()
                 .userId(userId)
                 .bookId(bookId)
-                .prePrice(15000L)
+                .prePrice("15000")
                 .stock(3L)
                 .publisher("테스트 출판사")
                 .bookIntroductionUrl("http://test-url.com")
@@ -232,7 +232,7 @@ class OrderServiceTest {
         Order order = Order.builder()
                 .userId(1L)
                 .bookId(2L)
-                .prePrice(15000L)
+                .prePrice("15000")
                 .stock(3L)
                 .publisher("테스트 출판사")
                 .bookIntroductionUrl("http://test-url.com")

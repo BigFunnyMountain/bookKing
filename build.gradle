@@ -44,6 +44,7 @@ dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j'
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'org.redisson:redisson-spring-data-34:3.45.1'
+    runtimeOnly 'org.springframework.boot:spring-boot-starter-jdbc'
 
     // security
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -69,6 +70,11 @@ dependencies {
     // MapStruct
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+
+
+    //WebClient
+    compileOnly 'org.springframework.boot:spring-boot-starter-webflux'
+
 
     // jwt
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'

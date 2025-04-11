@@ -27,7 +27,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order createOrder(Long userId, Long bookId, Long prePrice, Long stock, String publisher, String bookIntroductionUrl, OrderStatus status) {
+    public Order createOrder(Long userId, Long bookId, String prePrice, Long stock, String publisher, String bookIntroductionUrl, OrderStatus status) {
         Order order = Order.builder()
                 .userId(userId)
                 .bookId(bookId)

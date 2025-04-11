@@ -1,4 +1,4 @@
-package xyz.tomorrowlearncamp.bookking.domain.common.entity;
+package xyz.tomorrowlearncamp.bookking.domain.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
