@@ -33,8 +33,6 @@ public class PaymentService {
 	private final RedissonClient redissonClient;
 
 	public void payment(Long userId, Long bookId, Long buyStock, Long money, PayType payType) {
-		UserResponse user = userService.getMyInfo(userId);
-
 		RLock lock = redissonClient.getFairLock("book:"+bookId);
 
 		try {
@@ -52,17 +50,15 @@ public class PaymentService {
 
 			// 돈이 부족한 경우
 			long price = Long.parseLong(book.getPrePrice());
-			if( price > money ) {
+			if( price * buyStock > money ) {
 				throw new InvalidRequestException(ErrorMessage.SHORT_ON_MONEY.getMessage());
 			}
 
 			// buyStock 만큼 구매
 			book.updateStock(book.getStock() - buyStock);
-
 			bookRepository.save(book);
 
 			orderService.createOrder(userId, book.getBookId(), book.getPrePrice(), book.getStock(), book.getPublisher(), book.getBookIntroductionUrl(), OrderStatus.COMPLETED);
-
 		} catch (InterruptedException ex) {
 			throw new InvalidRequestException(ErrorMessage.REDIS_ERROR.getMessage());
 		} catch (NumberFormatException ex) {
