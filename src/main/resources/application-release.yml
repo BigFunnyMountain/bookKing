@@ -11,3 +11,15 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+
+jwt:
+  secret:
+    key: ${JWT_SECRET_KEY}
+
+library:
+  api:
+    key: ${LIBRARY_API_KEY}

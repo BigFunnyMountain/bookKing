@@ -2,7 +2,7 @@ spring:
   application:
     name: bookKing
   profiles:
-    default: dev
+    default: release
 
 management:
   endpoint:
@@ -12,7 +12,3 @@ management:
     jmx:
       exposure:
         include: health
-
-jwt:
-  secret:
-    key: aHJmZXNrbnJndWhrbmJyZ2ZkdmtodXlicmVmdWt5aGZldnVobGtydGdkdWxpaGpydGd1bGloamVmcnVpbGpoZmVodWxpZnh2dWlobGpucmdm
