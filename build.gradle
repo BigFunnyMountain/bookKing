@@ -85,6 +85,10 @@ dependencies {
     implementation "com.querydsl:querydsl-jpa:5.0.0:jakarta"
     annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
     annotationProcessor 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+
+    // es
+    implementation 'co.elastic.clients:elasticsearch-java:8.13.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0'
 }
 
 // Q-class 생성 경로 지정
