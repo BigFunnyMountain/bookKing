@@ -12,6 +12,8 @@ import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.AddBookRequestDto;
 import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.UpdateBookRequestDto;
 import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.UpdateBookStockRequestDto;
 import xyz.tomorrowlearncamp.bookking.domain.book.dto.response.BookResponseDto;
+import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.entity.ElasticBookDocument;
+import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.service.ElasticBookService;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.book.mapper.BookMapper;
 import xyz.tomorrowlearncamp.bookking.domain.book.repository.BookRepository;
@@ -22,11 +24,14 @@ import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
 public class BookService {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
+    private final ElasticBookService elasticBookService;
 
     @Transactional
     public Long addBook(AddBookRequestDto addBookRequestDto) {
         Book book = bookMapper.toEntity(addBookRequestDto);
         bookRepository.save(book);
+
+        elasticBookService.save(ElasticBookDocument.of(book));
         return book.getBookId();
     }
 
