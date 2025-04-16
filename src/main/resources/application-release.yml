@@ -1,6 +1,8 @@
 server:
   shutdown: graceful
 spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 30s # default
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${DB_URL}:3306/${DB_NAME}
