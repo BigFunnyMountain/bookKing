@@ -54,6 +54,8 @@ dependencies {
 
     // swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6'
+    
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
     // default
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -72,8 +74,8 @@ dependencies {
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 
 
-    //WebClient
-    compileOnly 'org.springframework.boot:spring-boot-starter-webflux'
+    // WebClient
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
 
     // jwt
