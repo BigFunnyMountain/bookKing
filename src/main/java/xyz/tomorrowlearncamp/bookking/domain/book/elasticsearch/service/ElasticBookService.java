@@ -47,7 +47,6 @@ public class ElasticBookService {
             throw new RuntimeException("======색인 실패======", e);
         }
     }
-
     public Page<ElasticBookSearchResponseDto> search(String keyword, Pageable pageable) {
         try {
             List<Query> mustQueries = new ArrayList<>();
