@@ -1,0 +1,23 @@
+{
+  "properties": {
+    "bookId": {
+      "type": "long"
+    },
+    "title": {
+      "type": "text",
+      "analyzer": "korean"
+    },
+    "author": {
+      "type": "text",
+      "analyzer": "korean"
+    },
+    "publisher": {
+      "type": "text",
+      "analyzer": "korean"
+    },
+    "subject": {
+      "type": "text",
+      "analyzer": "korean"
+    }
+  }
+}

@@ -1,4 +1,4 @@
-package xyz.tomorrowlearncamp.bookking.domain.user.controller;
+package xyz.tomorrowlearncamp.bookking.domain.user.auth.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

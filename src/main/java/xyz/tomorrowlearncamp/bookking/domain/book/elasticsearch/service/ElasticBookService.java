@@ -1,60 +1,92 @@
 package xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.service;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import co.elastic.clients.elasticsearch.core.SearchResponse;
-import co.elastic.clients.elasticsearch.core.IndexRequest;
-import co.elastic.clients.elasticsearch.core.search.Hit;
 
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch.core.IndexRequest;
+import co.elastic.clients.elasticsearch.core.IndexResponse;
+import co.elastic.clients.elasticsearch.core.SearchRequest;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
+import co.elastic.clients.elasticsearch.core.search.Hit;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.document.ElasticBookDocument;
 import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.dto.ElasticBookSearchResponseDto;
-import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.entity.ElasticBookDocument;
+import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ElasticBookService {
 
-    private final ElasticsearchClient client;
+    private final ElasticsearchClient elasticsearchClient;
+    private static final String INDEX_NAME = "books";
 
-    public void save(ElasticBookDocument document) {
+    public void save(Book book) {
+        ElasticBookDocument elasticBookDocument = ElasticBookDocument.of(book);
         try {
-            client.index(IndexRequest.of(i -> i
-                    .index("books")
-                    .id(document.bookId().toString())
-                    .document(document)
-            ));
+            IndexResponse indexResponse = elasticsearchClient.index(IndexRequest
+                    .of(i -> i
+                            .index(INDEX_NAME)
+                            .id(String.valueOf(elasticBookDocument.getBookId()))
+                            .document(elasticBookDocument)
+                    ));
+            log.info("elastic 색인 성공 {}", indexResponse.id());
         } catch (IOException e) {
-            throw new RuntimeException("Elasticsearch 색인 실패", e);
+            log.error("======색인 실패======", e);
+            throw new RuntimeException("======색인 실패======", e);
         }
     }
 
-    public List<ElasticBookSearchResponseDto> search(String keyword) {
+    public Page<ElasticBookSearchResponseDto> search(String keyword, Pageable pageable) {
         try {
-            SearchResponse<ElasticBookDocument> response = client.search(s -> s
-                            .index("books")
-                            .query(q -> q
-                                    .multiMatch(m -> m
-                                            .fields("title", "author", "publisher", "subject")
-                                            .query(keyword)
-                                    )
-                            ),
-                    ElasticBookDocument.class
+            List<Query> mustQueries = new ArrayList<>();
+            if (keyword != null && !keyword.isBlank()) {
+                mustQueries.add(Query.of(q -> q
+                        .multiMatch(m -> m
+                                .fields("title", "author", "publisher", "subject")
+                                .query(keyword)
+                        )
+                ));
+            }
+
+            Query finalQuery = Query.of(q -> q
+                    .bool(b -> b.must(mustQueries))
             );
 
-            return response.hits().hits().stream()
+            SearchRequest searchRequest = SearchRequest.of(s -> s
+                    .index(INDEX_NAME)
+                    .query(finalQuery)
+                    .from((int) pageable.getOffset())
+                    .size(pageable.getPageSize())
+            );
+
+            SearchResponse<ElasticBookDocument> elasticBookDocumentSearchResponse =
+                    elasticsearchClient.search(searchRequest, ElasticBookDocument.class);
+
+            List<ElasticBookSearchResponseDto> results = elasticBookDocumentSearchResponse.hits().hits().stream()
                     .map(Hit::source)
+                    .filter(Objects::nonNull)
                     .map(ElasticBookSearchResponseDto::of)
                     .toList();
 
+            long totalHits = elasticBookDocumentSearchResponse.hits().total() != null ? elasticBookDocumentSearchResponse.hits().total().value() : 0L;
+
+            return new PageImpl<>(results, pageable, totalHits);
+
         } catch (IOException e) {
+            log.error("Elastic 검색 실패", e);
             throw new RuntimeException("Elasticsearch 검색 실패", e);
         }
     }
-
-    /*
-     TODO : 하나의 키워드로 여러가지 검색 될 수 있게, 예) '짱구'검색하면, title, 저자, 뭐 어디서든 '짱구'가 포함된 정보는 검색될 수 있게.
-     */
 }

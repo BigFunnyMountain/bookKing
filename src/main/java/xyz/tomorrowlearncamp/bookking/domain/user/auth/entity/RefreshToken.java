@@ -20,10 +20,10 @@ import java.time.LocalDateTime;
 public class RefreshToken extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(columnDefinition = "BIGINT UNSIGNED")
+    @Column
     private Long id;
 
-    @Column(nullable = false, columnDefinition = "BIGINT UNSIGNED")
+    @Column(nullable = false)
     private Long userId;
 
     @Column(nullable = false, length = 512,unique = true)

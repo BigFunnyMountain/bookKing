@@ -21,7 +21,7 @@ public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(columnDefinition = "BIGINT UNSIGNED")
+    @Column
     private Long id;
 
     @Column(nullable = false, unique = true, length = 20)

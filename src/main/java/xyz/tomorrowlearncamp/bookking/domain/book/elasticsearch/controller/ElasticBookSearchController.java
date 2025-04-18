@@ -1,6 +1,8 @@
 package xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.dto.ElasticBookSearchResponseDto;
@@ -15,10 +17,12 @@ public class ElasticBookSearchController {
     private final ElasticBookService elasticBookService;
 
     @GetMapping("/v1/elasticsearch")
-    public ResponseEntity<List<ElasticBookSearchResponseDto>> searchBooks(@RequestParam String keyword) {
-        List<ElasticBookSearchResponseDto> results = elasticBookService.search(keyword);
-        return ResponseEntity.ok(results);
+    public ResponseEntity<Page<ElasticBookSearchResponseDto>> searchBooks(
+            @RequestParam String keyword,
+            Pageable pageable
+    ) {
+        Page<ElasticBookSearchResponseDto> result = elasticBookService.search(keyword, pageable);
+        return ResponseEntity.ok(result);
     }
-    //TODO :
 
 }

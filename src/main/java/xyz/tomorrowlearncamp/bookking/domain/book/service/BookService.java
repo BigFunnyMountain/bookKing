@@ -15,7 +15,7 @@ import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.AddBookRequestDto;
 import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.UpdateBookRequestDto;
 import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.UpdateBookStockRequestDto;
 import xyz.tomorrowlearncamp.bookking.domain.book.dto.response.BookResponseDto;
-import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.entity.ElasticBookDocument;
+import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.document.ElasticBookDocument;
 import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.service.ElasticBookService;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.book.mapper.BookMapper;
@@ -42,7 +42,7 @@ public class BookService {
         LocalDateTime now = LocalDateTime.now();
 
         books.forEach(book -> {
-            elasticBookService.save(ElasticBookDocument.of(book));
+            elasticBookService.save(book);
         });
 
         jdbcTemplate.batchUpdate(INSERT_SQL, books, batchSize,
@@ -66,8 +66,9 @@ public class BookService {
     @Transactional
     public Long addBook(AddBookRequestDto addBookRequestDto) {
         Book book = bookMapper.toEntity(addBookRequestDto);
-        bookRepository.save(book);
-        return book.getBookId();
+        Book saved = bookRepository.save(book);
+        elasticBookService.save(saved);
+        return saved.getBookId();
     }
 
     @Transactional

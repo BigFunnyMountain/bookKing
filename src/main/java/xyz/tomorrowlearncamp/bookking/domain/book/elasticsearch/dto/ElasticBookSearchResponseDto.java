@@ -1,21 +1,36 @@
 package xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.dto;
 
-import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.entity.ElasticBookDocument;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.document.ElasticBookDocument;
 
-public record ElasticBookSearchResponseDto(
-    Long bookId,
-    String title,
-    String author,
-    String publisher,
-    String subject
-) {
+@Getter
+@NoArgsConstructor
+public class ElasticBookSearchResponseDto {
+
+    private Long bookId;
+    private String title;
+    private String author;
+    private String publisher;
+    private String subject;
+
+    @Builder
+    private ElasticBookSearchResponseDto(Long bookId, String title, String author, String publisher, String subject) {
+        this.bookId = bookId;
+        this.title = title;
+        this.author = author;
+        this.publisher = publisher;
+        this.subject = subject;
+    }
+
     public static ElasticBookSearchResponseDto of(ElasticBookDocument elasticBookDocument) {
-        return new ElasticBookSearchResponseDto(
-            elasticBookDocument.bookId(),
-            elasticBookDocument.title(),
-            elasticBookDocument.author(),
-            elasticBookDocument.publisher(),
-            elasticBookDocument.subject()
-        );
+        return ElasticBookSearchResponseDto.builder()
+                .bookId(elasticBookDocument.getBookId())
+                .title(elasticBookDocument.getTitle())
+                .author(elasticBookDocument.getAuthor())
+                .publisher(elasticBookDocument.getPublisher())
+                .subject(elasticBookDocument.getSubject())
+                .build();
     }
 }
