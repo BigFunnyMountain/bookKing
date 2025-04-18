@@ -149,7 +149,7 @@ class AuthServiceTest {
 
         // when
         Throwable thrown = catchThrowable(() -> authService.refreshAccessToken(refreshToken));
-        log.info(">>> [refresh_fail_tokenNotFound] 예외 메시지: {}", thrown.getMessage());
+        log.info(">>>>>>>>>> [refresh_fail_tokenNotFound] 예외 메시지: {}", thrown.getMessage());
 
         // then
         assertThat(thrown)
@@ -173,7 +173,7 @@ class AuthServiceTest {
 
         // when
         Throwable thrown = catchThrowable(() -> authService.refreshAccessToken(refreshToken));
-        log.info(">>> [refresh_fail_expiredToken] 예외 메시지: {}", thrown.getMessage());
+        log.info(">>>>>>>>> [refresh_fail_expiredToken] 예외 메시지: {}", thrown.getMessage());
 
         // then
         assertThat(thrown)
@@ -199,7 +199,7 @@ class AuthServiceTest {
 
         // when
         Throwable thrown = catchThrowable(() -> authService.refreshAccessToken(refreshToken));
-        log.info(">>> [refresh_fail_userNotFound] 예외 메시지: {}", thrown.getMessage());
+        log.info(">>>>>>>> [refresh_fail_userNotFound] 예외 메시지: {}", thrown.getMessage());
 
         // then
         assertThat(thrown)
@@ -263,7 +263,7 @@ class AuthServiceTest {
 
         // when
         Throwable thrown = catchThrowable(() -> authService.signup(request));
-        log.info(">>> [signup_fail_duplicateEmail] 예외 메시지: {}", thrown.getMessage());
+        log.info(">>>>>>> [signup_fail_duplicateEmail] 예외 메시지: {}", thrown.getMessage());
 
         // then
         assertThat(thrown)
