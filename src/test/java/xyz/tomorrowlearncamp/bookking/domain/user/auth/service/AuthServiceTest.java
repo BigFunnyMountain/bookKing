@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -99,6 +100,47 @@ class AuthServiceTest {
     }
 
     @Test
+    @DisplayName("로그인_성공")
+    void login_success() {
+        //given
+        String email = "test@email.com";
+        String password = "1234";
+        String encodedPassword = "encodedPassword";
+        String accessToken = "Bearer access-token";
+        String refreshToken = "Bearer refresh-token";
+        Long userId = 1L;
+
+        User user = User.of(email, encodedPassword, "홍길동", UserRole.ROLE_USER, "서울", Gender.MALE, 25, "길동이");
+        setField(user, "id", userId);
+
+        given(userRepository.findByEmail(email)).willReturn(Optional.of(user));
+        given(passwordEncoder.matches(password, encodedPassword)).willReturn(true);
+        given(jwtProvider.createAccessToken(userId, email, user.getRole())).willReturn(accessToken);
+        given(jwtProvider.createRefreshToken(userId, email, user.getRole())).willReturn(refreshToken);
+        given(jwtProvider.removeBearerPrefix(refreshToken)).willReturn("refresh-token");
+
+        LoginRequest request = LoginRequest.of(email, password);
+
+        //when
+        var result = authService.login(request, response);
+
+        //then
+        assertThat(result.getAccessToken()).isEqualTo(accessToken);
+        assertThat(result.getRefreshToken()).isEqualTo(refreshToken);
+
+        verify(userRepository).findByEmail(email);
+        verify(passwordEncoder).matches(password, encodedPassword);
+        verify(jwtProvider).createAccessToken(userId, email, user.getRole());
+        verify(jwtProvider).createRefreshToken(userId, email, user.getRole());
+        verify(jwtProvider).removeBearerPrefix(refreshToken);
+        verify(refreshTokenRepository).deleteByUserId(userId);
+        verify(refreshTokenRepository).flush();
+        verify(refreshTokenRepository).save(any(RefreshToken.class));
+        verify(response).setHeader(HttpHeaders.AUTHORIZATION, accessToken);
+    }
+
+
+    @Test
     @DisplayName("리프레시_실패-DB_해당_토큰_없음")
     void refresh_fail_tokenNotFound() {
         // given
@@ -166,6 +208,43 @@ class AuthServiceTest {
     }
 
     @Test
+    @DisplayName("리프레시_성공-accessToken_재발급")
+    void refresh_success() {
+        //given
+        String refreshToken = "valid_refresh_token";
+        Long userId = 1L;
+        String email = "test@email.com";
+        UserRole role = UserRole.ROLE_USER;
+        String newAccessToken = "Bearer new-access-token";
+
+        RefreshToken token = RefreshToken.builder()
+                .userId(userId)
+                .token(refreshToken)
+                .expiredAt(LocalDateTime.now().plusMinutes(30))
+                .build();
+        setField(token, "id", 1L);
+
+        User user = User.of(email, "encodedPassword", "홍길동", role, "서울", Gender.MALE, 25, "길동이");
+        setField(user, "id", userId);
+
+        given(refreshTokenRepository.findByToken(refreshToken)).willReturn(Optional.of(token));
+        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(jwtProvider.createAccessToken(userId, email, role)).willReturn(newAccessToken);
+
+        //when
+        var result = authService.refreshAccessToken(refreshToken);
+
+        //then
+        assertThat(result).isNotNull();
+        assertThat(result.getAccessToken()).isEqualTo(newAccessToken);
+
+        verify(refreshTokenRepository).findByToken(refreshToken);
+        verify(userRepository).findById(userId);
+        verify(jwtProvider).createAccessToken(userId, email, role);
+    }
+
+
+    @Test
     @DisplayName("회원가입_실패-이미_존재하는_이메일")
     void signup_fail_duplicateEmail() {
         // given
@@ -197,6 +276,55 @@ class AuthServiceTest {
     }
 
     @Test
-    void validateEmail() {
+    @DisplayName("회원가입_성공")
+    void signup_success() {
+        // given
+        String email = "test@email.com";
+        String password = "1234";
+        String encodedPassword = "encodedPassword";
+
+        SignupRequest request = SignupRequest.builder()
+                .email(email)
+                .password(password)
+                .name("홍길동")
+                .address("서울")
+                .gender(Gender.MALE)
+                .age(25)
+                .nickname("길동이")
+                .build();
+
+        User user = User.of(email, encodedPassword, "홍길동", UserRole.ROLE_USER, "서울", Gender.MALE, 25, "길동이");
+        setField(user, "id", 1L);
+
+        given(userRepository.existsByEmail(email)).willReturn(false);
+        given(passwordEncoder.encode(password)).willReturn(encodedPassword);
+        given(userRepository.save(any(User.class))).willReturn(user);
+
+        // when
+        var result = authService.signup(request);
+
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result.getEmail()).isEqualTo(email);
+        assertThat(result.getUserId()).isEqualTo(1L);
+
+        verify(userRepository).existsByEmail(email);
+        verify(passwordEncoder).encode(password);
+        verify(userRepository).save(any(User.class));
+    }
+
+    @Test
+    @DisplayName("이메일_중복_확인_성공")
+    void validateEmail_success() {
+        // given
+        String email = "newuser@email.com";
+        given(userRepository.existsByEmail(email)).willReturn(false);
+
+        // when
+        Throwable throwable = catchThrowable(() -> authService.validateEmail(email));
+
+        // then
+        assertThat(throwable).doesNotThrowAnyException();
+        verify(userRepository).existsByEmail(email);
     }
 }
