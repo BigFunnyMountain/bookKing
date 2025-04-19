@@ -14,7 +14,7 @@ import xyz.tomorrowlearncamp.bookking.domain.book.repository.BookRepository;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
 import xyz.tomorrowlearncamp.bookking.domain.order.dto.OrderResponse;
 import xyz.tomorrowlearncamp.bookking.domain.order.entity.Order;
-import xyz.tomorrowlearncamp.bookking.domain.order.entity.enums.OrderStatus;
+import xyz.tomorrowlearncamp.bookking.domain.order.enums.OrderStatus;
 import xyz.tomorrowlearncamp.bookking.domain.order.repository.OrderRepository;
 import xyz.tomorrowlearncamp.bookking.domain.order.service.OrderService;
 import xyz.tomorrowlearncamp.bookking.domain.user.entity.User;
@@ -23,6 +23,7 @@ import xyz.tomorrowlearncamp.bookking.domain.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -68,7 +69,7 @@ class OrderServiceTest {
         Order order1 = Order.builder()
                 .userId(user.getId())
                 .bookId(book.getBookId())
-                .prePrice(10000L)
+                .prePrice("10000")
                 .stock(book.getStock())
                 .publisher("Some Publisher")
                 .bookIntroductionUrl("http://example.com/book")
@@ -80,7 +81,7 @@ class OrderServiceTest {
         Order order2 = Order.builder()
                 .userId(user.getId())
                 .bookId(book.getBookId())
-                .prePrice(10000L)
+                .prePrice("10000")
                 .stock(book.getStock())
                 .publisher("Some Publisher")
                 .bookIntroductionUrl("http://example.com/book")
@@ -104,7 +105,7 @@ class OrderServiceTest {
         assertThat(result.getContent().get(1).getOrderId()).isEqualTo(1L);
         assertThat(result.getContent().get(0).getBookId()).isEqualTo(1L);
         // 추가된 필드에 대한 검증 (필요한 경우)
-        assertThat(result.getContent().get(0).getPrePrice()).isEqualTo(10000L);
+        assertThat(result.getContent().get(0).getPrePrice()).isEqualTo("10000");
         assertThat(result.getContent().get(0).getPublisher()).isEqualTo("Some Publisher");
 
         verify(orderRepository).findByUserId(eq(userId), any(Pageable.class));
@@ -136,7 +137,7 @@ class OrderServiceTest {
         // given
         Long userId = 1L;
         Long bookId = 2L;
-        Long prePrice = 15000L;
+        String prePrice = "15000";
         Long stock = 5L;
         String publisher = "테스트 출판사";
         String bookIntroductionUrl = "http://test-url.com";
@@ -175,38 +176,53 @@ class OrderServiceTest {
     }
 
     @Test
-    void 사용자_구매_내역_존재시_true_반환() {
+    void 사용자_구매_내역_존재시_orderId_반환() {
         // given
         Long userId = 1L;
         Long bookId = 2L;
+        Long expectedOrderId = 100L;
 
-        given(orderRepository.existsByUserIdAndBookIdAndStatus(userId, bookId, OrderStatus.COMPLETED))
-                .willReturn(true);
+        Order order = Order.builder()
+                .userId(userId)
+                .bookId(bookId)
+                .prePrice("15000")
+                .stock(3L)
+                .publisher("테스트 출판사")
+                .bookIntroductionUrl("http://test-url.com")
+                .status(OrderStatus.COMPLETED)
+                .build();
+
+        ReflectionTestUtils.setField(order, "orderId", expectedOrderId);
+
+        given(orderRepository.findCompletedOrder(userId, bookId, OrderStatus.COMPLETED))
+                .willReturn(Optional.of(order));
 
         // when
-        boolean result = orderService.hasUserPurchasedBook(userId, bookId);
+        Long result = orderService.getPurchasedOrderId(userId, bookId);
 
         // then
-        assertThat(result).isTrue();
-        verify(orderRepository).existsByUserIdAndBookIdAndStatus(userId, bookId, OrderStatus.COMPLETED);
+        assertThat(result).isEqualTo(expectedOrderId);
+        verify(orderRepository).findCompletedOrder(userId, bookId, OrderStatus.COMPLETED);
     }
+
 
     @Test
-    void 사용자_구매_내역_없을때_false_반환() {
+    void 사용자_구매_내역_없을때_예외발생() {
         // given
         Long userId = 1L;
         Long bookId = 2L;
 
-        given(orderRepository.existsByUserIdAndBookIdAndStatus(userId, bookId, OrderStatus.COMPLETED))
-                .willReturn(false);
+        given(orderRepository.findCompletedOrder(userId, bookId, OrderStatus.COMPLETED))
+                .willReturn(Optional.empty());
 
-        // when
-        boolean result = orderService.hasUserPurchasedBook(userId, bookId);
+        // when & then
+        assertThatThrownBy(() -> orderService.getPurchasedOrderId(userId, bookId))
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage("구매 이력이 존재하지 않습니다.");
 
-        // then
-        assertThat(result).isFalse();
-        verify(orderRepository).existsByUserIdAndBookIdAndStatus(userId, bookId, OrderStatus.COMPLETED);
+        verify(orderRepository).findCompletedOrder(userId, bookId, OrderStatus.COMPLETED);
     }
+
 
     @Test
     void 리뷰_상태_토글_성공() {
@@ -216,7 +232,7 @@ class OrderServiceTest {
         Order order = Order.builder()
                 .userId(1L)
                 .bookId(2L)
-                .prePrice(15000L)
+                .prePrice("15000")
                 .stock(3L)
                 .publisher("테스트 출판사")
                 .bookIntroductionUrl("http://test-url.com")
@@ -225,10 +241,10 @@ class OrderServiceTest {
 
         ReflectionTestUtils.setField(order, "orderId", orderId);
 
-        given(orderRepository.findById(orderId)).willReturn(java.util.Optional.of(order));
+        given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
 
         // when
-        orderService.toggleReviewStatus(orderId);
+        orderService.switchReviewStatus(orderId);
 
         // then
         assertThat(order.isReviewed()).isTrue(); // 토글 한 번 -> true
@@ -240,10 +256,10 @@ class OrderServiceTest {
         // given
         Long orderId = 999L;
 
-        given(orderRepository.findById(orderId)).willReturn(java.util.Optional.empty());
+        given(orderRepository.findById(orderId)).willReturn(Optional.empty());
 
         // when & then
-        assertThatThrownBy(() -> orderService.toggleReviewStatus(orderId))
+        assertThatThrownBy(() -> orderService.switchReviewStatus(orderId))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessage("주문을 찾을 수 없습니다.");
 

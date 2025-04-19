@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
 import xyz.tomorrowlearncamp.bookking.domain.order.dto.OrderResponse;
 import xyz.tomorrowlearncamp.bookking.domain.order.entity.Order;
-import xyz.tomorrowlearncamp.bookking.domain.order.entity.enums.OrderStatus;
+import xyz.tomorrowlearncamp.bookking.domain.order.enums.OrderStatus;
 import xyz.tomorrowlearncamp.bookking.domain.order.repository.OrderRepository;
 
 @Service
@@ -27,7 +27,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order createOrder(Long userId, Long bookId, Long prePrice, Long stock, String publisher, String bookIntroductionUrl, OrderStatus status) {
+    public Order createOrder(Long userId, Long bookId, String prePrice, Long stock, String publisher, String bookIntroductionUrl, OrderStatus status) {
         Order order = Order.builder()
                 .userId(userId)
                 .bookId(bookId)
@@ -42,12 +42,15 @@ public class OrderService {
 
     // review 작성시 필요
     @Transactional(readOnly = true)
-    public boolean hasUserPurchasedBook(Long userId, Long bookId) {
-        return orderRepository.existsByUserIdAndBookIdAndStatus(userId, bookId, OrderStatus.COMPLETED);
+    public Long getPurchasedOrderId(Long userId, Long bookId) {
+        return orderRepository.findCompletedOrder(userId, bookId, OrderStatus.COMPLETED)
+                .map(Order::getOrderId)
+                .orElseThrow(() -> new NotFoundException("구매 이력이 존재하지 않습니다."));
     }
 
+
     @Transactional
-    public void toggleReviewStatus(Long orderId) {
+    public void switchReviewStatus(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new NotFoundException("주문을 찾을 수 없습니다."));
         order.toggleReviewed();

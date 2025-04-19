@@ -16,6 +16,7 @@ public class OrderController {
 
     private final OrderService orderService;
 
+    // todo : 공통 response 사용
     @GetMapping("/v1/orders/myinfo")
     public ResponseEntity<Page<OrderResponse>> getMyOrders(
             @AuthenticationPrincipal AuthUser authUser,

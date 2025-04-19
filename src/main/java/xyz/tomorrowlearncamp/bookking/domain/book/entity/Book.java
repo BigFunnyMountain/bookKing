@@ -18,42 +18,43 @@ public class Book extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookId;
 
-    @Column(nullable = false)
+    @Column
     private String isbn;
 
-    @Column(nullable = false)
+    @Column
     private String title;
 
-    @Column(nullable = false)
+    @Column
     private String subject;
 
-    @Column(nullable = false)
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String author;
 
-    @Column(nullable = false)
+    @Column
     private String publisher;
 
-    @Column(nullable = false)
+    @Column
     private String bookIntroductionUrl;
 
-    @Column(nullable = false)
-    private Long prePrice;
+    @Column
+    private String prePrice;
 
-    @Column(nullable = false)
-    private Long page;
+    @Column
+    private String page;
 
-    @Column(nullable = false)
+    @Column
     private String titleUrl;
 
-    @Column(nullable = false)
-    private LocalDateTime publicationDate;
+    @Column
+    private String publicationDate;
 
     @Column(nullable = false)
     private Long stock = 0L;
 
     @Builder
     public Book(Long bookId, String isbn, String title, String subject, String author, String publisher,
-        String bookIntroductionUrl, Long prePrice, Long page, String titleUrl, LocalDateTime publicationDate,
+        String bookIntroductionUrl, String prePrice, String page, String titleUrl, String publicationDate,
         Long stock) {
         this.bookId = bookId;
         this.isbn = isbn;

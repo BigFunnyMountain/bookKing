@@ -1,13 +1,16 @@
 package xyz.tomorrowlearncamp.bookking.domain.book.service;
 
-
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
 import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.AddBookRequestDto;
 import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.UpdateBookRequestDto;
 import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.UpdateBookStockRequestDto;
@@ -26,6 +29,16 @@ public class BookService {
     private final BookMapper bookMapper;
     private final ElasticBookService elasticBookService;
 
+    private final JdbcTemplate jdbcTemplate;
+
+    private static final String INSERT_SQL = """
+                INSERT INTO book (
+                    isbn, title, subject, author, publisher,
+                    book_introduction_url, pre_price, page, title_url,
+                    publication_date, stock, created_at, modified_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """;
+
     @Transactional
     public Long addBook(AddBookRequestDto addBookRequestDto) {
         Book book = bookMapper.toEntity(addBookRequestDto);
@@ -35,15 +48,36 @@ public class BookService {
         return book.getBookId();
     }
 
+    public void saveBooksInBatch(List<Book> books, int batchSize) {
+        LocalDateTime now = LocalDateTime.now();
+
+        jdbcTemplate.batchUpdate(INSERT_SQL, books, batchSize,
+                (ps, book) -> {
+                    ps.setString(1, book.getIsbn());
+                    ps.setString(2, book.getTitle());
+                    ps.setString(3, book.getSubject());
+                    ps.setString(4, book.getAuthor());
+                    ps.setString(5, book.getPublisher());
+                    ps.setString(6, book.getBookIntroductionUrl());
+                    ps.setString(7, book.getPrePrice());
+                    ps.setString(8, book.getPage());
+                    ps.setString(9, book.getTitleUrl());
+                    ps.setString(10, book.getPublicationDate());
+                    ps.setLong(11, 0L);
+                    ps.setTimestamp(12, Timestamp.valueOf(now));
+                    ps.setTimestamp(13, Timestamp.valueOf(now));
+                });
+    }
+
     @Transactional
-    public void updateBook(Long id, UpdateBookRequestDto requestDto){
+    public void updateBook(Long id, UpdateBookRequestDto requestDto) {
         Book book = bookRepository.findById(id).orElseThrow(() -> new NotFoundException("Book not found"));
         bookMapper.updateBookFromDto(requestDto, book);
     }
 
     @Transactional
-    public void updateBookStock(Long id, UpdateBookStockRequestDto requestDto){
-        Book book = bookRepository.findById(id).orElseThrow(()->new NotFoundException("Book not found"));
+    public void updateBookStock(Long id, UpdateBookStockRequestDto requestDto) {
+        Book book = bookRepository.findById(id).orElseThrow(() -> new NotFoundException("Book not found"));
         book.updateStock(requestDto.getStock());
     }
 
@@ -53,14 +87,14 @@ public class BookService {
     }
 
     @Transactional(readOnly = true)
-    public List<BookResponseDto> getAllBooks() {
-        List<Book> books = bookRepository.findAll();
-        return books.stream().map(BookResponseDto::new).collect(Collectors.toList());
+    public Page<BookResponseDto> getAllBooks(Pageable pageable) {
+        return bookRepository.findAll(pageable)
+                .map(BookResponseDto::of);
     }
 
     @Transactional(readOnly = true)
     public BookResponseDto getBookById(Long id) {
-        Book book = bookRepository.findById(id).orElseThrow(()->new NotFoundException("Book not found"));
+        Book book = bookRepository.findById(id).orElseThrow(() -> new NotFoundException("Book not found"));
         return new BookResponseDto(book);
     }
 }
