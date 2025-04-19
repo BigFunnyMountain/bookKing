@@ -1,0 +1,25 @@
+<configuration>
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="Logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>logstash.tomorrowlearncamp.xyz:5000</destination>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+    </appender>
+
+    <logger name="SEARCH_LOG" level="INFO" additivity="false">
+        <appender-ref ref="Logstash" />
+    </logger>
+
+    <logger name="BUY_LOG" level="INFO" additivity="false">
+        <appender-ref ref="Logstash" />
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="Console" />
+    </root>
+
+</configuration>
