@@ -48,6 +48,8 @@ dependencies {
     //redisson
     runtimeOnly 'org.redisson:redisson-spring-data-34:3.45.1'
     runtimeOnly 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.redisson:redisson-spring-boot-starter:3.23.5'
+
 
     // security
     implementation 'org.springframework.boot:spring-boot-starter-security'
