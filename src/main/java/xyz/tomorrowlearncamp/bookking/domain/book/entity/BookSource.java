@@ -5,5 +5,5 @@ package xyz.tomorrowlearncamp.bookking.domain.book.entity;
  */
 public enum BookSource {
     API,
-    MANUAL
+    DIRECT
 }

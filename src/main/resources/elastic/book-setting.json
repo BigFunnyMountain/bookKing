@@ -14,8 +14,7 @@
       },
       "synonym_filter": {
         "type": "synonym",
-        "synonyms_path": "synonym.txt",
-        "updateable": true
+        "synonyms_path": "synonym.txt"
       }
     },
     "analyzer": {

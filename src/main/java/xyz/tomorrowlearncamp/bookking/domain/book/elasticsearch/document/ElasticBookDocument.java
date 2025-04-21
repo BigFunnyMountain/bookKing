@@ -26,13 +26,17 @@ public class ElasticBookDocument {
     @JsonProperty("subject")
     private String subject;
 
+    @JsonProperty("source")
+    private String source;
+
     @Builder
-    private ElasticBookDocument(Long bookId, String title, String author, String publisher, String subject) {
+    private ElasticBookDocument(Long bookId, String title, String author, String publisher, String subject, String source) {
         this.bookId = bookId;
         this.title = title;
         this.author = author;
         this.publisher = publisher;
         this.subject = subject;
+        this.source = source;
     }
 
     public static ElasticBookDocument of(Book book) {
@@ -42,6 +46,7 @@ public class ElasticBookDocument {
                 .author(book.getAuthor())
                 .publisher(book.getPublisher())
                 .subject(book.getSubject())
+                .source(book.getSource().name())
                 .build();
     }
 }
