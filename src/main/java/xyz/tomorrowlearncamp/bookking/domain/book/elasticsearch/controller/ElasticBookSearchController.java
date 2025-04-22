@@ -24,5 +24,20 @@ public class ElasticBookSearchController {
         Page<ElasticBookSearchResponseDto> result = elasticBookService.search(keyword, pageable);
         return ResponseEntity.ok(result);
     }
+    @GetMapping("/v1/elasticsearch/autocomplete")
+    public ResponseEntity<List<String>> searchAutoComplete(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(elasticBookService.searchAutoCompleteTitle(keyword, size));
+    }
+
+    @GetMapping("/v2/elasticsearch/autocomplete")
+    public ResponseEntity<List<String>> searchAutocompleteV2(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "5") int size
+    ) {
+        return ResponseEntity.ok(elasticBookService.searchAutoCompleteTitleV2(keyword, size));
+    }
 
 }

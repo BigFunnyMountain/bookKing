@@ -5,7 +5,12 @@
     },
     "title": {
       "type": "text",
-      "analyzer": "korean"
+      "analyzer": "korean",
+      "fields": {
+        "keyword": {
+          "type": "keyword"
+        }
+      }
     },
     "author": {
       "type": "text",

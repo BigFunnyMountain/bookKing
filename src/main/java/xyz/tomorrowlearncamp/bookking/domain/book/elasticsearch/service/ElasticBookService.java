@@ -47,6 +47,7 @@ public class ElasticBookService {
             throw new RuntimeException("======색인 실패======", e);
         }
     }
+
     public Page<ElasticBookSearchResponseDto> search(String keyword, Pageable pageable) {
         try {
             List<Query> mustQueries = new ArrayList<>();
@@ -88,4 +89,64 @@ public class ElasticBookService {
             throw new RuntimeException("Elasticsearch 검색 실패", e);
         }
     }
+
+    /**
+     * 자동 완성 기능 v1
+     */
+    public List<String> searchAutoCompleteTitle(String keyword, int size) {
+        try {
+            Query autoCompleteQuery = Query.of(q -> q
+                    .matchPhrasePrefix(m -> m
+                            .field("title").query(keyword)));
+
+            SearchRequest searchRequest = SearchRequest.of(s -> s
+                    .index(INDEX_NAME)
+                    .query(autoCompleteQuery)
+                    .size(size)
+            );
+
+            SearchResponse<ElasticBookDocument> elasticBookDocumentSearchResponse =
+                    elasticsearchClient.search(searchRequest, ElasticBookDocument.class);
+
+            return elasticBookDocumentSearchResponse
+                    .hits().hits().stream()
+                    .map(Hit::source)
+                    .filter(Objects::nonNull)
+                    .map(ElasticBookDocument::getTitle)
+                    .distinct()
+                    .toList();
+        } catch (IOException e) {
+            log.error("=====V1, 자동 완성 검색 실패=====", e);
+            throw new RuntimeException("=====V1, 자동 완성 검색 실패==", e);
+        }
+    }
+
+    /**
+     * 자동 완성 기능 v2
+     */
+    public List<String> searchAutoCompleteTitleV2(String keyword, int size) {
+        try {
+            Query prefixQuery = Query.of(q -> q
+                    .prefix(p -> p
+                            .field("title.keyword").value(keyword)));
+
+            SearchRequest searchRequest = SearchRequest.of(s -> s
+                    .index(INDEX_NAME)
+                    .query(prefixQuery)
+                    .size(size)
+            );
+
+            SearchResponse<ElasticBookDocument> elasticBookDocumentSearchResponse = elasticsearchClient.search(searchRequest, ElasticBookDocument.class);
+            return elasticBookDocumentSearchResponse
+                    .hits().hits().stream()
+                    .map(Hit::source)
+                    .filter(Objects::nonNull)
+                    .map(ElasticBookDocument::getTitle)
+                    .toList();
+        } catch (IOException e) {
+            log.error("=====V2, 자동 완성 검색 실패=====", e);
+            throw new RuntimeException("=====V2, 자동 완성 검색 실패==", e);
+        }
+    }
+
 }
