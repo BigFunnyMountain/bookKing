@@ -149,4 +149,33 @@ public class ElasticBookService {
         }
     }
 
+    /**
+     * 자동 완성 기능 V3 - 가중치 부여
+     */
+    public List<String> searchAutoCompleteTitleV3(String keyword, int size) {
+        try {
+            Query query = Query.of(q -> q
+                    .multiMatch(m -> m
+                            .query(keyword)
+                            .fields("title^3", "subject^2", "author")
+                            .fuzziness("AUTO")));
+
+            SearchRequest searchRequest = SearchRequest.of(s -> s
+                    .index(INDEX_NAME)
+                    .query(query)
+                    .size(size));
+
+            SearchResponse<ElasticBookDocument> elasticBookDocumentSearchResponse = elasticsearchClient.search(searchRequest, ElasticBookDocument.class);
+
+            return elasticBookDocumentSearchResponse
+                    .hits().hits().stream()
+                    .map(Hit::source)
+                    .filter(Objects::nonNull)
+                    .map(ElasticBookDocument::getTitle)
+                    .toList();
+        } catch (IOException e) {
+            log.error("=====V3, 자동 완성 검색(가중치) 실패=====", e);
+            throw new RuntimeException("=====V3, 자동 완성 검색(가중치) 실패==", e);
+        }
+    }
 }
