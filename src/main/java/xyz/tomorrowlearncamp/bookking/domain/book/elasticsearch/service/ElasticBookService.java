@@ -2,6 +2,7 @@ package xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.service;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 
+import co.elastic.clients.elasticsearch._types.aggregations.Aggregation;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch.core.IndexRequest;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
@@ -176,6 +177,39 @@ public class ElasticBookService {
         } catch (IOException e) {
             log.error("=====V3, 자동 완성 검색(가중치) 실패=====", e);
             throw new RuntimeException("=====V3, 자동 완성 검색(가중치) 실패==", e);
+        }
+    }
+
+    /**
+     * 연관 검색어 기능 V1 - terms aggregation
+     */
+    public List<String> searchRelateKeywords(String keyword) {
+        try{
+            Query query = Query.of(q -> q
+                    .multiMatch(m -> m
+                            .query(keyword)
+                            .fields("title", "subject", "author", "publisher")));
+
+            Aggregation aggregation = Aggregation.of(a -> a
+                    .terms(t -> t
+                            .field("all_fields.keyword")
+                            .size(10)));
+
+            SearchRequest searchRequest = SearchRequest.of(s -> s
+                    .index(INDEX_NAME)
+                    .query(query)
+                    .aggregations("relate_keywords", aggregation)
+                    .size(0));
+
+            SearchResponse<ElasticBookDocument> elasticBookDocumentSearchResponse = elasticsearchClient.search(searchRequest, ElasticBookDocument.class);
+
+            List<String> results = new ArrayList<>();
+            elasticBookDocumentSearchResponse.aggregations().get("relate_keywords").sterms().buckets().array().forEach(bucket -> results.add(bucket.key().stringValue()));
+
+            return results;
+        } catch (IOException e) {
+            log.error("=====연관 검색어 조회 실패=====", e);
+            throw new RuntimeException("=====연관 검색어 조회 실패=====",e);
         }
     }
 }

@@ -48,4 +48,10 @@ public class ElasticBookSearchController {
     ) {
         return ResponseEntity.ok(elasticBookService.searchAutoCompleteTitleV3(keyword, size));
     }
+
+    @GetMapping("/v1/elasticsearch/relate")
+    public ResponseEntity<List<String>> searchRelateKeywords(@RequestParam String keyword) {
+        List<String> relateKeywords = elasticBookService.searchRelateKeywords(keyword);
+        return ResponseEntity.ok(relateKeywords);
+    }
 }
