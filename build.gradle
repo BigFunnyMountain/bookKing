@@ -47,7 +47,7 @@ dependencies {
     // redisson
     runtimeOnly 'org.redisson:redisson-spring-data-34:3.45.1'
     implementation 'org.redisson:redisson-spring-boot-starter:3.23.5'
-    
+
     // security
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
@@ -80,11 +80,14 @@ dependencies {
     // WebClient
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
-    // jjwt
+    //logstash
+    implementation 'net.logstash.logback:logstash-logback-encoder:8.1'
+
+    // jwt
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-    
+
     // elasticsearch
     implementation 'co.elastic.clients:elasticsearch-java:8.17.4'
     implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
@@ -117,19 +120,24 @@ tasks.withType(JavaCompile).configureEach {
 
 tasks.named('test') {
     useJUnitPlatform()
-    finalizedBy jacocoTestReport
+    finalizedBy jacocoTestReport, jacocoTestCoverageVerification
 }
 
 tasks.named('check') {
-    dependsOn jacocoTestCoverageVerification
+    dependsOn tasks.named('jacocoTestCoverageVerification')
 }
 
-jacocoTestCoverageVerification {
+tasks.named('jacocoTestCoverageVerification') {
     violationRules {
         rule {
+            includes = ['xyz.tomorrowlearncamp.bookking.domain..service.*']
+            element = 'CLASS'
             limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
                 minimum = 0.5
             }
         }
     }
 }
+

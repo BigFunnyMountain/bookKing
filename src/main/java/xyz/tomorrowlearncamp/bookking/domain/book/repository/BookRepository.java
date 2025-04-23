@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 
 public interface BookRepository extends JpaRepository<Book, Long> {
+
 }

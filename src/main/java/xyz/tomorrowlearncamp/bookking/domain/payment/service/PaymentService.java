@@ -58,6 +58,7 @@ public class PaymentService {
 			bookRepository.save(book);
 
 			orderService.createOrder(userId, book.getBookId(), book.getPrePrice(), book.getStock(), book.getPublisher(), book.getBookIntroductionUrl(), OrderStatus.COMPLETED);
+
 		} catch (InterruptedException ex) {
 			throw new InvalidRequestException(ErrorMessage.REDIS_ERROR.getMessage());
 		} catch (NumberFormatException ex) {
