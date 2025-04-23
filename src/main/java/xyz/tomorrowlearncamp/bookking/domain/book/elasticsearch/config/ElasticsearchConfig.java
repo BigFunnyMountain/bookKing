@@ -23,25 +23,26 @@ public class ElasticsearchConfig {
     @Value("${spring.elasticsearch.uris}")
     private String host;
 
-    @Value("${spring.elasticsearch.username}")
-    private String username;
-
-    @Value("${spring.elasticsearch.password}")
-    private String password;
+//    @Value("${spring.elasticsearch.username}")
+//    private String username;
+//
+//    @Value("${spring.elasticsearch.password}")
+//    private String password;
 
     @Bean
     public RestClient restClient() {
-        BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-        credentialsProvider.setCredentials(AuthScope.ANY,
-                new UsernamePasswordCredentials(username, password));
-
-        RestClientBuilder builder = RestClient.builder(HttpHost.create(host))
-                .setHttpClientConfigCallback(httpClientBuilder ->
-                        ((HttpAsyncClientBuilder) httpClientBuilder)
-                                .setDefaultCredentialsProvider(credentialsProvider)
-                );
-
-        return builder.build();
+//        BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+//        credentialsProvider.setCredentials(AuthScope.ANY,
+//                new UsernamePasswordCredentials(username, password));
+//
+//        RestClientBuilder builder = RestClient.builder(HttpHost.create(host))
+//                .setHttpClientConfigCallback(httpClientBuilder ->
+//                        ((HttpAsyncClientBuilder) httpClientBuilder)
+//                                .setDefaultCredentialsProvider(credentialsProvider)
+//                );
+//
+//        return builder.build();
+        return RestClient.builder(HttpHost.create(host)).build();
     }
 
     @Bean
