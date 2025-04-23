@@ -16,6 +16,7 @@ import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.AddBookRequestDto;
 import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.UpdateBookRequestDto;
 import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.UpdateBookStockRequestDto;
 import xyz.tomorrowlearncamp.bookking.domain.book.dto.response.BookResponseDto;
+import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.service.ElasticBookService;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.book.mapper.BookMapper;
 import xyz.tomorrowlearncamp.bookking.domain.book.repository.BookRepository;
@@ -34,6 +35,9 @@ class BookServiceTest {
 
 	@InjectMocks
 	private BookService bookService;
+
+	@Mock
+	private ElasticBookService elasticBookService;
 
 	@Test
 	void addBook_shouldSaveBookAndReturnId() {

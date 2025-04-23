@@ -1,7 +1,11 @@
+server:
+  shutdown: graceful
 spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 30s # default
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${DB_URL}
+    url: jdbc:mysql://${DB_URL}:3306/${DB_NAME}
     username: ${DB_USER}
     password: ${DB_USER_PASSWORD}
 
@@ -11,3 +15,20 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+
+  elasticsearch:
+    uris: ${ES_URI}
+    username: ${ES_USERNAME}
+    password: ${ES_PASSWORD}
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+
+jwt:
+  secret:
+    key: ${JWT_SECRET_KEY}
+
+library:
+  api:
+    key: ${LIBRARY_API_KEY}

@@ -4,12 +4,17 @@ import java.io.IOException;
 
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
 import org.redisson.spring.data.connection.RedissonConnectionFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RedissonConfig {
+
+	@Value("${spring.data.redis.host}")
+	private String redisHost;
 
 	@Bean
 	public RedissonConnectionFactory redissonConnectionFactory(RedissonClient redisson) {
@@ -18,6 +23,9 @@ public class RedissonConfig {
 
 	@Bean(destroyMethod="shutdown")
 	public RedissonClient redissonClient() throws IOException {
-		return Redisson.create();
+		Config config = new Config();
+		config.useSingleServer()
+			.setAddress("redis://" + redisHost);
+		return Redisson.create(config);
 	}
 }

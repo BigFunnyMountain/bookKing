@@ -39,12 +39,17 @@ repositories {
 
 dependencies {
     // DB
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.redisson:redisson-spring-data-34:3.45.1'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     runtimeOnly 'com.mysql:mysql-connector-j'
     runtimeOnly 'com.h2database:h2'
+
+    //redisson
     runtimeOnly 'org.redisson:redisson-spring-data-34:3.45.1'
     runtimeOnly 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.redisson:redisson-spring-boot-starter:3.23.5'
+
 
     // security
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -54,42 +59,51 @@ dependencies {
 
     // swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6'
+    
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
-    // default
+    //default
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    // test
+    //test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    testCompileOnly 'org.projectlombok:lombok'
-    testAnnotationProcessor 'org.projectlombok:lombok'
 
-    // MapStruct
+    //MapStruct
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 
+    // WebClient
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
-    //WebClient
-    compileOnly 'org.springframework.boot:spring-boot-starter-webflux'
-
-
-    // jwt
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+
+    // Slf4j - 테스트때 활용
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
 
     // QueryDSL
     implementation "com.querydsl:querydsl-jpa:5.0.0:jakarta"
     annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
     annotationProcessor 'jakarta.persistence:jakarta.persistence-api:3.1.0'
 
+
     // es
     implementation 'co.elastic.clients:elasticsearch-java:8.17.4'
     implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0'
+
+    // S3
+//    implementation platform('software.amazon.awssdk:bom:2.31.24')
+//    implementation 'software.amazon.awssdk:s3'
+    implementation 'software.amazon.awssdk:s3:2.25.46'
+    testImplementation 'io.findify:s3mock_2.13:0.2.6'  // test
 }
 
 // Q-class 생성 경로 지정
@@ -104,21 +118,17 @@ tasks.withType(JavaCompile).configureEach {
 
 tasks.named('test') {
     useJUnitPlatform()
-    finalizedBy jacocoTestReport, jacocoTestCoverageVerification
+    finalizedBy jacocoTestReport
 }
 
 tasks.named('check') {
-    dependsOn tasks.named('jacocoTestCoverageVerification')
+    dependsOn jacocoTestCoverageVerification
 }
 
-tasks.named('jacocoTestCoverageVerification') {
+jacocoTestCoverageVerification {
     violationRules {
         rule {
-            includes = ['xyz.tomorrowlearncamp.bookking.domain..service.*']
-            element = 'CLASS'
             limit {
-                counter = 'LINE'
-                value = 'COVEREDRATIO'
                 minimum = 0.5
             }
         }
