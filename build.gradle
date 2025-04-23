@@ -39,58 +39,55 @@ repositories {
 
 dependencies {
     // DB
-    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     runtimeOnly 'com.mysql:mysql-connector-j'
     runtimeOnly 'com.h2database:h2'
 
-    //redisson
+    // redisson
     runtimeOnly 'org.redisson:redisson-spring-data-34:3.45.1'
-    runtimeOnly 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'org.redisson:redisson-spring-boot-starter:3.23.5'
-
-
+    
     // security
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
-    // validated
+    // validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     // swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6'
     
+    // spring actuator
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
-    //default
+    // default
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    //test
+    // test
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'io.findify:s3mock_2.13:0.2.6'  // test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-    //MapStruct
+    // MapStruct
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 
     // WebClient
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
-
-
+    
+    // jjwt
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-
-
-    // Slf4j - 테스트때 활용
-    testCompileOnly 'org.projectlombok:lombok'
-    testAnnotationProcessor 'org.projectlombok:lombok'
-
-    // ES
-    implementation 'co.elastic.clients:elasticsearch-java:8.13.0'
+    
+    // elasticsearch
+    implementation 'co.elastic.clients:elasticsearch-java:8.17.4'
+    implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0'
 
     // QueryDSL
@@ -99,11 +96,8 @@ dependencies {
     annotationProcessor 'jakarta.persistence:jakarta.persistence-api:3.1.0'
 
     // S3
-//    implementation platform('software.amazon.awssdk:bom:2.31.24')
-//    implementation 'software.amazon.awssdk:s3'
-    implementation 'software.amazon.awssdk:s3:2.25.46'
-    testImplementation 'io.findify:s3mock_2.13:0.2.6'  // test
-
+    implementation platform('software.amazon.awssdk:bom:2.27.21')
+    implementation 'software.amazon.awssdk:s3'
 }
 
 // Q-class 생성 경로 지정

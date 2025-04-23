@@ -1,13 +1,22 @@
 server:
   shutdown: graceful
+
 spring:
   lifecycle:
     timeout-per-shutdown-phase: 30s # default
+
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_URL}:3306/${DB_NAME}
-    username: ${DB_USER}
-    password: ${DB_USER_PASSWORD}
+    hikari:
+      writer:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://${WRITER_URL}:3306/${DB_NAME}
+        username: ${DB_USERNAME}
+        password: ${DB_PASSWORD}
+      reader:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://${READER_URL}:3306/${DB_NAME}
+        username: ${DB_USERNAME}
+        password: ${DB_PASSWORD}
 
   jpa:
     hibernate:
@@ -19,6 +28,18 @@ spring:
   data:
     redis:
       host: ${REDIS_HOST}
+
+cloud:
+  aws:
+    s3:
+      bucket: ${S3_BUCKET}
+    region:
+      static: ${S3_REGION}
+
+elasticsearch:
+  uris: ${ES_URI}
+  username: ${ES_USERNAME}
+  password: ${ES_PASSWORD}
 
 jwt:
   secret:
