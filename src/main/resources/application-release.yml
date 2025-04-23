@@ -27,8 +27,6 @@ spring:
 
   elasticsearch:
     uris: ${ES_URI}
-    username: ${ES_USERNAME}
-    password: ${ES_PASSWORD}
 
   data:
     redis:
@@ -40,9 +38,6 @@ cloud:
       bucket: ${S3_BUCKET}
     region:
       static: ${S3_REGION}
-
-elasticsearch:
-  uris: ${ES_URI}
 
 jwt:
   secret:
