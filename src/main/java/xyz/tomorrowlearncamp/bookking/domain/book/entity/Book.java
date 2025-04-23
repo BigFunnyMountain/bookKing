@@ -52,10 +52,14 @@ public class Book extends BaseEntity {
     @Column(nullable = false)
     private Long stock = 0L;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private BookSource source;
+
     @Builder
     public Book(Long bookId, String isbn, String title, String subject, String author, String publisher,
         String bookIntroductionUrl, String prePrice, String page, String titleUrl, String publicationDate,
-        Long stock) {
+        Long stock, BookSource source) {
         this.bookId = bookId;
         this.isbn = isbn;
         this.title = title;

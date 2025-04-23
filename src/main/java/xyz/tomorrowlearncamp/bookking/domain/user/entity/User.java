@@ -16,12 +16,12 @@ import xyz.tomorrowlearncamp.bookking.domain.user.enums.UserRole;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "`user`")
+@Table(name = "users")
 public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(columnDefinition = "BIGINT UNSIGNED")
+    @Column
     private Long id;
 
     @Column(nullable = false, unique = true, length = 20)
@@ -50,6 +50,8 @@ public class User extends BaseEntity {
     @Column(nullable = false, length = 30)
     private String nickname;
 
+    @Column(name = "profile_image_url")
+    private String profileImageUrl;
 
     @Builder
     private User(String email, String password, String name, UserRole role, String address, Gender gender, int age, String nickname) {
@@ -77,10 +79,13 @@ public class User extends BaseEntity {
                 .build();
     }
 
-    //TODO :
-    public String getProfileImageUrl() {
 
-        return null;
+    public String getProfileImageUrl() {
+        return this.profileImageUrl;
+    }
+
+    public void updateProfileImageUrl(String imageUrl) {
+        this.profileImageUrl = imageUrl;
     }
 
     public void updateUserInfo(String nickname, String address) {
@@ -95,5 +100,6 @@ public class User extends BaseEntity {
     public void updateRole(UserRole newRole) {
         this.role = newRole;
     }
+    // TODO : soft 딜리트 구현 (리팩토링 시에 진행할 예정)
 
 }

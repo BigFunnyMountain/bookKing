@@ -5,9 +5,10 @@ spring:
         web-allow-others: true
       enabled: true
       path: /h2-console
+
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     username: sa
     password:
 
@@ -21,9 +22,31 @@ spring:
         use_sql_comments: true
         dialect: org.hibernate.dialect.H2Dialect
 
+  elasticsearch:
+    uris: http://localhost:9200
+    username: elastic
+    password: changeme
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
   data:
     redis:
-      host: 'localhost:6379'
+      host: localhost:6379
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    region:
+      static: ap-southeast-2
+    s3:
+      bucket: bigfunnybookking
+    stack:
+      auto: false
 
 logging:
   level:
@@ -33,7 +56,7 @@ logging:
 
 jwt:
   secret:
-    key: 60066e95d82266c1ae7bc5bf01828f64f4337ee0f4b4a1f29008ba63d7b3e69fb77d2abca9f2085ca7d6a8fabd224007cfd3316d0b96f714ea4215dd06988c59
+    key: 60066e95d82266c1ae7bc5bf01828f64f4337ee0f4b4a1f29008ba63d7b3e69fb77d2abca7f2085ca7d6a8fabd224007cfd3316d0b96f714ea4215dd06988c59
 
 library:
   api:

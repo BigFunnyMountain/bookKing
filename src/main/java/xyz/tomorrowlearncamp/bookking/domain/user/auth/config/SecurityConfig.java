@@ -45,6 +45,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/error").permitAll()
                         .requestMatchers(request -> request.getRequestURI().startsWith("/api/v1/auth")).permitAll()
+                                .requestMatchers(HttpMethod.GET, "/api/v1/books/**").permitAll()
+                                // 테스트를 위해 임시 허용
+                                //.requestMatchers(HttpMethod.POST, "/api/v1/books").hasRole("ADMIN")
+                                //.requestMatchers(HttpMethod.PUT, "/api/v1/books/**").authenticated()
                         .requestMatchers("/test").hasAuthority(UserRole.ROLE_ADMIN.name())
                         .requestMatchers(request -> request.getRequestURI().startsWith("/api/v1/users")).authenticated()
                         .anyRequest().permitAll()

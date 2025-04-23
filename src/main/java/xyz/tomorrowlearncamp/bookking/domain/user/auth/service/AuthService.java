@@ -67,32 +67,32 @@ public class AuthService {
     @Transactional(readOnly = true)
     public AccessTokenResponse refreshAccessToken(String refreshToken) {
         // 값 넘어온거 확인
-        log.info(">>> [refresh] 클라이언트로부터 받은 refreshToken: {}", refreshToken);
+        log.info("======== [refresh] 클라이언트로부터 받은 refreshToken: {}", refreshToken);
 
         Optional<RefreshToken> optionalToken = refreshTokenRepository.findByToken(refreshToken);
 
         if (optionalToken.isEmpty()) {
-            log.warn(">>> [refresh] DB에서 일치하는 RefreshToken을 찾지 못했음. 요청 토큰: {}", refreshToken);
+            log.warn("======== [refresh] DB에서 일치하는 RefreshToken을 찾지 못했음. 요청 토큰: {}", refreshToken);
             throw new IllegalArgumentException("유효하지 않은 Refresh Token.");
         }
 
         RefreshToken token = optionalToken.get();
         //찾고 로그
-        log.info(">>> [refresh] db 에서 찾은 refreshToken: {}", token.getToken());
-        log.info(">>> [refresh] 토큰 만료 시간: {}", token.getExpiredAt());
+        log.info("========= [refresh] db 에서 찾은 refreshToken: {}", token.getToken());
+        log.info("======== [refresh] 토큰 만료 시간: {}", token.getExpiredAt());
 
         if (token.getExpiredAt().isBefore(LocalDateTime.now())) {
-            log.warn(">>> [refresh] 만료된 Refresh Token. expiredAt: {}", token.getExpiredAt());
+            log.warn("======== [refresh] 만료된 Refresh Token. expiredAt: {}", token.getExpiredAt());
             throw new IllegalArgumentException("만료된 Refresh Token.");
         }
 
         User user = userRepository.findById(token.getUserId())
                 .orElseThrow(() -> {
-                    log.warn(">>> [refresh] userId={} 에 해당하는 유저를 찾지 못했습니다.", token.getUserId());
+                    log.warn("======== [refresh] userId={} 에 해당하는 유저를 찾지 못했습니다.", token.getUserId());
                     return new UsernameNotFoundException("사용자를 찾을 수 없습니다.");
                 });
 
-        log.info(">>> [refresh] AccessToken 재발급 성공 (userId={}, email={})", user.getId(), user.getEmail());
+        log.info("======== [refresh] AccessToken 재발급 성공 (userId={}, email={})", user.getId(), user.getEmail());
 
         String newAccessToken = jwtProvider.createAccessToken(user.getId(), user.getEmail(), user.getRole());
 

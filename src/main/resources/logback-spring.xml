@@ -6,7 +6,7 @@
     </appender>
 
     <appender name="Logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <destination>logstash.tomorrowlearncamp.xyz:5000</destination>
+        <destination>${LOGSTASH_SERVER}</destination>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
     </appender>
 

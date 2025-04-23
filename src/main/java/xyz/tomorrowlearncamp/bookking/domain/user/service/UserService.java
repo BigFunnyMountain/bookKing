@@ -4,13 +4,18 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import xyz.tomorrowlearncamp.bookking.domain.user.aws.S3Upload;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.UpdateUserRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.UpdateUserRoleRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.UserResponse;
 import xyz.tomorrowlearncamp.bookking.domain.user.entity.User;
 import xyz.tomorrowlearncamp.bookking.domain.user.enums.UserRole;
 import xyz.tomorrowlearncamp.bookking.domain.user.repository.UserRepository;
+
+import java.io.IOException;
 
 /**
  * 작성자 : 문성준
@@ -21,6 +26,7 @@ import xyz.tomorrowlearncamp.bookking.domain.user.repository.UserRepository;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final S3Upload s3Upload;
 
     public UserResponse getMyInfo(Long userId) {
         User user = userRepository.findById(userId)
@@ -69,5 +75,16 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "비밀번호가 일치하지 않습니다");
         }
         userRepository.delete(user);
+    }
+
+    @Transactional
+    public String updateProfileImage(Long userId, MultipartFile image) throws IOException {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+
+        String imageUrl = s3Upload.uploadProfileImage(image);
+        user.updateProfileImageUrl(imageUrl);
+
+        return imageUrl;
     }
 }
