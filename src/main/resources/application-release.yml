@@ -36,6 +36,11 @@ cloud:
     region:
       static: ${S3_REGION}
 
+elasticsearch:
+  uris: ${ES_URI}
+  username: ${ES_USERNAME}
+  password: ${ES_PASSWORD}
+
 jwt:
   secret:
     key: ${JWT_SECRET_KEY}
