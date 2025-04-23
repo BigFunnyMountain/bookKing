@@ -15,7 +15,7 @@ import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.AddBookRequestDto;
 import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.UpdateBookRequestDto;
 import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.UpdateBookStockRequestDto;
 import xyz.tomorrowlearncamp.bookking.domain.book.dto.response.BookResponseDto;
-import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.entity.ElasticBookDocument;
+import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.document.ElasticBookDocument;
 import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.service.ElasticBookService;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.book.mapper.BookMapper;
@@ -27,9 +27,8 @@ import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
 public class BookService {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
-    private final ElasticBookService elasticBookService;
-
     private final JdbcTemplate jdbcTemplate;
+    private final ElasticBookService elasticBookService;
 
     private static final String INSERT_SQL = """
                 INSERT INTO book (
@@ -39,17 +38,12 @@ public class BookService {
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """;
 
-    @Transactional
-    public Long addBook(AddBookRequestDto addBookRequestDto) {
-        Book book = bookMapper.toEntity(addBookRequestDto);
-        bookRepository.save(book);
-
-        elasticBookService.save(ElasticBookDocument.of(book));
-        return book.getBookId();
-    }
-
     public void saveBooksInBatch(List<Book> books, int batchSize) {
         LocalDateTime now = LocalDateTime.now();
+
+        books.forEach(book -> {
+            elasticBookService.save(book);
+        });
 
         jdbcTemplate.batchUpdate(INSERT_SQL, books, batchSize,
                 (ps, book) -> {
@@ -67,6 +61,14 @@ public class BookService {
                     ps.setTimestamp(12, Timestamp.valueOf(now));
                     ps.setTimestamp(13, Timestamp.valueOf(now));
                 });
+    }
+
+    @Transactional
+    public Long addBook(AddBookRequestDto addBookRequestDto) {
+        Book book = bookMapper.toEntity(addBookRequestDto);
+        Book saved = bookRepository.save(book);
+        elasticBookService.save(saved);
+        return saved.getBookId();
     }
 
     @Transactional

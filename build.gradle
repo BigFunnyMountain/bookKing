@@ -79,7 +79,7 @@ dependencies {
 
     // WebClient
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
-    
+
     // jjwt
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
@@ -94,6 +94,11 @@ dependencies {
     implementation "com.querydsl:querydsl-jpa:5.0.0:jakarta"
     annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
     annotationProcessor 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+
+    // es
+    implementation 'co.elastic.clients:elasticsearch-java:8.17.4'
+    implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0'
 
     // S3
     implementation platform('software.amazon.awssdk:bom:2.27.21')
@@ -128,4 +133,3 @@ jacocoTestCoverageVerification {
         }
     }
 }
-

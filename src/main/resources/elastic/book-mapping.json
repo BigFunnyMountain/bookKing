@@ -1,0 +1,50 @@
+{
+  "properties": {
+    "bookId": {
+      "type": "long"
+    },
+    "title": {
+      "type": "text",
+      "analyzer": "korean",
+      "fields": {
+        "keyword": {
+          "type": "keyword"
+        }
+      },
+      "copy_to": "all_fields"
+    },
+    "author": {
+      "type": "text",
+      "analyzer": "korean",
+      "copy_to": "all_fields"
+    },
+    "publisher": {
+      "type": "text",
+      "analyzer": "korean",
+      "copy_to": "all_fields"
+    },
+    "subject": {
+      "type": "text",
+      "analyzer": "korean",
+      "fields": {
+        "keyword": {
+          "type": "keyword"
+        }
+      },
+      "copy_to": "all_fields"
+    },
+    "source": {
+      "type": "keyword"
+    },
+
+    "all_fields": {
+      "type": "text",
+      "analyzer": "korean",
+      "fields": {
+        "keyword": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}

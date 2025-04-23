@@ -25,6 +25,9 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
 
+  elasticsearch:
+    uris: ${ES_URI}
+
   data:
     redis:
       host: ${REDIS_HOST}
@@ -35,11 +38,6 @@ cloud:
       bucket: ${S3_BUCKET}
     region:
       static: ${S3_REGION}
-
-elasticsearch:
-  uris: ${ES_URI}
-  username: ${ES_USERNAME}
-  password: ${ES_PASSWORD}
 
 jwt:
   secret:
