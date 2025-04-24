@@ -1,8 +1,9 @@
 spring:
   application:
     name: bookKing
-  profiles:
-    default: release
+  config:
+    activate:
+      on-profile: release
 
 management:
   endpoint:
