@@ -1,10 +1,25 @@
 package xyz.tomorrowlearncamp.bookking.domain.keyword.dto;
 
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Data
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class KeywordResponse {
     private List<String> suggestedKeywords;
+
+    @Builder
+    private KeywordResponse(List<String> suggestedKeywords) {
+        this.suggestedKeywords = suggestedKeywords;
+    }
+
+    public static KeywordResponse of(List<String> suggestedKeywords) {
+        return KeywordResponse.builder()
+                .suggestedKeywords(suggestedKeywords)
+                .build();
+    }
 } 

@@ -87,8 +87,7 @@ public class KeywordService {
                 .map(String::trim)
                 .collect(Collectors.toList());
 
-        KeywordResponse keywordResponse = new KeywordResponse();
-        keywordResponse.setSuggestedKeywords(keywords);
+        KeywordResponse keywordResponse = KeywordResponse.of(keywords);
         return keywordResponse;
     }
 } 
