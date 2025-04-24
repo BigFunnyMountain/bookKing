@@ -60,4 +60,8 @@ jwt:
 
 library:
   api:
-    key: ${LIBRARY_API_KEY}
+    key: test_key_for_development
+
+openai:
+  api:
+    key: ${OPENAI_API_KEY}
