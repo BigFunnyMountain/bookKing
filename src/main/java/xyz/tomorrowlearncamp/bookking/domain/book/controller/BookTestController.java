@@ -59,10 +59,13 @@ public class BookTestController {
 		for (int i = 0; i < size; i++) {
 			Map<String, Object> log = new HashMap<>();
 			log.put("log_type", "buy");
+			log.put("price", random.nextInt(70)*1000);
 			log.put("age_group", randomFrom(ageGroups));
 			log.put("book_name", randomFrom(books));
 			log.put("gender", randomFrom(genders));
-			log.put("timestamp", Instant.now().toString());
+			int day = random.nextInt(31) + 1;
+			String date = String.format("2025-03-%02d", day);
+			log.put("timestamp", date);
 			try {
 				buyLogger.info(objectMapper.writeValueAsString(log));
 			} catch (JsonProcessingException e) {
