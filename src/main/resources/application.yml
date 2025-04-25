@@ -2,7 +2,7 @@ spring:
   application:
     name: bookKing
   profiles:
-    default: dev
+    default: release
 
 management:
   endpoint:
