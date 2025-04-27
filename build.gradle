@@ -59,7 +59,10 @@ dependencies {
     
     // spring actuator
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-
+    
+    // micrometer
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+    
     // default
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
