@@ -14,4 +14,4 @@ RUN apk add --no-cache curl
 
 COPY --from=builder /app/build/libs/*.jar app.jar
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=${SPRING_PROFILE:-release}", "-jar", "app.jar"]

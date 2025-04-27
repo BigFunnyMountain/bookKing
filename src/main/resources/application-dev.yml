@@ -1,16 +1,16 @@
 spring:
-  h2:
-    console:
-      settings:
-        web-allow-others: true
-      enabled: true
-      path: /h2-console
-
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    username: sa
-    password:
+    hikari:
+      writer:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://mysql-container:3306/testdb
+        username: root
+        password: ${DB_PASSWORD}
+      reader:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://mysql-container:3306/testdb
+        username: root
+        password: ${DB_PASSWORD}
 
   jpa:
     hibernate:
@@ -20,12 +20,10 @@ spring:
         show_sql: true
         format_sql: true
         use_sql_comments: true
-        dialect: org.hibernate.dialect.H2Dialect
+        dialect: org.hibernate.dialect.MySQL8Dialect
 
   elasticsearch:
-    uris: http://localhost:9200
-    username: elastic
-    password: changeme
+    uris: http://elastic-container:9200
 
   servlet:
     multipart:
@@ -34,7 +32,7 @@ spring:
 
   data:
     redis:
-      host: localhost:6379
+      host: redis-container:6379
 
 cloud:
   aws:

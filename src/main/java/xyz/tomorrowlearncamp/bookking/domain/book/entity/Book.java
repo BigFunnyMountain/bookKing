@@ -1,14 +1,17 @@
 package xyz.tomorrowlearncamp.bookking.domain.book.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.UpdateBookRequestDto;
-
 import xyz.tomorrowlearncamp.bookking.domain.common.entity.BaseEntity;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -72,6 +75,7 @@ public class Book extends BaseEntity {
         this.titleUrl = titleUrl;
         this.publicationDate = publicationDate;
         this.stock = stock;
+        this.source = source;
     }
 
     public void updateStock(Long stock) {
