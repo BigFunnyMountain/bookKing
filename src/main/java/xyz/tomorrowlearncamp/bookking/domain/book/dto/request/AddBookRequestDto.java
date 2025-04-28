@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import xyz.tomorrowlearncamp.bookking.domain.book.entity.BookSource;
 
 @Getter
 public class AddBookRequestDto {
@@ -29,4 +30,6 @@ public class AddBookRequestDto {
 	private LocalDateTime publicationDate;
 	@NotNull
 	private Long stock;
+	@NotNull
+	private BookSource source;
 }
