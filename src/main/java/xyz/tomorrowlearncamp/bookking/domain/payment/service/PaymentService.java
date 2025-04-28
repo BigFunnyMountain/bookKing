@@ -40,17 +40,17 @@ public class PaymentService {
 				throw new InterruptedException();
 			}
 			Book book = bookRepository.findById(bookId).orElseThrow(
-				() -> new NotFoundException(ErrorMessage.NOT_FOUND_BOOK.getMessage())
+				() -> new NotFoundException(ErrorMessage.BOOK_NOT_FOUND)
 			);
 			// 책이 재고가 0개인 경우 || 구매하려는 개수 만큼 없는 경우
 			if( book.getStock() == 0 || book.getStock() < buyStock ) {
-				throw new InvalidRequestException(ErrorMessage.ZERO_BOOK_STOCK.getMessage());
+				throw new InvalidRequestException(ErrorMessage.ZERO_BOOK_STOCK);
 			}
 
 			// 돈이 부족한 경우
 			long price = Long.parseLong(book.getPrePrice());
 			if( price * buyStock > money ) {
-				throw new InvalidRequestException(ErrorMessage.SHORT_ON_MONEY.getMessage());
+				throw new InvalidRequestException(ErrorMessage.SHORT_ON_MONEY);
 			}
 
 			// buyStock 만큼 구매
@@ -60,13 +60,13 @@ public class PaymentService {
 			orderService.createOrder(userId, book.getBookId(), book.getPrePrice(), book.getStock(), book.getPublisher(), book.getBookIntroductionUrl(), OrderStatus.COMPLETED);
 
 		} catch (InterruptedException ex) {
-			throw new InvalidRequestException(ErrorMessage.REDIS_ERROR.getMessage());
+			throw new InvalidRequestException(ErrorMessage.REDIS_ERROR);
 		} catch (NumberFormatException ex) {
-			throw new InvalidRequestException(ErrorMessage.CALL_ADMIN.getMessage());
-		} catch ( InvalidRequestException ex ) {
-			throw new InvalidRequestException(ex.getMessage());
+			throw new InvalidRequestException(ErrorMessage.CALL_ADMIN);
+		} catch (InvalidRequestException ex) {
+			throw new InvalidRequestException(ex.getErrorMessage());
 		} catch (Exception ex) {
-			throw new InvalidRequestException(ErrorMessage.ERROR.getMessage());
+			throw new InvalidRequestException(ErrorMessage.ERROR);
 		} finally {
 			lock.unlock();
 		}

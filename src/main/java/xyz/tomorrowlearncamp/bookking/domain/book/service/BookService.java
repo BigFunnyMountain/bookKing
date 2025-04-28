@@ -20,6 +20,7 @@ import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.service.ElasticB
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.book.mapper.BookMapper;
 import xyz.tomorrowlearncamp.bookking.domain.book.repository.BookRepository;
+import xyz.tomorrowlearncamp.bookking.domain.common.enums.ErrorMessage;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
 
 @Service
@@ -73,13 +74,13 @@ public class BookService {
 
     @Transactional
     public void updateBook(Long id, UpdateBookRequestDto requestDto) {
-        Book book = bookRepository.findById(id).orElseThrow(() -> new NotFoundException("Book not found"));
+        Book book = bookRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorMessage.BOOK_NOT_FOUND));
         bookMapper.updateBookFromDto(requestDto, book);
     }
 
     @Transactional
     public void updateBookStock(Long id, UpdateBookStockRequestDto requestDto) {
-        Book book = bookRepository.findById(id).orElseThrow(() -> new NotFoundException("Book not found"));
+        Book book = bookRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorMessage.BOOK_NOT_FOUND));
         book.updateStock(requestDto.getStock());
     }
 
@@ -96,7 +97,7 @@ public class BookService {
 
     @Transactional(readOnly = true)
     public BookResponseDto getBookById(Long id) {
-        Book book = bookRepository.findById(id).orElseThrow(() -> new NotFoundException("Book not found"));
+        Book book = bookRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorMessage.BOOK_NOT_FOUND));
         return new BookResponseDto(book);
     }
 }
