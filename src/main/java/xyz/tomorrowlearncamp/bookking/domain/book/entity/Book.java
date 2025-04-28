@@ -19,9 +19,6 @@ public class Book extends BaseEntity {
     private Long bookId;
 
     @Column
-    private String isbn;
-
-    @Column
     private String title;
 
     @Column
@@ -41,12 +38,6 @@ public class Book extends BaseEntity {
     private String prePrice;
 
     @Column
-    private String page;
-
-    @Column
-    private String titleUrl;
-
-    @Column
     private String publicationDate;
 
     @Column(nullable = false)
@@ -57,19 +48,16 @@ public class Book extends BaseEntity {
     private BookSource source;
 
     @Builder
-    public Book(Long bookId, String isbn, String title, String subject, String author, String publisher,
-        String bookIntroductionUrl, String prePrice, String page, String titleUrl, String publicationDate,
+    public Book(Long bookId, String title, String subject, String author, String publisher,
+        String bookIntroductionUrl, String prePrice, String publicationDate,
         Long stock, BookSource source) {
         this.bookId = bookId;
-        this.isbn = isbn;
         this.title = title;
         this.subject = subject;
         this.author = author;
         this.publisher = publisher;
         this.bookIntroductionUrl = bookIntroductionUrl;
         this.prePrice = prePrice;
-        this.page = page;
-        this.titleUrl = titleUrl;
         this.publicationDate = publicationDate;
         this.stock = stock;
     }

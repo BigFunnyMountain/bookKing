@@ -32,10 +32,10 @@ public class BookService {
 
     private static final String INSERT_SQL = """
                 INSERT INTO book (
-                    isbn, title, subject, author, publisher,
-                    book_introduction_url, pre_price, page, title_url,
+                    title, subject, author, publisher,
+                    book_introduction_url, pre_price,
                     publication_date, stock, created_at, modified_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """;
 
     public void saveBooksInBatch(List<Book> books, int batchSize) {
@@ -47,19 +47,16 @@ public class BookService {
 
         jdbcTemplate.batchUpdate(INSERT_SQL, books, batchSize,
                 (ps, book) -> {
-                    ps.setString(1, book.getIsbn());
-                    ps.setString(2, book.getTitle());
-                    ps.setString(3, book.getSubject());
-                    ps.setString(4, book.getAuthor());
-                    ps.setString(5, book.getPublisher());
-                    ps.setString(6, book.getBookIntroductionUrl());
-                    ps.setString(7, book.getPrePrice());
-                    ps.setString(8, book.getPage());
-                    ps.setString(9, book.getTitleUrl());
-                    ps.setString(10, book.getPublicationDate());
-                    ps.setLong(11, 0L);
-                    ps.setTimestamp(12, Timestamp.valueOf(now));
-                    ps.setTimestamp(13, Timestamp.valueOf(now));
+                    ps.setString(1, convertString(book.getTitle(),"제목없음"));
+                    ps.setString(2, convertString(book.getSubject(), "주제없음"));
+                    ps.setString(3, convertString(book.getAuthor(), "저자없음"));
+                    ps.setString(4, convertString(book.getPublisher(), "출판사없음"));
+                    ps.setString(5, convertString(book.getBookIntroductionUrl(), "소개없음"));
+                    ps.setString(6, convertString(book.getPrePrice(), "가격없음"));
+                    ps.setString(7, convertString(book.getPublicationDate(),"출판날자없음"));
+                    ps.setLong(8, 0L);
+                    ps.setTimestamp(9, Timestamp.valueOf(now));
+                    ps.setTimestamp(10, Timestamp.valueOf(now));
                 });
     }
 
@@ -98,5 +95,19 @@ public class BookService {
     public BookResponseDto getBookById(Long id) {
         Book book = bookRepository.findById(id).orElseThrow(() -> new NotFoundException("Book not found"));
         return new BookResponseDto(book);
+    }
+
+    private String convertString(Object value, String defaultValue){
+        if(value == null) return defaultValue;
+
+        if(value instanceof String){
+            String str = (String) value;
+            return str.isEmpty() ? defaultValue : str;
+        } else if(value instanceof String[]){
+            String[] arr = (String[]) value;
+            return arr.length > 0 ? String.join(",", arr) : defaultValue;
+        } else {
+            return value.toString();
+        }
     }
 }
