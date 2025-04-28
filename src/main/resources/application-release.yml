@@ -32,6 +32,18 @@ spring:
     redis:
       host: ${REDIS_HOST}
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, health, metrics
+  endpoint:
+    prometheus:
+      access: unrestricted
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
 cloud:
   aws:
     s3:
