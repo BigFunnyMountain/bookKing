@@ -32,11 +32,9 @@ public class DataSourceConfig {
 	@Bean(name = READER_DATASOURCE)
 	@ConfigurationProperties(prefix = "spring.datasource.hikari.reader")
 	public DataSource readerDataSource() {
-		HikariDataSource hikariDataSource = DataSourceBuilder.create()
+		return DataSourceBuilder.create()
 			.type(HikariDataSource.class)
 			.build();
-		hikariDataSource.setReadOnly(true);
-		return hikariDataSource;
 	}
 
 	@Bean

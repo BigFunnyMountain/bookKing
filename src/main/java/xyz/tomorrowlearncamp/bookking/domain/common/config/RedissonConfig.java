@@ -1,7 +1,5 @@
 package xyz.tomorrowlearncamp.bookking.domain.common.config;
 
-import java.io.IOException;
-
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
@@ -21,11 +19,10 @@ public class RedissonConfig {
 		return new RedissonConnectionFactory(redisson);
 	}
 
-	@Bean(destroyMethod="shutdown")
-	public RedissonClient redissonClient() throws IOException {
+	@Bean(destroyMethod = "shutdown")
+	public RedissonClient redissonClient() {
 		Config config = new Config();
-		config.useSingleServer()
-			.setAddress("rediss://" + redisHost);
+		config.useSingleServer().setAddress(redisHost);
 		return Redisson.create(config);
 	}
 }
