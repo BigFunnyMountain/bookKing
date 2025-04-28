@@ -32,7 +32,7 @@ spring:
 
   data:
     redis:
-      host: redis-container:6379
+      host: redis://redis-container:6379
 
 cloud:
   aws:
