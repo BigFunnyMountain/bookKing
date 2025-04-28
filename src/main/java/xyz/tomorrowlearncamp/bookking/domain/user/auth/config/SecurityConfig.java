@@ -14,7 +14,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
+import org.springframework.web.cors.CorsConfiguration;
 import xyz.tomorrowlearncamp.bookking.domain.user.enums.UserRole;
+
+import java.util.List;
 
 /**
  * 작성자 : 문성준
@@ -33,6 +36,16 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors
+                        .configurationSource(request -> {
+                            CorsConfiguration config = new CorsConfiguration();
+                            config.addAllowedOriginPattern("*");
+                            config.setAllowedMethods(List.of("GET", "POST", "PATCH", "DELETE"));
+                            config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+                            config.setAllowCredentials(true);
+                            return config;
+                        })
+                )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
