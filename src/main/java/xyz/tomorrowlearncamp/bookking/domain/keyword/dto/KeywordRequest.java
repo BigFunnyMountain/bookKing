@@ -7,12 +7,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class KeywordRequest {
     @NotBlank(message = "Search term is required")
     private String searchTerm;
 
-    @Builder
     private KeywordRequest(String searchTerm) {
         this.searchTerm = searchTerm;
     }

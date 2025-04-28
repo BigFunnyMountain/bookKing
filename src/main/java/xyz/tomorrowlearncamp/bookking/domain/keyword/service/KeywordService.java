@@ -21,11 +21,7 @@ public class KeywordService {
     private final OrderService orderService;
     private final BookRepository bookRepository;
 
-    /**
-     * 검색어 기반 키워드 추천
-     * @param searchTerm 검색어
-     * @return 추천 키워드 목록
-     */
+    // 검색어 기반 키워드 추천
     public KeywordResponse suggestKeywords(String searchTerm) {
         String prompt = String.format(
             "Suggest 5 related search keywords for '%s'. " +
@@ -36,11 +32,7 @@ public class KeywordService {
         return getKeywordsFromOpenAI(prompt);
     }
 
-    /**
-     * 사용자 구매 이력 기반 개인화된 키워드 추천
-     * @param userId 사용자 ID
-     * @return 추천 키워드 목록
-     */
+     // 사용자 구매 이력 기반 개인화된 키워드 추천
     public KeywordResponse suggestByOrder(Long userId) {
         List<OrderResponse> recentOrders = orderService.getMyOrders(userId, 0, 10).getContent();
 
@@ -64,11 +56,7 @@ public class KeywordService {
         return getKeywordsFromOpenAI(prompt);
     }
 
-    /**
-     * OpenAI API를 사용하여 키워드 추천
-     * @param prompt OpenAI에 전달할 프롬프트
-     * @return 추천 키워드 목록
-     */
+     // OpenAI API를 사용하여 키워드 추천
     private KeywordResponse getKeywordsFromOpenAI(String prompt) {
         CompletionRequest completionRequest = CompletionRequest.builder()
                 .model("gpt-3.5-turbo-instruct")
