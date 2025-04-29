@@ -4,6 +4,7 @@ import com.theokanning.openai.completion.CompletionRequest;
 import com.theokanning.openai.service.OpenAiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.book.repository.BookRepository;
 import xyz.tomorrowlearncamp.bookking.domain.keyword.dto.KeywordResponse;
@@ -32,7 +33,8 @@ public class KeywordService {
         return getKeywordsFromOpenAI(prompt);
     }
 
-     // 사용자 구매 이력 기반 개인화된 키워드 추천
+    // 사용자 구매 이력 기반 개인화된 키워드 추천
+    @Transactional(readOnly = true)
     public KeywordResponse suggestByOrder(Long userId) {
         List<OrderResponse> recentOrders = orderService.getMyOrders(userId, 0, 10).getContent();
 
@@ -49,7 +51,7 @@ public class KeywordService {
         String prompt = String.format(
                 "Based on the user's recent book purchases:\n%s\n\n" +
                         "Suggest 5 related book categories or topics that the user might be interested in. " +
-                        "Return only the keywords separated by commas, no additional text.",
+                        "Respond in Korean. Return only the keywords separated by commas, no additional text.",
                 bookInfo
         );
 
