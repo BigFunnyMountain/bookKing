@@ -1,7 +1,5 @@
 package xyz.tomorrowlearncamp.bookking.domain.keyword.dto;
 
-import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
