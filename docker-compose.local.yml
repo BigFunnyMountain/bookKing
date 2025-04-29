@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   mysql:
     image: mysql:latest
@@ -23,9 +21,25 @@ services:
     networks:
       - local-test
 
+  elastic-kibana:
+    container_name: kibana
+    build:
+      context: .
+      dockerfile: Dockerfile.kibana
+    depends_on:
+      - elastic-search
+    ports:
+      - "5601:5601"
+    networks:
+      - local-test
+
   elastic-logstash:
     container_name: logstash-container
-    image: logstash:8.18.0
+    build:
+      context: .
+      dockerfile: Dockerfile.logstash
+    depends_on:
+      - elastic-search
     ports:
       - "5044:5044"
     networks:
