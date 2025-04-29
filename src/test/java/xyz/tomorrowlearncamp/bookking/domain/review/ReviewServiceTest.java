@@ -28,6 +28,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static xyz.tomorrowlearncamp.bookking.domain.common.enums.ErrorMessage.PURCHASE_HISTORY_NOT_FOUND;
 
 @ExtendWith(MockitoExtension.class)
 class ReviewServiceTest {
@@ -114,7 +115,7 @@ class ReviewServiceTest {
         given(bookRepository.findById(bookId)).willReturn(Optional.of(book));
         given(reviewRepository.existsByUserAndBookAndState(userId, bookId, ReviewState.ACTIVE)).willReturn(false);
         given(orderService.getPurchasedOrderId(userId, bookId))
-                .willThrow(new NotFoundException("구매 이력이 존재하지 않습니다."));
+                .willThrow(new NotFoundException(PURCHASE_HISTORY_NOT_FOUND));
 
         // when & then
         assertThatThrownBy(() -> reviewService.saveReview(userId, bookId, request))
