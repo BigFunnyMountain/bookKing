@@ -12,14 +12,9 @@ import java.util.List;
 public class KeywordResponse {
     private List<String> suggestedKeywords;
 
-    @Builder
-    private KeywordResponse(List<String> suggestedKeywords) {
-        this.suggestedKeywords = suggestedKeywords;
-    }
-
     public static KeywordResponse of(List<String> suggestedKeywords) {
-        return KeywordResponse.builder()
-                .suggestedKeywords(suggestedKeywords)
-                .build();
+        KeywordResponse response = new KeywordResponse();
+        response.suggestedKeywords = suggestedKeywords;
+        return response;
     }
-} 
+}
