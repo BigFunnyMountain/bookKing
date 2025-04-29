@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import xyz.tomorrowlearncamp.bookking.domain.common.dto.Response;
+import xyz.tomorrowlearncamp.bookking.domain.common.enums.ErrorMessage;
+import xyz.tomorrowlearncamp.bookking.domain.common.exception.InvalidRequestException;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.service.AuthService;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.config.JwtProvider;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.AccessTokenResponse;
@@ -44,7 +46,7 @@ public class AuthController {
         String header = request.getHeader("Authorization");
 
         if (header == null || !header.startsWith("Bearer ")) {
-            throw new IllegalArgumentException("Refresh Token이 누락되었거나 잘못된 형식입니다.");
+            throw new InvalidRequestException(ErrorMessage.INVALID_HEADER);
         }
 
         String refreshToken = jwtProvider.removeBearerPrefix(header);
