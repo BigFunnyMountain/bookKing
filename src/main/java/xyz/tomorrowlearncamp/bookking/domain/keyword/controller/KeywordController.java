@@ -16,12 +16,12 @@ import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.AuthUser;
 public class KeywordController {
     private final KeywordService keywordService;
 
-    @PostMapping("/keywords/suggest")
+    @PostMapping("/v1/keywords/suggest")
     public ResponseEntity<KeywordResponse> suggestKeywords(@Valid @RequestBody KeywordRequest request) {
         return ResponseEntity.ok(keywordService.suggestKeywords(request.getSearchTerm()));
     }
 
-    @GetMapping("/keywords/recommendations")
+    @GetMapping("/v1/keywords/recommendations")
     public ResponseEntity<KeywordResponse> getPersonalizedRecommendations(
             @AuthenticationPrincipal AuthUser authUser) {
         return ResponseEntity.ok(keywordService.suggestByOrder(authUser.getUserId()));
