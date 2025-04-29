@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.book.repository.BookRepository;
+import xyz.tomorrowlearncamp.bookking.domain.common.enums.ErrorMessage;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.InvalidRequestException;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
 import xyz.tomorrowlearncamp.bookking.domain.order.service.OrderService;
@@ -33,14 +34,14 @@ public class ReviewService {
     @Transactional
     public ReviewResponse saveReview(Long userId, Long bookId, ReviewRequest request) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND));
 
         Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new NotFoundException("책을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.BOOK_NOT_FOUND));
 
         boolean exists = reviewRepository.existsByUserAndBookAndState(userId, bookId, ReviewState.ACTIVE);
         if (exists) {
-            throw new InvalidRequestException("이미 리뷰를 작성한 사용자입니다.");
+            throw new InvalidRequestException(ErrorMessage.REVIEW_ALREADY_WRITTEN);
         }
 
         Long orderId = orderService.getPurchasedOrderId(userId, bookId);
@@ -90,6 +91,6 @@ public class ReviewService {
 
     private Review getReviewOwnedByUser(Long reviewId, Long userId, Long bookId) {
         return reviewRepository.findByIdAndUserIdAndBookIdAndState(reviewId, userId, bookId, ReviewState.ACTIVE)
-                .orElseThrow(() -> new NotFoundException("리뷰가 존재하지 않거나 권한이 없습니다."));
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.REVIEW_ALREADY_WRITTEN));
     }
 }
