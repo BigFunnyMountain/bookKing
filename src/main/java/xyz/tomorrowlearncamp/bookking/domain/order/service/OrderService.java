@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import xyz.tomorrowlearncamp.bookking.domain.common.enums.ErrorMessage;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
 import xyz.tomorrowlearncamp.bookking.domain.order.dto.OrderResponse;
 import xyz.tomorrowlearncamp.bookking.domain.order.entity.Order;
@@ -45,14 +46,14 @@ public class OrderService {
     public Long getPurchasedOrderId(Long userId, Long bookId) {
         return orderRepository.findCompletedOrder(userId, bookId, OrderStatus.COMPLETED)
                 .map(Order::getOrderId)
-                .orElseThrow(() -> new NotFoundException("구매 이력이 존재하지 않습니다."));
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.PURCHASE_HISTORY_NOT_FOUND));
     }
 
 
     @Transactional
     public void switchReviewStatus(Long orderId) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NotFoundException("주문을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.ORDER_NOT_FOUND));
         order.toggleReviewed();
     }
 }
