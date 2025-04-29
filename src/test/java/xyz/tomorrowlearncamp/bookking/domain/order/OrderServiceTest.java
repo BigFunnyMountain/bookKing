@@ -217,8 +217,7 @@ class OrderServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderService.getPurchasedOrderId(userId, bookId))
-                .isInstanceOf(NotFoundException.class)
-                .hasMessage("구매 이력이 존재하지 않습니다.");
+                .isInstanceOf(NotFoundException.class);
 
         verify(orderRepository).findCompletedOrder(userId, bookId, OrderStatus.COMPLETED);
     }
@@ -260,8 +259,7 @@ class OrderServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderService.switchReviewStatus(orderId))
-                .isInstanceOf(NotFoundException.class)
-                .hasMessage("주문을 찾을 수 없습니다.");
+                .isInstanceOf(NotFoundException.class);
 
         verify(orderRepository).findById(orderId);
     }

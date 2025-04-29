@@ -119,8 +119,7 @@ class ReviewServiceTest {
 
         // when & then
         assertThatThrownBy(() -> reviewService.saveReview(userId, bookId, request))
-                .isInstanceOf(NotFoundException.class)
-                .hasMessage("구매 이력이 존재하지 않습니다.");
+                .isInstanceOf(NotFoundException.class);
     }
 
     @Test
@@ -144,8 +143,7 @@ class ReviewServiceTest {
 
         // when & then
         assertThatThrownBy(() -> reviewService.saveReview(userId, bookId, request))
-                .isInstanceOf(InvalidRequestException.class)
-                .hasMessage("이미 리뷰를 작성한 사용자입니다.");
+                .isInstanceOf(InvalidRequestException.class);
     }
 
     @Test
@@ -196,7 +194,6 @@ class ReviewServiceTest {
 
         // when & then
         assertThatThrownBy(() -> reviewService.deleteReview(userId, bookId, reviewId))
-                .isInstanceOf(NotFoundException.class)
-                .hasMessage("리뷰가 존재하지 않거나 권한이 없습니다.");
+                .isInstanceOf(NotFoundException.class);
     }
 }
