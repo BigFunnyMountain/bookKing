@@ -58,7 +58,7 @@ jwt:
 
 library:
   api:
-    key: test_key_for_development
+    key: ${LIBRARY_API_KEY}
 
 openai:
   api:
