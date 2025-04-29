@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import xyz.tomorrowlearncamp.bookking.domain.common.entity.BaseEntity;
 import xyz.tomorrowlearncamp.bookking.domain.order.enums.OrderStatus;
+import xyz.tomorrowlearncamp.bookking.domain.payment.enums.PayType;
 
 @Entity
 @Getter
@@ -27,9 +28,6 @@ public class Order extends BaseEntity {
     private String prePrice;
 
     @Column(nullable = false)
-    private Long stock;
-
-    @Column(nullable = false)
     private String publisher;
 
     @Column(nullable = false)
@@ -42,8 +40,11 @@ public class Order extends BaseEntity {
     @Column(nullable = false)
     private boolean isReviewed;
 
+    @Column(nullable = false)
+    private PayType payType;
+
     @Builder
-    public Order(Long userId, Long bookId, String prePrice, Long stock, String publisher, String bookIntroductionUrl, OrderStatus status) {
+    public Order(Long userId, Long bookId, String prePrice, Long stock, String publisher, String bookIntroductionUrl, OrderStatus status, PayType payType) {
         this.userId = userId;
         this.bookId = bookId;
         this.prePrice = prePrice;
@@ -51,6 +52,7 @@ public class Order extends BaseEntity {
         this.publisher = publisher;
         this.bookIntroductionUrl = bookIntroductionUrl;
         this.status = status;
+        this.payType = payType;
         this.isReviewed = false;
     }
 

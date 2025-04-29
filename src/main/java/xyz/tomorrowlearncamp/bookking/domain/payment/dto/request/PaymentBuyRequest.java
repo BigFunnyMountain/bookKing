@@ -3,33 +3,26 @@ package xyz.tomorrowlearncamp.bookking.domain.payment.dto.request;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import xyz.tomorrowlearncamp.bookking.domain.payment.enums.PayType;
 
 @Getter
-@NoArgsConstructor
-public class PaymentRequest {
+@RequiredArgsConstructor
+public class PaymentBuyRequest {
 
 	@NotNull
 	@Positive
-	private Long bookId;
+	private final Long bookId;
 
 	@NotNull
 	@Positive
-	private Long money;
+	private final Long money;
 
 	@NotNull
-	private PayType payType;
+	private final PayType payType;
 
 	// 구매하는 갯수
 	@NotNull
 	@Positive
-	private Long buyStock;
-
-	public PaymentRequest(Long bookId, Long buyStock, Long money, PayType payType) {
-		this.bookId = bookId;
-		this.buyStock = buyStock;
-		this.money = money;
-		this.payType = payType;
-	}
+	private final Long buyStock;
 }

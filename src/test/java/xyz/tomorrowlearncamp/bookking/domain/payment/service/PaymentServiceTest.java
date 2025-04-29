@@ -1,15 +1,5 @@
 package xyz.tomorrowlearncamp.bookking.domain.payment.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.*;
-
-import java.util.Optional;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +9,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.test.util.ReflectionTestUtils;
-
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.book.repository.BookRepository;
 import xyz.tomorrowlearncamp.bookking.domain.order.enums.OrderStatus;
@@ -28,6 +17,16 @@ import xyz.tomorrowlearncamp.bookking.domain.payment.enums.PayType;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.UserResponse;
 import xyz.tomorrowlearncamp.bookking.domain.user.enums.UserRole;
 import xyz.tomorrowlearncamp.bookking.domain.user.service.UserService;
+
+import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PaymentServiceTest {
@@ -74,7 +73,7 @@ class PaymentServiceTest {
 		// then
 		verify(bookRepository, times(1)).save(any(book.getClass()));
 		verify(orderService, times(1))
-			.createOrder(1L, 1L, "1", 0L, null, null, OrderStatus.COMPLETED);
+			.createOrder(1L, 1L, "1", null, null, OrderStatus.COMPLETED, PayType.KAKAO_PAY);
 		assertEquals(0, book.getStock());
 	}
 

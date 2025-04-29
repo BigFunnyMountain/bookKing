@@ -13,6 +13,7 @@ import xyz.tomorrowlearncamp.bookking.domain.order.dto.OrderResponse;
 import xyz.tomorrowlearncamp.bookking.domain.order.entity.Order;
 import xyz.tomorrowlearncamp.bookking.domain.order.enums.OrderStatus;
 import xyz.tomorrowlearncamp.bookking.domain.order.repository.OrderRepository;
+import xyz.tomorrowlearncamp.bookking.domain.payment.enums.PayType;
 
 @Service
 @RequiredArgsConstructor
@@ -28,15 +29,15 @@ public class OrderService {
     }
 
     @Transactional
-    public Order createOrder(Long userId, Long bookId, String prePrice, Long stock, String publisher, String bookIntroductionUrl, OrderStatus status) {
+    public Order createOrder(Long userId, Long bookId, String prePrice, String publisher, String bookIntroductionUrl, OrderStatus status, PayType payType) {
         Order order = Order.builder()
                 .userId(userId)
                 .bookId(bookId)
                 .prePrice(prePrice)
-                .stock(stock)
                 .publisher(publisher)
                 .bookIntroductionUrl(bookIntroductionUrl)
                 .status(status)
+                .payType(payType)
                 .build();
         return orderRepository.save(order);
     }
@@ -47,6 +48,14 @@ public class OrderService {
         return orderRepository.findCompletedOrder(userId, bookId, OrderStatus.COMPLETED)
                 .map(Order::getOrderId)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.PURCHASE_HISTORY_NOT_FOUND));
+    }
+
+    @Transactional(readOnly = true)
+    public OrderResponse getOrderEntity(Long orderId) {
+        Order getOrder = orderRepository.findById(orderId).orElseThrow(
+                () -> new NotFoundException(ErrorMessage.ORDER_NOT_FOUND)
+        );
+        return OrderResponse.of(getOrder);
     }
 
 

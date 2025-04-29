@@ -17,6 +17,7 @@ import xyz.tomorrowlearncamp.bookking.domain.order.entity.Order;
 import xyz.tomorrowlearncamp.bookking.domain.order.enums.OrderStatus;
 import xyz.tomorrowlearncamp.bookking.domain.order.repository.OrderRepository;
 import xyz.tomorrowlearncamp.bookking.domain.order.service.OrderService;
+import xyz.tomorrowlearncamp.bookking.domain.payment.enums.PayType;
 import xyz.tomorrowlearncamp.bookking.domain.user.entity.User;
 import xyz.tomorrowlearncamp.bookking.domain.user.enums.Gender;
 import xyz.tomorrowlearncamp.bookking.domain.user.repository.UserRepository;
@@ -142,6 +143,7 @@ class OrderServiceTest {
         String publisher = "테스트 출판사";
         String bookIntroductionUrl = "http://test-url.com";
         OrderStatus status = OrderStatus.COMPLETED;
+        PayType payType = PayType.CARD;
 
         Order savedOrder = Order.builder()
                 .userId(userId)
@@ -159,7 +161,7 @@ class OrderServiceTest {
         given(orderRepository.save(any(Order.class))).willReturn(savedOrder);
 
         // when
-        Order result = orderService.createOrder(userId, bookId, prePrice, stock, publisher, bookIntroductionUrl, status);
+        Order result = orderService.createOrder(userId, bookId, prePrice, publisher, bookIntroductionUrl, status, payType);
 
         // then
         assertThat(result).isNotNull();
@@ -167,7 +169,6 @@ class OrderServiceTest {
         assertThat(result.getUserId()).isEqualTo(userId);
         assertThat(result.getBookId()).isEqualTo(bookId);
         assertThat(result.getPrePrice()).isEqualTo(prePrice);
-        assertThat(result.getStock()).isEqualTo(stock);
         assertThat(result.getPublisher()).isEqualTo(publisher);
         assertThat(result.getBookIntroductionUrl()).isEqualTo(bookIntroductionUrl);
         assertThat(result.getStatus()).isEqualTo(status);
