@@ -39,6 +39,7 @@ public class PaymentService {
 	public void payment(Long userId, Long bookId, Long buyStock, Long money, PayType payType) {
 		Book book = new Book();
 		setFairLock(bookId);
+
 		try {
 			book = bookRepository.findById(bookId).orElseThrow(
 					() -> new NotFoundException(ErrorMessage.BOOK_NOT_FOUND)
@@ -57,18 +58,22 @@ public class PaymentService {
 			// buyStock 만큼 구매
 			book.updateStock(book.getStock() - buyStock);
 			bookRepository.save(book);
+		} catch (NotFoundException ex) {
+			throw new NotFoundException(ex.getErrorMessage());
 		} catch (NumberFormatException ex) {
 			throw new InvalidRequestException(ErrorMessage.CALL_ADMIN);
-		} catch (Exception ex) {
+		} catch (InvalidRequestException ex) {
+			throw new InvalidRequestException(ex.getErrorMessage());
+		}catch (Exception ex) {
 			throw new ServerException(ErrorMessage.ERROR);
 		} finally {
 			lock.unlock();
 		}
-		orderService.createOrder(userId, book.getBookId(), book.getPrePrice(), book.getPublisher(), book.getBookIntroductionUrl(), OrderStatus.COMPLETED, payType);
+		orderService.createOrder(userId, book.getBookId(), book.getPrePrice(), buyStock, book.getPublisher(), book.getBookIntroductionUrl(), OrderStatus.COMPLETED, payType);
 	}
 
 	public PaymentReturnResponse returnPayment(Long userId, Long orderId) {
-		OrderResponse order = orderService.getOrderEntity(orderId);
+		OrderResponse order = orderService.getOrder(orderId);
 		if(!ObjectUtils.nullSafeEquals(userId, order.getUserId())) {
 			throw new InvalidRequestException(ErrorMessage.NO_AUTHORITY_TO_RETURN_A_PAYMENT);
 		}
@@ -79,8 +84,10 @@ public class PaymentService {
 			Book book = bookRepository.findById(order.getBookId()).orElseThrow(
 					() -> new NotFoundException(ErrorMessage.BOOK_NOT_FOUND)
 			);
-			book.updateStock(book.getStock() + order.getStock());
+			book.updateStock(book.getStock() + order.getBuyStock());
 			bookRepository.save(book);
+		} catch (NotFoundException ex) {
+			throw new NotFoundException(ex.getErrorMessage());
 		} catch (Exception ex) {
 			throw new ServerException(ErrorMessage.ERROR);
 		} finally {
@@ -90,7 +97,7 @@ public class PaymentService {
 		Long price = Long.parseLong(order.getPrePrice());
 		return PaymentReturnResponse.builder()
 				.orderId(orderId)
-				.returnMoney(order.getStock() * price)
+				.returnMoney(order.getBuyStock() * price)
 				.build();
 	}
 

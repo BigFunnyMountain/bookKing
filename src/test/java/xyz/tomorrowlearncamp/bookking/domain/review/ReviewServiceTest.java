@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.book.repository.BookRepository;
+import xyz.tomorrowlearncamp.bookking.domain.common.enums.ErrorMessage;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.InvalidRequestException;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
 import xyz.tomorrowlearncamp.bookking.domain.order.service.OrderService;
@@ -114,7 +115,7 @@ class ReviewServiceTest {
         given(bookRepository.findById(bookId)).willReturn(Optional.of(book));
         given(reviewRepository.existsByUserAndBookAndState(userId, bookId, ReviewState.ACTIVE)).willReturn(false);
         given(orderService.getPurchasedOrderId(userId, bookId))
-                .willThrow(new NotFoundException("구매 이력이 존재하지 않습니다."));
+                .willThrow(new NotFoundException(ErrorMessage.PURCHASE_HISTORY_NOT_FOUND));
 
         // when & then
         assertThatThrownBy(() -> reviewService.saveReview(userId, bookId, request))

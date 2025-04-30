@@ -29,11 +29,12 @@ public class OrderService {
     }
 
     @Transactional
-    public Order createOrder(Long userId, Long bookId, String prePrice, String publisher, String bookIntroductionUrl, OrderStatus status, PayType payType) {
+    public Order createOrder(Long userId, Long bookId, String prePrice, Long stock, String publisher, String bookIntroductionUrl, OrderStatus status, PayType payType) {
         Order order = Order.builder()
                 .userId(userId)
                 .bookId(bookId)
                 .prePrice(prePrice)
+                .stock(stock)
                 .publisher(publisher)
                 .bookIntroductionUrl(bookIntroductionUrl)
                 .status(status)
@@ -51,7 +52,7 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
-    public OrderResponse getOrderEntity(Long orderId) {
+    public OrderResponse getOrder(Long orderId) {
         Order getOrder = orderRepository.findById(orderId).orElseThrow(
                 () -> new NotFoundException(ErrorMessage.ORDER_NOT_FOUND)
         );

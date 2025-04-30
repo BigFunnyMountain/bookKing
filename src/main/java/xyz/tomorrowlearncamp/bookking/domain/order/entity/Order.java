@@ -28,6 +28,9 @@ public class Order extends BaseEntity {
     private String prePrice;
 
     @Column(nullable = false)
+    private Long buyStock;
+
+    @Column(nullable = false)
     private String publisher;
 
     @Column(nullable = false)
@@ -48,7 +51,7 @@ public class Order extends BaseEntity {
         this.userId = userId;
         this.bookId = bookId;
         this.prePrice = prePrice;
-        this.stock = stock;
+        this.buyStock = stock;
         this.publisher = publisher;
         this.bookIntroductionUrl = bookIntroductionUrl;
         this.status = status;
