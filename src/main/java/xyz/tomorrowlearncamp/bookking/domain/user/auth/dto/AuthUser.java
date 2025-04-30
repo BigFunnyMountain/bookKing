@@ -33,4 +33,8 @@ public class AuthUser {
 
         );
     }
+
+    public String getRole() {
+        return UserRole.valueOf(authorities.get(0).toString()).name();
+    }
 }

@@ -1,7 +1,6 @@
 package xyz.tomorrowlearncamp.bookking.domain.common.config;
 
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
@@ -9,11 +8,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import xyz.tomorrowlearncamp.bookking.domain.common.dto.Response;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.CustomExceptionDto;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.InvalidRequestException;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.ServerException;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.ValidationExceptionDto;
+import xyz.tomorrowlearncamp.bookking.domain.common.exception.*;
+
+import java.util.List;
 
 @Slf4j
 @RestControllerAdvice
@@ -47,6 +44,17 @@ public class GlobalExceptionHandler {
 		HttpServletResponse response
 	) {
 		log.error("[NotFoundException] {}로 인한 예외 발생", ex.getErrorMessage().name(), ex.getCause());
+		HttpStatus status = ex.getErrorMessage().getStatus();
+		response.setStatus(status.value());
+		return Response.fail(status, new CustomExceptionDto(ex.getErrorMessage()));
+	}
+
+	@ExceptionHandler(ForbiddenRequestException.class)
+	public Response<CustomExceptionDto> forbiddenExHandler(
+			final ForbiddenRequestException ex,
+			HttpServletResponse response
+	) {
+		log.error("[ForbiddenRequestException] {}로 인한 예외 발생", ex.getErrorMessage().name(), ex.getCause());
 		HttpStatus status = ex.getErrorMessage().getStatus();
 		response.setStatus(status.value());
 		return Response.fail(status, new CustomExceptionDto(ex.getErrorMessage()));
