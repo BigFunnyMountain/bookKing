@@ -59,3 +59,7 @@ jwt:
 library:
   api:
     key: ${LIBRARY_API_KEY}
+
+openai:
+  api:
+    key: ${OPENAI_API_KEY}
