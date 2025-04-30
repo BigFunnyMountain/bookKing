@@ -41,7 +41,7 @@ public class SearchBookService {
 			.block();
 	}
 
-	public String buildUrl(SearchBookRequestDto requestDto) {
+	private String buildUrl(SearchBookRequestDto requestDto) {
 		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(BASE_URL)
 			.queryParam("cert_key", apiKey)
 			.queryParam("result_style", "json")

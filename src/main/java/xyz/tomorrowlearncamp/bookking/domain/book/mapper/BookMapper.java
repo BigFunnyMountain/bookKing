@@ -25,8 +25,8 @@ public interface BookMapper {
 	                .publisher(dto.getPublisher())
 	                .bookIntroductionUrl(dto.getBookIntroductionUrl())
 	                .prePrice(dto.getPrePrice())
-	                .publicationDate(dto.getPublicationDate().toString())
-	                .stock(dto.getStock())
+	                .publicationDate(dto.getPublicationDate())
+	                .stock(0L)
 	                .source(BookSource.DIRECT)
 	                .build();
 	    }
