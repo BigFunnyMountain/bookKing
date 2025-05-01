@@ -14,7 +14,7 @@ public class OrderResponse {
     private boolean isReviewed;
     private LocalDateTime createdAt;
     private String prePrice;
-    private Long stock;
+    private Long buyStock;
     private String publisher;
     private String bookIntroductionUrl;
 
@@ -27,7 +27,7 @@ public class OrderResponse {
         this.isReviewed = isReviewed;
         this.createdAt = createdAt;
         this.prePrice = prePrice;
-        this.stock = stock;
+        this.buyStock = stock;
         this.publisher = publisher;
         this.bookIntroductionUrl = bookIntroductionUrl;
     }
@@ -41,7 +41,7 @@ public class OrderResponse {
                 order.isReviewed(),
                 order.getCreatedAt(),
                 order.getPrePrice(),
-                order.getStock(),
+                order.getBuyStock(),
                 order.getPublisher(),
                 order.getBookIntroductionUrl()
         );

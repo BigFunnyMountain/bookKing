@@ -1,0 +1,16 @@
+FROM docker.elastic.co/kibana/kibana:8.17.4
+
+ENV ELASTICSEARCH_HOSTS=http://elasticsearch:9200 \
+    XPACK_SECURITY_ENABLED=false
+
+RUN cat <<EOF > /usr/share/kibana/config/kibana.yml
+server.host: "0.0.0.0"
+server.shutdownTimeout: "5s"
+elasticsearch.hosts: [ "http://elasticsearch:9200" ]
+monitoring.ui.container.elasticsearch.enabled: true
+EOF
+
+EXPOSE 5601
+
+
+

@@ -30,7 +30,6 @@ public class BookController {
 	private final BookService bookService;
 	private final SearchBookService searchBookService;
 
-	//ToDo : 국립도서관API 호출 Post
 	@PostMapping("/v1/books/search")
 	public Response<SearchBookResponseDto> searchBooks(@RequestBody SearchBookRequestDto requestDto) {
 		return Response.success(searchBookService.searchBooks(requestDto));
