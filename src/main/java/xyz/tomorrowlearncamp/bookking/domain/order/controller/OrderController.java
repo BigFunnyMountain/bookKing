@@ -19,7 +19,7 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    @GetMapping("/v1/orders/myInfo")
+    @GetMapping("/v1/orders/my-info")
     public Response<Page<OrderResponse>> getMyOrders(
             @AuthenticationPrincipal AuthUser authUser,
             @RequestParam(defaultValue = "0") int page,

@@ -197,7 +197,6 @@ class UserServiceTest {
     void deleteUser_success() {
         // given
         Long userId = 1L;
-        Long loginUserId = 1L;
         String password = "1234";
 
         ReflectionTestUtils.setField(user, "id", userId);
@@ -205,31 +204,12 @@ class UserServiceTest {
         given(passwordEncoder.matches(password, user.getPassword())).willReturn(true);
 
         // when
-        userService.deleteUser(userId, loginUserId, password);
+        userService.deleteUser(userId, password);
 
         // then
         verify(userRepository).findById(userId);
         verify(passwordEncoder).matches(password, user.getPassword());
         verify(userRepository).delete(user);
-    }
-
-    @Test
-    @DisplayName("회원_삭제_실패-로그인한_사람과_삭제_대상이_다름")
-    void deleteUser_fail_notSelf() {
-        // given
-        Long userId = 1L;
-        Long loginUserId = 2L;
-        String rawPassword = "1234";
-
-        // when
-        Throwable thrown = catchThrowable(() -> userService.deleteUser(userId, loginUserId, rawPassword));
-
-        // then
-        assertThat(thrown)
-                .isInstanceOf(ResponseStatusException.class)
-                .hasMessageContaining("본인 게정만 탈퇴가 가능합니다");
-
-        verifyNoInteractions(userRepository, passwordEncoder);
     }
 
 }

@@ -34,7 +34,7 @@ public class AuthController {
         return Response.success(authService.signup(request));
     }
 
-    @PostMapping("/v1/auth/login")
+    @PostMapping("/v1/auth/signin")
     public Response<LoginResponse> login(@Valid @RequestBody LoginRequest request,
                                                HttpServletResponse response) {
         return Response.success(authService.login(request, response));

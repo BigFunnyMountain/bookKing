@@ -3,6 +3,7 @@ package xyz.tomorrowlearncamp.bookking.domain.review.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import xyz.tomorrowlearncamp.bookking.domain.common.dto.Response;
@@ -38,27 +39,27 @@ public class ReviewController {
     }
 
     @PatchMapping("/v1/books/{bookId}/reviews/{reviewId}")
-    public Response<String> updateReview(
+    @ResponseStatus(HttpStatus.OK)
+    public void updateReview(
             @PathVariable Long bookId,
             @PathVariable Long reviewId,
             @Valid @RequestBody ReviewUpdateRequest request,
             @AuthenticationPrincipal AuthUser authUser
     ) {
         reviewService.updateReview(authUser.getUserId(), bookId, reviewId, request);
-        return Response.success("리뷰가 성공적으로 수정되었습니다.");
     }
 
     @DeleteMapping("/v1/books/{bookId}/reviews/{reviewId}")
-    public Response<String> deleteReview(
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteReview(
             @PathVariable Long bookId,
             @PathVariable Long reviewId,
             @AuthenticationPrincipal AuthUser authUser
     ) {
         reviewService.deleteReview(authUser.getUserId(), bookId, reviewId);
-        return Response.success("리뷰가 성공적으로 삭제되었습니다.");
     }
 
-    @GetMapping("/v1/reviews/myinfo")
+    @GetMapping("/v1/reviews/my-info")
     public Response<Page<ReviewResponse>> getMyReviews(
             @AuthenticationPrincipal AuthUser authUser,
             @RequestParam(defaultValue = "0") int page,
