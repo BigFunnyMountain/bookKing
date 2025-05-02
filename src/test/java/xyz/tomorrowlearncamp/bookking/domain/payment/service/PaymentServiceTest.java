@@ -57,7 +57,7 @@ class PaymentServiceTest {
 
 		// when && then
 		ServerException assertThrows = assertThrows(ServerException.class,
-				() -> paymentService.payment(1L, 1L, 1L, 1L, PayType.KAKAO_PAY));
+				() -> paymentService.paymentV2(1L, 1L, 1L, 1L, PayType.KAKAO_PAY));
 
 		assertInstanceOf(ServerException.class, assertThrows);
 		assertEquals(ErrorMessage.REDIS_ERROR, assertThrows.getErrorMessage());
@@ -82,7 +82,7 @@ class PaymentServiceTest {
 		given(rlock.tryLock(100L, 10L, TimeUnit.SECONDS)).willReturn(true);
 
 		// when
-		paymentService.payment(user.getId(), 1L, 1L, 1L, PayType.KAKAO_PAY);
+		paymentService.paymentV2(user.getId(), 1L, 1L, 1L, PayType.KAKAO_PAY);
 
 		// then
 		verify(bookRepository, times(1)).save(any(book.getClass()));
@@ -103,7 +103,7 @@ class PaymentServiceTest {
 
 		// when && then
 		NotFoundException assertThrows = assertThrows(NotFoundException.class,
-				() -> paymentService.payment(1L, 1L, 1L, 1L, PayType.KAKAO_PAY));
+				() -> paymentService.paymentV2(1L, 1L, 1L, 1L, PayType.KAKAO_PAY));
 
 		assertInstanceOf(NotFoundException.class, assertThrows);
 		assertEquals(ErrorMessage.BOOK_NOT_FOUND, assertThrows.getErrorMessage());
@@ -124,7 +124,7 @@ class PaymentServiceTest {
 
 		// when && then
 		InvalidRequestException assertThrows = assertThrows(InvalidRequestException.class,
-				() -> paymentService.payment(1L, 1L, 1L, 1L, PayType.KAKAO_PAY));
+				() -> paymentService.paymentV2(1L, 1L, 1L, 1L, PayType.KAKAO_PAY));
 
 		assertInstanceOf(InvalidRequestException.class, assertThrows);
 		assertEquals(ErrorMessage.ZERO_BOOK_STOCK, assertThrows.getErrorMessage());
@@ -145,17 +145,61 @@ class PaymentServiceTest {
 
 		// when && then
 		InvalidRequestException assertThrows = assertThrows(InvalidRequestException.class,
-				() -> paymentService.payment(1L, 1L, 1L, 0L, PayType.KAKAO_PAY));
+				() -> paymentService.paymentV2(1L, 1L, 1L, 0L, PayType.KAKAO_PAY));
 
 		assertInstanceOf(InvalidRequestException.class, assertThrows);
 		assertEquals(ErrorMessage.SHORT_ON_MONEY, assertThrows.getErrorMessage());
 	}
 
+	@Test
+	@DisplayName("멀티 쓰래드 v1 구매 성공 테스트")
+	void paymentV1MutiSuccessTest() throws InterruptedException {
+		//given
+		UserResponse user = new UserResponse();
+		ReflectionTestUtils.setField(user, "id", 1L);
+		ReflectionTestUtils.setField(user, "email", "test@test.com");
+		ReflectionTestUtils.setField(user, "role", UserRole.ROLE_USER);
+
+		Book book = new Book();
+		ReflectionTestUtils.setField(book, "bookId", 1L);
+		ReflectionTestUtils.setField(book, "stock", 100L);
+		ReflectionTestUtils.setField(book, "prePrice", "1");
+
+		int threadCount = 100;
+		ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+		CountDownLatch latch = new CountDownLatch(threadCount);
+
+		given(bookRepository.findByIdWithLock(anyLong())).willReturn(book);
+		given(redissonClient.getFairLock(anyString())).willReturn(rlock);
+		given(rlock.tryLock(100L, 10L, TimeUnit.SECONDS)).willReturn(true);
+
+		//when
+		for (int i = 0; i < threadCount; i++) {
+			Long userId = (long)i;
+			executorService.execute(() -> {
+				try {
+					paymentService.paymentV1(userId, 1L, 1L, 1L, PayType.KAKAO_PAY);
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				} finally {
+					latch.countDown();
+				}
+			});
+		}
+
+		latch.await();
+		executorService.shutdown();
+
+		// then
+		verify(bookRepository, times(100)).save(any(book.getClass()));
+		assertEquals(0, book.getStock());
+	}
+
 
 
 	@Test
-	@DisplayName("멀티 쓰래드 구매 성공 테스트")
-	void paymentMutiSuccessTest() throws InterruptedException {
+	@DisplayName("멀티 쓰래드 v2 구매 성공 테스트")
+	void paymentV2MutiSuccessTest() throws InterruptedException {
 		//given
 		UserResponse user = new UserResponse();
 		ReflectionTestUtils.setField(user, "id", 1L);
@@ -180,7 +224,7 @@ class PaymentServiceTest {
 			Long userId = (long)i;
 			executorService.execute(() -> {
 				try {
-					paymentService.payment(userId, 1L, 1L, 1L, PayType.KAKAO_PAY);
+					paymentService.paymentV2(userId, 1L, 1L, 1L, PayType.KAKAO_PAY);
 				} catch (Exception e) {
 					System.out.println(e.getMessage());
 				} finally {

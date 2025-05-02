@@ -53,7 +53,7 @@ public class BookController {
 			@AuthenticationPrincipal AuthUser user,
 			@RequestBody @Valid AddBookRequestDto requestDto
 	) {
-		if (!ObjectUtils.nullSafeEquals(user.getRole(), UserRole.ROLE_ADMIN)) {
+		if (!ObjectUtils.nullSafeEquals(user.getRole(), UserRole.Authority.ADMIN)) {
 			throw new ForbiddenRequestException(ErrorMessage.FORBIDDEN_ADMINISTRATOR);
 		}
 		return Response.success(bookService.addBook(requestDto));
@@ -66,7 +66,7 @@ public class BookController {
 			@PathVariable("bookId") Long bookId,
 			@RequestBody @Valid UpdateBookRequestDto requestDto
 	) {
-		if (!ObjectUtils.nullSafeEquals(user.getRole(), UserRole.ROLE_ADMIN)) {
+		if (!ObjectUtils.nullSafeEquals(user.getRole(), UserRole.Authority.ADMIN)) {
 			throw new ForbiddenRequestException(ErrorMessage.FORBIDDEN_ADMINISTRATOR);
 		}
 		bookService.updateBook(bookId, requestDto);
@@ -79,7 +79,7 @@ public class BookController {
 			@PathVariable("bookId") Long bookId,
 			@RequestBody @Valid UpdateBookStockRequestDto requestDto
 	) {
-		if (!ObjectUtils.nullSafeEquals(user.getRole(), UserRole.ROLE_ADMIN)) {
+		if (!ObjectUtils.nullSafeEquals(user.getRole(), UserRole.Authority.ADMIN)) {
 			throw new ForbiddenRequestException(ErrorMessage.FORBIDDEN_ADMINISTRATOR);
 		}
 		bookService.updateBookStock(bookId, requestDto);
@@ -91,7 +91,7 @@ public class BookController {
 			@AuthenticationPrincipal AuthUser user,
 			@PathVariable("bookId") Long bookId
 	) {
-		if (!ObjectUtils.nullSafeEquals(user.getRole(), UserRole.ROLE_ADMIN)) {
+		if (!ObjectUtils.nullSafeEquals(user.getRole(), UserRole.Authority.ADMIN)) {
 			throw new ForbiddenRequestException(ErrorMessage.FORBIDDEN_ADMINISTRATOR);
 		}
 		bookService.deleteBook(bookId);
