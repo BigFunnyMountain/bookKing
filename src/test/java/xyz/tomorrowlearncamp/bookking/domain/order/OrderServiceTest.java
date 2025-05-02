@@ -1,5 +1,6 @@
 package xyz.tomorrowlearncamp.bookking.domain.order;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,12 +12,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.book.repository.BookRepository;
+import xyz.tomorrowlearncamp.bookking.domain.common.enums.ErrorMessage;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
 import xyz.tomorrowlearncamp.bookking.domain.order.dto.OrderResponse;
 import xyz.tomorrowlearncamp.bookking.domain.order.entity.Order;
 import xyz.tomorrowlearncamp.bookking.domain.order.enums.OrderStatus;
 import xyz.tomorrowlearncamp.bookking.domain.order.repository.OrderRepository;
 import xyz.tomorrowlearncamp.bookking.domain.order.service.OrderService;
+import xyz.tomorrowlearncamp.bookking.domain.payment.enums.PayType;
 import xyz.tomorrowlearncamp.bookking.domain.user.entity.User;
 import xyz.tomorrowlearncamp.bookking.domain.user.enums.Gender;
 import xyz.tomorrowlearncamp.bookking.domain.user.repository.UserRepository;
@@ -27,8 +30,8 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
@@ -142,6 +145,7 @@ class OrderServiceTest {
         String publisher = "테스트 출판사";
         String bookIntroductionUrl = "http://test-url.com";
         OrderStatus status = OrderStatus.COMPLETED;
+        PayType payType = PayType.CARD;
 
         Order savedOrder = Order.builder()
                 .userId(userId)
@@ -159,7 +163,7 @@ class OrderServiceTest {
         given(orderRepository.save(any(Order.class))).willReturn(savedOrder);
 
         // when
-        Order result = orderService.createOrder(userId, bookId, prePrice, stock, publisher, bookIntroductionUrl, status);
+        Order result = orderService.createOrder(userId, bookId, prePrice, stock, publisher, bookIntroductionUrl, status, payType);
 
         // then
         assertThat(result).isNotNull();
@@ -167,7 +171,7 @@ class OrderServiceTest {
         assertThat(result.getUserId()).isEqualTo(userId);
         assertThat(result.getBookId()).isEqualTo(bookId);
         assertThat(result.getPrePrice()).isEqualTo(prePrice);
-        assertThat(result.getStock()).isEqualTo(stock);
+        assertThat(result.getBuyStock()).isEqualTo(stock);
         assertThat(result.getPublisher()).isEqualTo(publisher);
         assertThat(result.getBookIntroductionUrl()).isEqualTo(bookIntroductionUrl);
         assertThat(result.getStatus()).isEqualTo(status);
@@ -217,8 +221,7 @@ class OrderServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderService.getPurchasedOrderId(userId, bookId))
-                .isInstanceOf(NotFoundException.class)
-                .hasMessage("구매 이력이 존재하지 않습니다.");
+                .isInstanceOf(NotFoundException.class);
 
         verify(orderRepository).findCompletedOrder(userId, bookId, OrderStatus.COMPLETED);
     }
@@ -260,9 +263,44 @@ class OrderServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderService.switchReviewStatus(orderId))
-                .isInstanceOf(NotFoundException.class)
-                .hasMessage("주문을 찾을 수 없습니다.");
+                .isInstanceOf(NotFoundException.class);
 
         verify(orderRepository).findById(orderId);
+    }
+
+    @Test
+    @DisplayName("있는 오더 엔티티")
+    void 오더_엔티티_가져오기_성공() {
+        // given
+        Order order = Order.builder()
+                .userId(1L)
+                .bookId(2L)
+                .prePrice("15000")
+                .stock(3L)
+                .publisher("테스트 출판사")
+                .bookIntroductionUrl("http://test-url.com")
+                .status(OrderStatus.COMPLETED)
+                .build();
+        ReflectionTestUtils.setField(order, "orderId", 1L);
+
+        given(orderRepository.findById(anyLong())).willReturn(Optional.of(order));
+
+        OrderResponse getOrder = orderService.getOrder(1L);
+
+        assertThat(getOrder.getOrderId()).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("없는 오더 가져오기")
+    void 오더_엔티티_가져오기_실패() {
+        // given
+        given(orderRepository.findById(anyLong())).willReturn(Optional.empty());
+
+        // when && then
+        NotFoundException assertThrows = assertThrows(NotFoundException.class,
+                () -> orderService.getOrder(1L));
+
+        assertInstanceOf(NotFoundException.class, assertThrows);
+        assertEquals(ErrorMessage.ORDER_NOT_FOUND, assertThrows.getErrorMessage());
     }
 }

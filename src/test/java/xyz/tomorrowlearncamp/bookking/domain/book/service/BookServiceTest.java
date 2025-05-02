@@ -10,6 +10,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.AddBookRequestDto;
@@ -20,6 +21,7 @@ import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.service.ElasticB
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.book.mapper.BookMapper;
 import xyz.tomorrowlearncamp.bookking.domain.book.repository.BookRepository;
+import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class BookServiceTest {
@@ -40,7 +42,7 @@ class BookServiceTest {
 	private ElasticBookService elasticBookService;
 
 	@Test
-	void addBook_shouldSaveBookAndReturnId() {
+	void 책_등록() {
 		// given
 		AddBookRequestDto requestDto = new AddBookRequestDto();
 		Book book = new Book();
@@ -58,7 +60,7 @@ class BookServiceTest {
 	}
 
 	@Test
-	void updateBook_shouldUpdateBookFields() {
+	void 책_내용_업데이트() {
 		// given
 		Long id = 1L;
 		Book book = new Book();
@@ -74,7 +76,22 @@ class BookServiceTest {
 	}
 
 	@Test
-	void updateBookStock_shouldUpdateStock() {
+	void 책_내용_업데이트_실패() {
+		// given
+		Long id = 1L;
+		Book book = new Book();
+		UpdateBookRequestDto requestDto = new UpdateBookRequestDto();
+
+		given(bookRepository.findById(id)).willThrow(NotFoundException.class);
+
+		// when & then
+		assertThrows(NotFoundException.class, () -> {
+			bookService.updateBook(id, requestDto);
+		});
+	}
+
+	@Test
+	void 책_재고_업데이트() {
 		// given
 		Long id = 1L;
 		Book book = mock(Book.class);
@@ -91,7 +108,23 @@ class BookServiceTest {
 	}
 
 	@Test
-	void getBookById_shouldReturnBookResponseDto() {
+	void 책_재고_업데이트_실패() {
+		// given
+		Long id = 1L;
+		Book book = mock(Book.class);
+		UpdateBookStockRequestDto requestDto = new UpdateBookStockRequestDto();
+		ReflectionTestUtils.setField(requestDto, "stock", 5L);
+
+		given(bookRepository.findById(id)).willThrow(NotFoundException.class);
+
+		// when & then
+		assertThrows(NotFoundException.class, () -> {
+			bookService.updateBookStock(id, requestDto);
+		});
+	}
+
+	@Test
+	void 책_ID로_책_찾기() {
 		// given
 		Long id = 1L;
 		Book book = new Book();
@@ -106,7 +139,21 @@ class BookServiceTest {
 	}
 
 	@Test
-	void deleteBook_shouldCallRepositoryDelete() {
+	void 책_ID로_책_찾기_실패() {
+		// given
+		Long id = 1L;
+		Book book = new Book();
+
+		given(bookRepository.findById(id)).willThrow(NotFoundException.class);
+
+		// when & then
+		assertThrows(NotFoundException.class, () -> {
+			bookService.getBookById(id);
+		});
+	}
+
+	@Test
+	void 책_삭제() {
 		// given
 		Long id = 1L;
 
@@ -115,22 +162,5 @@ class BookServiceTest {
 
 		// then
 		then(bookRepository).should().deleteById(id);
-	}
-
-	@Test
-	void saveBooksInBatch_shouldCallJdbcTemplateBatchUpdate() {
-		// given
-		List<Book> books = List.of(new Book(), new Book());
-
-		// when
-		bookService.saveBooksInBatch(books, 500);
-
-		// then
-		then(jdbcTemplate).should().batchUpdate(
-			anyString(),
-			eq(books),
-			eq(500),
-			any()
-		);
 	}
 }

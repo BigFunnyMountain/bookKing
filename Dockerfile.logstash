@@ -1,0 +1,38 @@
+FROM docker.elastic.co/logstash/logstash:8.17.4
+
+RUN mkdir -p /usr/share/logstash/pipeline && \
+    cat <<EOF > /usr/share/logstash/pipeline//logstash.conf
+input {
+  tcp {
+    port => 4560
+    host => "0.0.0.0"
+    codec => json_lines
+  }
+}
+
+filter {
+  json {
+    source => "message"
+  }
+}
+
+output {
+  if [log_type] == "search" {
+    elasticsearch {
+      hosts => ["http://elasticsearch:9200"]
+      index => "search-logs-%{+YYYY.MM.dd}"
+    }
+  } else if [log_type] == "buy" {
+    elasticsearch {
+      hosts => ["http://elasticsearch:9200"]
+      index => "buy-logs-%{+YYYY.MM.dd}"
+    }
+  } else {
+    stdout {
+      codec => rubydebug
+    }
+  }
+}
+EOF
+
+EXPOSE 4560 9600

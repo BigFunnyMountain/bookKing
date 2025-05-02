@@ -1,15 +1,12 @@
 package xyz.tomorrowlearncamp.bookking.domain.payment.controller;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import xyz.tomorrowlearncamp.bookking.domain.payment.dto.request.PaymentRequest;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+import xyz.tomorrowlearncamp.bookking.domain.common.dto.Response;
+import xyz.tomorrowlearncamp.bookking.domain.payment.dto.request.PaymentBuyRequest;
+import xyz.tomorrowlearncamp.bookking.domain.payment.dto.response.PaymentReturnResponse;
 import xyz.tomorrowlearncamp.bookking.domain.payment.service.PaymentService;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.AuthUser;
 
@@ -21,17 +18,24 @@ public class PaymentController {
 	private final PaymentService paymentService;
 
 	@PostMapping("/v1/payments")
-	public ResponseEntity<Void> payment(
+	public void payment(
 			@AuthenticationPrincipal AuthUser user,
-			@Valid @RequestBody PaymentRequest paymentRequest
+			@Valid @RequestBody PaymentBuyRequest paymentBuyRequest
 	) {
 		paymentService.payment(
 			user.getUserId(),
-			paymentRequest.getBookId(),
-			paymentRequest.getBuyStock(),
-			paymentRequest.getMoney(),
-			paymentRequest.getPayType()
+			paymentBuyRequest.getBookId(),
+			paymentBuyRequest.getBuyStock(),
+			paymentBuyRequest.getMoney(),
+			paymentBuyRequest.getPayType()
 		);
-		return ResponseEntity.ok().build();
+	}
+
+	@PostMapping("/v1/payment/{orderId}")
+	public Response<PaymentReturnResponse> returnPayment(
+			@AuthenticationPrincipal AuthUser user,
+			@PathVariable Long orderId
+	) {
+		return Response.success(paymentService.returnPayment(user.getUserId(), orderId));
 	}
 }

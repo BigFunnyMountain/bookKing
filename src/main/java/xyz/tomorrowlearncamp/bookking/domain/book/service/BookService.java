@@ -39,6 +39,7 @@ public class BookService {
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """;
 
+    @Transactional
     public void saveBooksInBatch(List<Book> books, int batchSize) {
         LocalDateTime now = LocalDateTime.now();
 

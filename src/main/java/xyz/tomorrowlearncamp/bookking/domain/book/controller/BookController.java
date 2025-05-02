@@ -34,7 +34,6 @@ public class BookController {
 	private final BookService bookService;
 	private final SearchBookService searchBookService;
 
-	//ToDo : 국립도서관API 호출 Post
 	@PostMapping("/v1/books/search")
 	@ResponseStatus(HttpStatus.OK)
 	public SearchBookResponseDto searchBooks(@RequestBody SearchBookRequestDto requestDto) {
@@ -50,13 +49,11 @@ public class BookController {
 		return ResponseEntity.ok().build();
 	}
 
-	//ToDo : 권한 체크 필요
 	@PostMapping("/v1/books")
 	public ResponseEntity<Long> addBook(@RequestBody @Valid AddBookRequestDto requestDto) {
 		return ResponseEntity.ok(bookService.addBook(requestDto));
 	}
 
-	//ToDo : 권한 체크 필요
 	@PatchMapping("/v1/books/{bookId}")
 	public ResponseEntity<Void> updateBook(
 		@PathVariable("bookId") Long bookId,
@@ -66,7 +63,6 @@ public class BookController {
 		return ResponseEntity.ok().build();
 	}
 
-	//ToDo : 권한 체크 필요
 	@PatchMapping("/v1/books/{bookId}/stock")
 	public ResponseEntity<Void> updateBookStock(
 		@PathVariable("bookId") Long bookId,
@@ -76,7 +72,6 @@ public class BookController {
 		return ResponseEntity.ok().build();
 	}
 
-	//ToDo : 권한 체크 필요
 	@DeleteMapping("/v1/books/{bookId}")
 	public ResponseEntity<Void> deleteBook(@PathVariable("bookId") Long bookId) {
 		bookService.deleteBook(bookId);
