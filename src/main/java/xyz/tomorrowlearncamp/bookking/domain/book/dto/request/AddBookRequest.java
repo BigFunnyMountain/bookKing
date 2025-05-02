@@ -1,11 +1,11 @@
 package xyz.tomorrowlearncamp.bookking.domain.book.dto.request;
 
-import java.time.LocalDateTime;
-
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import xyz.tomorrowlearncamp.bookking.domain.book.entity.BookSource;
 
 @Getter
-public class UpdateBookRequestDto {
+public class AddBookRequest {
 	private String title;
 	private String subject;
 	private String author;
@@ -13,4 +13,7 @@ public class UpdateBookRequestDto {
 	private String bookIntroductionUrl;
 	private String prePrice;
 	private String publicationDate;
+	private final Long stock = 0L;
+	@NotNull
+	private BookSource source;
 }

@@ -32,6 +32,7 @@ public enum ErrorMessage {
 	BOOK_NOT_FOUND(NOT_FOUND,"없는 책입니다."),
 	PURCHASE_HISTORY_NOT_FOUND(NOT_FOUND, "구매 이력이 존재하지 않습니다."),
 	ORDER_NOT_FOUND(NOT_FOUND, "주문을 찾을 수 없습니다."),
+	NO_HANDLER_FOUND(NOT_FOUND, "요청한 리소스를 찾을 수 없습니다."),
 
 
 	FILE_SIZE_LIMIT_EXCEEDED(PAYLOAD_TOO_LARGE, "전송하려는 개별 파일의 크기가 너무 큽니다."),
@@ -46,6 +47,8 @@ public enum ErrorMessage {
 	DB_TOO_MANY_CONNECTION_ERROR(INTERNAL_SERVER_ERROR, "DB 연결이 너무 많습니다."),
 	DEFAULT_DB_ERROR(INTERNAL_SERVER_ERROR, "데이터베이스 에러가 발생했습니다."),
 	FILE_IO_FAILED(INTERNAL_SERVER_ERROR, "파일 입출력 중 에러가 발생했습니다."),
+	INDEX_FAILED_ERROR(INTERNAL_SERVER_ERROR, "INDEX 작업 중 에러가 발생했습니다."),
+	REINDEXING_IO_ERROR(INTERNAL_SERVER_ERROR, "REINDEX 작업 수행 중 에러가 발생했습니다."),
 	;
 
 	private final HttpStatus status;

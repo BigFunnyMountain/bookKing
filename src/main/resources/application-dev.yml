@@ -23,7 +23,7 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
 
   elasticsearch:
-    uris: http://elastic-container:9200
+    uris: http://elasticsearch:9200
 
   servlet:
     multipart:

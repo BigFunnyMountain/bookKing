@@ -7,7 +7,7 @@ import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.document.Elastic
 
 @Getter
 @NoArgsConstructor
-public class ElasticBookSearchResponseDto {
+public class ElasticBookSearchResponse {
 
     private Long bookId;
     private String title;
@@ -17,7 +17,7 @@ public class ElasticBookSearchResponseDto {
     private String source;
 
     @Builder
-    private ElasticBookSearchResponseDto(Long bookId, String title, String author, String publisher, String subject, String source) {
+    private ElasticBookSearchResponse(Long bookId, String title, String author, String publisher, String subject, String source) {
         this.bookId = bookId;
         this.title = title;
         this.author = author;
@@ -26,8 +26,8 @@ public class ElasticBookSearchResponseDto {
         this.source = source;
     }
 
-    public static ElasticBookSearchResponseDto of(ElasticBookDocument doc) {
-        return ElasticBookSearchResponseDto.builder()
+    public static ElasticBookSearchResponse of(ElasticBookDocument doc) {
+        return ElasticBookSearchResponse.builder()
                 .bookId(doc.getBookId())
                 .title(doc.getTitle())
                 .author(doc.getAuthor())

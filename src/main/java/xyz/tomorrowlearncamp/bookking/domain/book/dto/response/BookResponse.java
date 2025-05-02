@@ -1,12 +1,10 @@
 package xyz.tomorrowlearncamp.bookking.domain.book.dto.response;
 
-import java.time.LocalDateTime;
-
 import lombok.Getter;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 
 @Getter
-public class BookResponseDto {
+public class BookResponse {
 	private final Long bookId;
 	private final String title;
 	private final String subject;
@@ -17,7 +15,7 @@ public class BookResponseDto {
 	private final String publicationDate;
 	private final Long stock;
 
-	public BookResponseDto(Book book) {
+	public BookResponse(Book book) {
 		this.bookId = book.getBookId();
 		this.title = book.getTitle();
 		this.subject = book.getSubject();
@@ -29,7 +27,7 @@ public class BookResponseDto {
 		this.stock = book.getStock();
 	}
 
-	public static BookResponseDto of(Book book) {
-		return new BookResponseDto(book);
+	public static BookResponse of(Book book) {
+		return new BookResponse(book);
 	}
 }

@@ -41,7 +41,7 @@ services:
     depends_on:
       - elastic-search
     ports:
-      - "5044:5044"
+      - "4560:4560"
     networks:
       - local-test
 
