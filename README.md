@@ -213,6 +213,7 @@ BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활
 # 8. 기술적 의사 결정 및 트러블 슈팅
 - [노션](https://www.notion.so/teamsparta/16-Bookking-1e22dc3ef514809e91f6e1d0aef42603)
 
+테스트 후, 추후 업데이트 예정
 
 <hr>
 
