@@ -32,7 +32,6 @@ BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활
 <hr>
 
 # 3. 기술 스택
-## :공구_상자: 기술 스택
 <h3 align="center">Backend</h3>
 <p align="center">
   <img alt="Java" src="https://img.shields.io/badge/Java-ED8B00?logo=java&logoColor=white&style=flat-square" />
@@ -111,13 +110,7 @@ BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활
 <hr>
 
 # 5. 주요 기능 및 API 명세서
-![image](https://github.com/user-attachments/assets/9bea02f9-f0fa-421d-943e-fc1dcaa4bcc6) <br><br>
-![image](https://github.com/user-attachments/assets/191bb6ef-d7d2-43f1-bc7d-e3b296f0eb8e) <br><hr>
-<b>사용자 로그 수집</b><br>
-![image](https://github.com/user-attachments/assets/ae1bcfc4-5fd5-456d-b6f6-fdab2805eca7) <br><hr>
-
-
-## 📌 주요 기능
+<b>📌 주요 기능</b>
 
 |  기능 |  설명 |
 |--------|--------|
@@ -126,6 +119,14 @@ BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활
 | **사용자 로그 수집** | 사용자 구매 로그 정보로 사용자 수요 조사 |
 | **인공지능 사용자 맞춤 추천** | 사용자 키워드 검색 및 구매 목록을 기반, 사용자 맞춤 책 키워드로 검색 및 추천 | 
 <br>
+
+![image](https://github.com/user-attachments/assets/9bea02f9-f0fa-421d-943e-fc1dcaa4bcc6) <br><br>
+![image](https://github.com/user-attachments/assets/191bb6ef-d7d2-43f1-bc7d-e3b296f0eb8e) <br><hr>
+<b>사용자 로그 수집</b><br>
+![image](https://github.com/user-attachments/assets/ae1bcfc4-5fd5-456d-b6f6-fdab2805eca7) <br><hr>
+
+
+
 
 <hr>
 
