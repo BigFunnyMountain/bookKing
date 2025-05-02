@@ -135,63 +135,63 @@ BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활
 ### Auth API
 | 기능 | method | URL | requestHeader | requestBody | responseBody | responseStatus |
 |:----:|:------:|:---:|:-------------:|:-----------:|:------------:|:---------------:|
-| 회원 가입 | POST | /api/v1/auth/signup | - | SignupRequest | SignupResponse | 200 OK<br>400 BAD_REQUEST |
-| 유저 로그인 (email) | POST | /api/v1/auth/login | - | LoginRequest | LoginResponse | 200 OK<br>400 BAD_REQUEST |
-| 토큰 재발급 | POST | /api/v1/auth/refresh | Authorization | - | 재발급 Response | 200 OK<br>400 BAD_REQUEST |
+| <nobr>회원 가입</nobr> | POST | /api/v1/auth/signup | - | SignupRequest | SignupResponse | 200 OK<br>400 BAD_REQUEST |
+| <nobr>유저 로그인 (email)</nobr> | POST | /api/v1/auth/login | - | LoginRequest | LoginResponse | 200 OK<br>400 BAD_REQUEST |
+| <nobr>토큰 재발급</nobr> | POST | /api/v1/auth/refresh | Authorization | - | 재발급 Response | 200 OK<br>400 BAD_REQUEST |
 
 ### User API
 | 기능             | method | URL                          | requestHeader           | requestBody           | requestParam | responseBody  | responseStatus         |
 |:----------------:|:------:|:-----------------------------:|:------------------------:|:----------------------:|:------------:|:--------------:|:------------------------:|
-| 회원&nbsp;조회      | GET    | /api/v1/users/myInfo         | Authorization           | -                    | -            | UserResponse   | 200 OK<br>400 BAD_REQUEST |
-| 회원&nbsp;수정      | PATCH  | /api/v1/users/myInfo         | Authorization           | UpdateUserRequest     | -            | UserResponse   | 200 OK<br>400 BAD_REQUEST |
-| ADMIN&nbsp;권한&nbsp;부여 | PATCH  | /api/v1/users/{userId}/role  | Authorization           | UpdateUserRoleRequest | -            | UserResponse   | 200 OK<br>400 BAD_REQUEST |
-| 회원&nbsp;탈퇴      | DELETE | /api/v1/users/{userId}       | Authorization, password | -                    | -            | -              | 200 OK<br>400 BAD_REQUEST |
-| 프로필<br>업로드   | POST   | /v1/users/profile-image      | Authorization           | image                 | -            | -              | 200 OK<br>400 BAD_REQUEST |
+| <nobr>회원&nbsp;조회</nobr>      | GET    | /api/v1/users/myInfo         | Authorization           | -                    | -            | UserResponse   | 200 OK<br>400 BAD_REQUEST |
+| <nobr>회원&nbsp;수정</nobr>      | PATCH  | /api/v1/users/myInfo         | Authorization           | UpdateUserRequest     | -            | UserResponse   | 200 OK<br>400 BAD_REQUEST |
+| <nobr>ADMIN&nbsp;권한&nbsp;부여</nobr> | PATCH  | /api/v1/users/{userId}/role  | Authorization           | UpdateUserRoleRequest | -            | UserResponse   | 200 OK<br>400 BAD_REQUEST |
+| <nobr>회원&nbsp;탈퇴</nobr>      | DELETE | /api/v1/users/{userId}       | Authorization, password | -                    | -            | -              | 200 OK<br>400 BAD_REQUEST |
+| <nobr>프로필<br>업로드</nobr>   | POST   | /v1/users/profile-image      | Authorization           | image                 | -            | -              | 200 OK<br>400 BAD_REQUEST |
 
 ### Book API
 | 기능 | method | URL | requestHeader | requestBody | requestParam | responseBody | responseStatus |
 |:----:|:------:|:---:|:-------------:|:-----------:|:------------:|:------------:|:--------------:|
-| OpenAPI 책 검색 | POST | /api/v1/books/search | - | SearchBookRequestDto | - | SearchBookResponseDto | 200 OK<br>500 SERVER_ERROR |
-| OpenAPI 책 DB에 추가 | POST | /api/v1/books/import | - | - | pageSize, totalPage | - | 200 OK<br>500 SERVER_ERROR |
-| 새로운 책 등록 | POST | /api/v1/books | Authorization(ADMIN) | AddBookRequestDto | - | 1 | 200 OK<br>400 BAD_REQUEST |
-| 책 내용 수정 | PATCH | /api/v1/books/{bookId} | Authorization(ADMIN) | UpdateBookRequestDto | - | - | 200 OK<br>404 NOT_FOUND |
-| 책 수량 수정 | PATCH | /api/v1/books/{bookId}/stock | Authorization(ADMIN) | UpdateBookStockRequestDto | - | - | 200 OK<br>404 NOT_FOUND |
-| 책 삭제 | DELETE | /api/v1/books/{bookId} | Authorization(ADMIN) | - | - | - | 200 OK<br>404 NOT_FOUND |
-| 책 목록 가져오기 | GET | /api/v1/books | - | - | - | BookResponseDto | 200 OK |
-| 책<br>가져오기 | GET | /api/v1/books/{bookId} | - | - | - | Page&lt;BookResponseDto&gt; | 200 OK |
+| <nobr>OpenAPI 책 검색</nobr> | POST | /api/v1/books/search | - | SearchBookRequestDto | - | SearchBookResponseDto | 200 OK<br>500 SERVER_ERROR |
+| <nobr>OpenAPI 책 DB에 추가</nobr> | POST | /api/v1/books/import | - | - | pageSize, totalPage | - | 200 OK<br>500 SERVER_ERROR |
+| <nobr>새로운 책 등록</nobr> | POST | /api/v1/books | Authorization(ADMIN) | AddBookRequestDto | - | 1 | 200 OK<br>400 BAD_REQUEST |
+| <nobr>책 내용 수정</nobr> | PATCH | /api/v1/books/{bookId} | Authorization(ADMIN) | UpdateBookRequestDto | - | - | 200 OK<br>404 NOT_FOUND |
+| <nobr>책 수량 수정</nobr> | PATCH | /api/v1/books/{bookId}/stock | Authorization(ADMIN) | UpdateBookStockRequestDto | - | - | 200 OK<br>404 NOT_FOUND |
+| <nobr>책 삭제</nobr> | DELETE | /api/v1/books/{bookId} | Authorization(ADMIN) | - | - | - | 200 OK<br>404 NOT_FOUND |
+| <nobr>책 목록 가져오기</nobr> | GET | /api/v1/books | - | - | - | BookResponseDto | 200 OK |
+| <nobr>책<br>가져오기</nobr> | GET | /api/v1/books/{bookId} | - | - | - | Page&lt;BookResponseDto&gt; | 200 OK |
 
 ### Search API
 | 기능 | method | URL | requestHeader | requestBody | requestParam | responseBody | responseStatus |
 |:----:|:------:|:---:|:-------------:|:-----------:|:------------:|:------------:|:--------------:|
-| 검색 | GET | /api/v1/elasticsearch | - | - | keyword | Page<br>&lt;ElasticBookSearchResponseDto&gt; | 200 OK<br>500 SERVER_ERROR |
-| 자동완성 | GET | /api/v3/elasticsearch/autocomplete | - | - | keyword, size | List&lt;String&gt; | 200 OK<br>500 SERVER_ERROR |
-| 연관 검색어 | GET | /api/v1/elasticsearch/relate | - | - | keyword | List&lt;String&gt; | 200 OK<br>500 SERVER_ERROR |
+| <nobr>검색 | GET | /api/v1/elasticsearch | - | - | keyword | Page<br>&lt;ElasticBookSearchResponseDto&gt; | 200 OK<br>500 SERVER_ERROR |
+| <nobr>자동완성</nobr> | GET | /api/v3/elasticsearch/autocomplete | - | - | keyword, size | List&lt;String&gt; | 200 OK<br>500 SERVER_ERROR |
+| <nobr>연관 검색어</nobr> | GET | /api/v1/elasticsearch/relate | - | - | keyword | List&lt;String&gt; | 200 OK<br>500 SERVER_ERROR |
 
 ### Keyword API
 | 기능 | method | URL | requestHeader | requestBody | requestParam | responseBody | responseStatus |
 |:----:|:------:|:---:|:-------------:|:-----------:|:------------:|:------------:|:--------------:|
-| 키워드 입력해서 받기 | POST | /api/v1/keywords/suggest | - | KeywordRequest | - | 결제 | 400 BAD_REQUEST, 200 OK |
-| 구매목록 기반 키워드 | GET | /api/v1/keywords/recommendations | Authorization(JWT) | - | - | 결제 | 400 BAD_REQUEST, 200 OK |
+| <nobr>키워드 입력해서 받기</nobr> | POST | /api/v1/keywords/suggest | - | KeywordRequest | - | 결제 | 400 BAD_REQUEST, 200 OK |
+| <nobr>구매목록 기반 키워드</nobr> | GET | /api/v1/keywords/recommendations | Authorization(JWT) | - | - | 결제 | 400 BAD_REQUEST, 200 OK |
 
 ### Order API
 | 기능 | method | URL | requestHeader | requestBody | requestParam | responseBody | responseStatus |
 |:----:|:------:|:---:|:-------------:|:-----------:|:------------:|:------------:|:--------------:|
-| 주문 목록조회 | GET | /api/v1/orders/myInfo | Authorization(User) | - | - | Page&lt;OrderResponse&gt; | 200 OK<br>400 BAD_REQUEST |
+| <nobr>주문 목록조회</nobr> | GET | /api/v1/orders/myInfo | Authorization(User) | - | - | Page&lt;OrderResponse&gt; | 200 OK<br>400 BAD_REQUEST |
 
 ### Payment API
 | 기능 | method | URL | requestHeader | requestBody | requestParam | responseBody | responseStatus |
 |:----:|:------:|:---:|:-------------:|:-----------:|:------------:|:------------:|:--------------:|
-| 결제 | POST | /api/v1/payments | Authorization(JWT) | PaymentBuyRequest | - | 결제 | 400 BAD_REQUEST, 200 OK |
-| 결제 취소 | POST | /v1/payment/{orderId} | Authorization(JWT) | - | - | PaymentReturnResponse | 400 BAD_REQUEST, 200 OK |
+| <nobr>결제</nobr> | POST | /api/v1/payments | Authorization(JWT) | PaymentBuyRequest | - | 결제 | 400 BAD_REQUEST, 200 OK |
+| <nobr>결제 취소</nobr> | POST | /v1/payment/{orderId} | Authorization(JWT) | - | - | PaymentReturnResponse | 400 BAD_REQUEST, 200 OK |
 
 ### Review API
-| 기능 | method | URL | requestHeader | requestBody | requestParam | responseBody | responseStatus |
-|:----:|:------:|:---:|:-------------:|:-----------:|:------------:|:------------:|:--------------:|
-| 리뷰 생성 | POST | /api/v1/books/{bookId}/reviews | Authorization(USER) | ReviewRequest | - | - | 200 OK, 400 BAD_REQUEST |
-| 리뷰 조회 | GET | /api/v1/books/{bookId}/reviews | - | - | - | Page&lt;ReviewResponse&gt; | 200 OK, 400 BAD_REQUEST |
-| 리뷰 수정 | PATCH | /api/v1/books/{bookId}/reviews/{reviewId} | Authorization(USER) | ReviewUpdateRequest | - | - | 200 OK, 400 BAD_REQUEST |
-| 리뷰 삭제 | DELETE | /api/v1/books/{bookId}/reviews/{reviewId} | Authorization(USER) | - | - | - | 200 OK, 400 BAD_REQUEST |
-| 내가 쓴 리뷰 | GET | /api/v1/reviews/my | Authorization(USER) | - | page, size | List&lt;ReviewResponse&gt; | 200 OK, 400 BAD_REQUEST |
+|         기능         | method | URL | requestHeader | requestBody | requestParam | responseBody | responseStatus |
+|:------------------:|:------:|:---:|:-------------:|:-----------:|:------------:|:------------:|:--------------:|
+| <nobr>리뷰 생성</nobr> | POST | /api/v1/books/{bookId}/reviews | Authorization(USER) | ReviewRequest | - | - | 200 OK, 400 BAD_REQUEST |
+|<nobr>리뷰 조회</nobr>| GET | /api/v1/books/{bookId}/reviews | - | - | - | Page&lt;ReviewResponse&gt; | 200 OK, 400 BAD_REQUEST |
+|<nobr>리뷰 수정</nobr>| PATCH | /api/v1/books/{bookId}/reviews/{reviewId} | Authorization(USER) | ReviewUpdateRequest | - | - | 200 OK, 400 BAD_REQUEST |
+|<nobr>리뷰 삭제</nobr>| DELETE | /api/v1/books/{bookId}/reviews/{reviewId} | Authorization(USER) | - | - | - | 200 OK, 400 BAD_REQUEST |
+|<nobr>내가 쓴 리뷰</nobr>| GET | /api/v1/reviews/my | Authorization(USER) | - | page, size | List&lt;ReviewResponse&gt; | 200 OK, 400 BAD_REQUEST |
 
 
 <hr>
