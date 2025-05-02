@@ -1,8 +1,10 @@
 package xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.controller;
 
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.dto.ElasticBookSearchResponseDto;
 import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.service.ElasticBookService;
 import xyz.tomorrowlearncamp.bookking.domain.common.dto.Response;
+import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.AuthUser;
 
 import java.util.List;
 
@@ -21,10 +24,11 @@ public class ElasticBookSearchController {
 
     @GetMapping("/v1/elasticsearch")
     public Response<Page<ElasticBookSearchResponseDto>> searchBooks(
+            @AuthenticationPrincipal AuthUser user,
             @RequestParam String keyword,
             Pageable pageable
     ) {
-        Page<ElasticBookSearchResponseDto> result = elasticBookService.search(keyword, pageable);
+        Page<ElasticBookSearchResponseDto> result = elasticBookService.search(user.getUserId(), keyword, pageable);
         return Response.success(result);
     }
 

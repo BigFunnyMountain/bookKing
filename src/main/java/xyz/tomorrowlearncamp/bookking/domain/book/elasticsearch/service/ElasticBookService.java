@@ -18,10 +18,17 @@ import org.springframework.stereotype.Service;
 import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.document.ElasticBookDocument;
 import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.dto.ElasticBookSearchResponseDto;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
+import xyz.tomorrowlearncamp.bookking.domain.common.enums.LogType;
+import xyz.tomorrowlearncamp.bookking.domain.common.util.LogUtil;
+import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.UserResponse;
+import xyz.tomorrowlearncamp.bookking.domain.user.service.UserService;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
@@ -29,6 +36,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class ElasticBookService {
 
+    private final UserService userService;
     private final ElasticsearchClient elasticsearchClient;
     private static final String INDEX_NAME = "books";
 
@@ -48,7 +56,7 @@ public class ElasticBookService {
         }
     }
 
-    public Page<ElasticBookSearchResponseDto> search(String keyword, Pageable pageable) {
+    public Page<ElasticBookSearchResponseDto> search(Long userId, String keyword, Pageable pageable) {
         try {
             List<Query> mustQueries = new ArrayList<>();
             if (keyword != null && !keyword.isBlank()) {
@@ -81,6 +89,17 @@ public class ElasticBookService {
                     .toList();
 
             long totalHits = elasticBookDocumentSearchResponse.hits().total() != null ? elasticBookDocumentSearchResponse.hits().total().value() : 0L;
+
+            UserResponse user = userService.getMyInfo(userId);
+
+            Map<String, Object> log = new HashMap<>();
+            log.put("log_type", "search");
+            log.put("age_group", LogUtil.getAgeGroup(user.getAge()));
+            log.put("gender", user.getGender());
+            log.put("keyword", keyword);
+            log.put("timestamp", Instant.now().toString());
+
+            LogUtil.log(LogType.SEARCH, log);
 
             return new PageImpl<>(results, pageable, totalHits);
 

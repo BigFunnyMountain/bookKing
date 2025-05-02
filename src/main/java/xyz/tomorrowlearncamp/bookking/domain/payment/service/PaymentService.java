@@ -9,16 +9,22 @@ import org.springframework.util.ObjectUtils;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.book.repository.BookRepository;
 import xyz.tomorrowlearncamp.bookking.domain.common.enums.ErrorMessage;
+import xyz.tomorrowlearncamp.bookking.domain.common.enums.LogType;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.InvalidRequestException;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.ServerException;
+import xyz.tomorrowlearncamp.bookking.domain.common.util.LogUtil;
 import xyz.tomorrowlearncamp.bookking.domain.order.dto.OrderResponse;
 import xyz.tomorrowlearncamp.bookking.domain.order.enums.OrderStatus;
 import xyz.tomorrowlearncamp.bookking.domain.order.service.OrderService;
 import xyz.tomorrowlearncamp.bookking.domain.payment.dto.response.PaymentReturnResponse;
 import xyz.tomorrowlearncamp.bookking.domain.payment.enums.PayType;
+import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.UserResponse;
 import xyz.tomorrowlearncamp.bookking.domain.user.service.UserService;
 
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -70,6 +76,18 @@ public class PaymentService {
 			lock.unlock();
 		}
 		orderService.createOrder(userId, book.getBookId(), book.getPrePrice(), buyStock, book.getPublisher(), book.getBookIntroductionUrl(), OrderStatus.COMPLETED, payType);
+
+		UserResponse user = userService.getMyInfo(userId);
+
+		Map<String, Object> log = new HashMap<>();
+		log.put("log_type", "buy");
+		log.put("age_group", LogUtil.getAgeGroup(user.getAge()));
+		log.put("gender", user.getGender());
+		log.put("price", book.getPrePrice());
+		log.put("book_name", book.getTitle());
+		log.put("timestamp", Instant.now().toString());
+
+		LogUtil.log(LogType.PURCHASE, log);
 	}
 
 	public PaymentReturnResponse returnPayment(Long userId, Long orderId) {
