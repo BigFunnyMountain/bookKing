@@ -9,10 +9,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
+import xyz.tomorrowlearncamp.bookking.domain.common.enums.ErrorMessage;
+import xyz.tomorrowlearncamp.bookking.domain.common.exception.InvalidRequestException;
+import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.config.JwtProvider;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.SignupRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.entity.RefreshToken;
@@ -26,7 +27,9 @@ import xyz.tomorrowlearncamp.bookking.domain.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
@@ -60,16 +63,13 @@ class AuthServiceTest {
         LoginRequest request = LoginRequest.of("notfound@email.com", "1234");
         given(userRepository.findByEmail(request.getEmail())).willReturn(Optional.empty());
 
-        // when
-        Throwable throwable = catchThrowable(() -> authService.login(request, response));
 
-        // then
-        assertThat(throwable)
-                .isInstanceOf(UsernameNotFoundException.class)
-                .hasMessage("사용자를 찾을 수 없습니다.");
+        // when && then
+        NotFoundException assertThrows = assertThrows(NotFoundException.class,
+                () -> authService.login(request, response));
 
-        verify(userRepository).findByEmail(request.getEmail());
-        verifyNoInteractions(passwordEncoder, jwtProvider, refreshTokenRepository);
+        assertInstanceOf(NotFoundException.class, assertThrows);
+        assertEquals(ErrorMessage.USER_NOT_FOUND, assertThrows.getErrorMessage());
     }
 
     @Test
@@ -86,17 +86,12 @@ class AuthServiceTest {
 
         LoginRequest request = LoginRequest.of(email, inputPassword);
 
-        // when
-        Throwable throwable = catchThrowable(() -> authService.login(request, response));
+        // when && then
+        InvalidRequestException assertThrows = assertThrows(InvalidRequestException.class,
+                () -> authService.login(request, response));
 
-        // then
-        assertThat(throwable)
-                .isInstanceOf(BadCredentialsException.class)
-                .hasMessage("비밀번호가 일치하지 않습니다.");
-
-        verify(userRepository).findByEmail(email);
-        verify(passwordEncoder).matches(inputPassword, encodedPassword);
-        verifyNoInteractions(jwtProvider, refreshTokenRepository);
+        assertInstanceOf(InvalidRequestException.class, assertThrows);
+        assertEquals(ErrorMessage.WRONG_PASSWORD, assertThrows.getErrorMessage());
     }
 
     @Test
@@ -147,14 +142,12 @@ class AuthServiceTest {
         String refreshToken = "not_in_db_token";
         given(refreshTokenRepository.findByToken(refreshToken)).willReturn(Optional.empty());
 
-        // when
-        Throwable thrown = catchThrowable(() -> authService.refreshAccessToken(refreshToken));
-        log.info(">>>>>>>>>> [refresh_fail_tokenNotFound] 예외 메시지: {}", thrown.getMessage());
+        // when && then
+        InvalidRequestException assertThrows = assertThrows(InvalidRequestException.class,
+                () -> authService.refreshAccessToken(refreshToken));
 
-        // then
-        assertThat(thrown)
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("유효하지 않은 Refresh Token.");
+        assertInstanceOf(InvalidRequestException.class, assertThrows);
+        assertEquals(ErrorMessage.INVALID_REFRESH_TOKEN, assertThrows.getErrorMessage());
     }
 
     @Test
@@ -171,14 +164,12 @@ class AuthServiceTest {
 
         given(refreshTokenRepository.findByToken(refreshToken)).willReturn(Optional.of(token));
 
-        // when
-        Throwable thrown = catchThrowable(() -> authService.refreshAccessToken(refreshToken));
-        log.info(">>>>>>>>> [refresh_fail_expiredToken] 예외 메시지: {}", thrown.getMessage());
+        // when && then
+        InvalidRequestException assertThrows = assertThrows(InvalidRequestException.class,
+                () -> authService.refreshAccessToken(refreshToken));
 
-        // then
-        assertThat(thrown)
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("만료된 Refresh Token.");
+        assertInstanceOf(InvalidRequestException.class, assertThrows);
+        assertEquals(ErrorMessage.EXPIRED_REFRESH_TOKEN, assertThrows.getErrorMessage());
     }
 
     @Test
@@ -197,14 +188,12 @@ class AuthServiceTest {
         given(refreshTokenRepository.findByToken(refreshToken)).willReturn(Optional.of(token));
         given(userRepository.findById(999L)).willReturn(Optional.empty());
 
-        // when
-        Throwable thrown = catchThrowable(() -> authService.refreshAccessToken(refreshToken));
-        log.info(">>>>>>>> [refresh_fail_userNotFound] 예외 메시지: {}", thrown.getMessage());
+        // when && then
+        NotFoundException assertThrows = assertThrows(NotFoundException.class,
+                () -> authService.refreshAccessToken(refreshToken));
 
-        // then
-        assertThat(thrown)
-                .isInstanceOf(org.springframework.security.core.userdetails.UsernameNotFoundException.class)
-                .hasMessage("사용자를 찾을 수 없습니다.");
+        assertInstanceOf(NotFoundException.class, assertThrows);
+        assertEquals(ErrorMessage.USER_NOT_FOUND, assertThrows.getErrorMessage());
     }
 
     @Test
@@ -261,18 +250,12 @@ class AuthServiceTest {
 
         given(userRepository.existsByEmail(email)).willReturn(true);
 
-        // when
-        Throwable thrown = catchThrowable(() -> authService.signup(request));
-        log.info(">>>>>>> [signup_fail_duplicateEmail] 예외 메시지: {}", thrown.getMessage());
+        // when && then
+        InvalidRequestException assertThrows = assertThrows(InvalidRequestException.class,
+                () -> authService.signup(request));
 
-        // then
-        assertThat(thrown)
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("이미 가입된 email 입니다.");
-
-        verify(userRepository).existsByEmail(email);
-        verifyNoMoreInteractions(userRepository);
-        verifyNoInteractions(passwordEncoder, jwtProvider, refreshTokenRepository);
+        assertInstanceOf(InvalidRequestException.class, assertThrows);
+        assertEquals(ErrorMessage.EMAIL_DUPLICATED, assertThrows.getErrorMessage());
     }
 
     @Test

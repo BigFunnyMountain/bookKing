@@ -6,14 +6,11 @@ import lombok.Getter;
 
 @Getter
 public class UpdateBookRequestDto {
-	private String isbn;
 	private String title;
 	private String subject;
 	private String author;
 	private String publisher;
 	private String bookIntroductionUrl;
 	private String prePrice;
-	private String page;
-	private String titleUrl;
 	private String publicationDate;
 }

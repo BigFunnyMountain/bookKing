@@ -16,7 +16,17 @@ public enum ErrorMessage {
 	REVIEW_ALREADY_WRITTEN(BAD_REQUEST, "이미 작성된 리뷰입니다."),
 	TYPE_MISMATCH(BAD_REQUEST, "올바른 값을 입력해주세요."),
 
-	NO_AUTHORITY_TO_WRITE_A_REVIEW(FORBIDDEN, "리뷰를 작성할 권한이 없습니다."),
+    NO_AUTHORITY_TO_WRITE_A_REVIEW(FORBIDDEN, "리뷰를 작성할 권한이 없습니다."),
+    INVALID_HEADER(BAD_REQUEST, "Authorization 헤더가 잘못되었습니다."),
+    INVALID_REFRESH_TOKEN(BAD_REQUEST, "유효하지 않은 Refresh Token입니다."),
+    EXPIRED_REFRESH_TOKEN(BAD_REQUEST, "만료된 Refresh Token입니다."),
+    EMAIL_DUPLICATED(BAD_REQUEST, "이미 가입된 이메일입니다."),
+    WRONG_PASSWORD(UNAUTHORIZED, "비밀번호가 일치하지 않습니다."),
+    ROLE_CHANGE_NOT_ALLOWED(BAD_REQUEST, "ROLE_USER만 ROLE_ADMIN으로 변경할 수 있습니다."),
+    NO_AUTHORITY_TO_CHANGE_ROLE(FORBIDDEN, "본인 계정만 권한을 변경할 수 있습니다."),
+    NO_AUTHORITY_TO_DELETE_USER(FORBIDDEN, "본인 계정만 탈퇴할 수 있습니다."),
+	NO_AUTHORITY_TO_RETURN_A_PAYMENT(FORBIDDEN, "환불할 권한이 없습니다."),
+	FORBIDDEN_ADMINISTRATOR(FORBIDDEN, "권한이 없습니다."),
 
 	USER_NOT_FOUND(NOT_FOUND, "사용자를 찾을 수 없습니다."),
 	BOOK_NOT_FOUND(NOT_FOUND,"없는 책입니다."),

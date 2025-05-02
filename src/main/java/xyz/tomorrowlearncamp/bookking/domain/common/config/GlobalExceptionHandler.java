@@ -1,9 +1,6 @@
 package xyz.tomorrowlearncamp.bookking.domain.common.config;
 
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.springframework.dao.DataAccessException;
@@ -14,15 +11,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
-import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.reactive.function.client.WebClientException;
 import xyz.tomorrowlearncamp.bookking.domain.common.dto.Response;
 import xyz.tomorrowlearncamp.bookking.domain.common.enums.ErrorMessage;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.CustomExceptionDto;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.InvalidRequestException;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.ServerException;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.ValidationExceptionDto;
+import xyz.tomorrowlearncamp.bookking.domain.common.exception.*;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
 
 @Slf4j
 @RestControllerAdvice
@@ -34,10 +30,8 @@ public class GlobalExceptionHandler {
 		HttpServletResponse response
 	) {
 		HttpStatus status = ex.getErrorMessage().getStatus();
-
 		log.error("[InvalidRequestException] name: {}, stackTrace: {}", ex.getErrorMessage().name(),
 			ex.getStackTrace());
-
 		response.setStatus(status.value());
 		return Response.fail(status, new CustomExceptionDto(ex.getErrorMessage()));
 	}
@@ -48,9 +42,7 @@ public class GlobalExceptionHandler {
 		HttpServletResponse response
 	) {
 		HttpStatus status = ex.getErrorMessage().getStatus();
-
 		log.error("[ServerException] name: {}, stackTrace: {}", ex.getErrorMessage().name(), ex.getStackTrace());
-
 		response.setStatus(status.value());
 		return Response.fail(status, new CustomExceptionDto(ex.getErrorMessage()));
 	}
@@ -61,9 +53,18 @@ public class GlobalExceptionHandler {
 		HttpServletResponse response
 	) {
 		HttpStatus status = ex.getErrorMessage().getStatus();
-
 		log.error("[NotFoundException] name: {}, stackTrace:{}", ex.getErrorMessage().name(), ex.getStackTrace());
+		response.setStatus(status.value());
+		return Response.fail(status, new CustomExceptionDto(ex.getErrorMessage()));
+	}
 
+	@ExceptionHandler(ForbiddenRequestException.class)
+	public Response<CustomExceptionDto> forbiddenExHandler(
+			final ForbiddenRequestException ex,
+			HttpServletResponse response
+	) {
+		log.error("[ForbiddenRequestException] {}로 인한 예외 발생", ex.getErrorMessage().name(), ex.getCause());
+		HttpStatus status = ex.getErrorMessage().getStatus();
 		response.setStatus(status.value());
 		return Response.fail(status, new CustomExceptionDto(ex.getErrorMessage()));
 	}
@@ -81,9 +82,7 @@ public class GlobalExceptionHandler {
 				String defaultMessage = fieldError.getDefaultMessage();
 				return new ValidationExceptionDto(code, field, defaultMessage);
 			}).toList();
-
 		log.error("[MethodArgumentNotValidException] stackTrace: {}", (Object[]) ex.getStackTrace());
-
 		response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 		return Response.fail(HttpStatus.BAD_REQUEST, validationList);
 	}
