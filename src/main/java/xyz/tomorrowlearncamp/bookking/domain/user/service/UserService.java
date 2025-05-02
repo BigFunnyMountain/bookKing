@@ -53,21 +53,15 @@ public class UserService {
         UserRole currentRole = user.getRole();
         UserRole requestedRole = UserRole.of(updateUserRoleRequest.getRole());
 
-        if (currentRole == UserRole.ROLE_USER && requestedRole == UserRole.ROLE_ADMIN) {
-            user.updateRole(UserRole.ROLE_ADMIN);
-        } else {
+        if (!(currentRole == UserRole.ROLE_USER && requestedRole == UserRole.ROLE_ADMIN)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "권한 변경이 허용되지 않습니다. \n ROLE_USER만 ROLE_ADMIN으로 변경할 수 있습니다.");
         }
-
+        user.updateRole(UserRole.ROLE_ADMIN);
         userRepository.save(user);
         return UserResponse.of(user);
     }
 
-    public void deleteUser(Long userId, Long loginUserId, String checkPassword) {
-        if (!userId.equals(loginUserId)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "본인 게정만 탈퇴가 가능합니다");
-        }
-
+    public void deleteUser(Long userId, String checkPassword) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
 

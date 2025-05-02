@@ -16,6 +16,12 @@ public class Review extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reviewId;
 
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+
+    @Column(name = "book_id", nullable = false)
+    private Long bookId;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StarRating rating;
@@ -26,12 +32,6 @@ public class Review extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ReviewState reviewState;
-
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
-
-    @Column(name = "book_id", nullable = false)
-    private Long bookId;
 
     @Builder
     public Review(Long userId, Long bookId, StarRating rating, String content, ReviewState reviewState) {

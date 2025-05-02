@@ -17,6 +17,7 @@ public enum ErrorMessage {
 
 	NO_AUTHORITY_TO_WRITE_A_REVIEW(FORBIDDEN, "리뷰를 작성할 권한이 없습니다."),
 	NO_AUTHORITY_TO_RETURN_A_PAYMENT(FORBIDDEN, "환불할 권한이 없습니다."),
+	FORBIDDEN_ADMINISTRATOR(FORBIDDEN, "권한이 없습니다."),
 
 	USER_NOT_FOUND(NOT_FOUND, "사용자를 찾을 수 없습니다."),
 	BOOK_NOT_FOUND(NOT_FOUND,"없는 책입니다."),
