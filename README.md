@@ -29,6 +29,9 @@ BookKing과 함께라면, 당신이 원하는 바로 그 책을 손쉽게 찾을
 
 BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활을 더욱 풍요롭고 편리하게 만들어 줄 것입니다.<br>
 지금 바로 BookKing을 경험하고, 원하는 책을 그 어느 때보다 쉽고 빠르게 찾아보세요!
+
+- **프로젝트 기간** <br>
+  25.04.01 ~ 25.05.02
 - **서비스 웹사이트**  
   [https://app.tomorrowlearncamp.xyz](https://app.tomorrowlearncamp.xyz)
 - **Notion 문서** <br>
