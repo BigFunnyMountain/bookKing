@@ -38,7 +38,7 @@ public class Order extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private OrderStatus orderStatus;
+    private OrderStatus status;
 
     @Column(nullable = false)
     private boolean isReviewed;
@@ -54,7 +54,7 @@ public class Order extends BaseEntity {
         this.buyStock = stock;
         this.publisher = publisher;
         this.bookIntroductionUrl = bookIntroductionUrl;
-        this.orderStatus = status;
+        this.status = status;
         this.payType = payType;
         this.isReviewed = false;
     }
