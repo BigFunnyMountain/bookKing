@@ -1,3 +1,8 @@
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/c3e6372e-8bc5-4dbe-9387-63ade5339a1b" alt="BookKing 배너" width="1000" height="200"/>
+</p>
+<hr>
+
 #  1. 팀원 소개 🙋🏻‍♂️
 | <img src="https://github.com/user-attachments/assets/4d49dfa7-601c-42ee-ba36-dea4ea83c01a" width="150" height="150"/> <br>  [이은성](https://github.com/mixedsider) <br>  팀장 <br> 👉ENTP👈 <br>  구매 <br> CICD <br> AWS 인프라 <br> [블로그](https://strnetwork.tistory.com/)  | <img src="https://github.com/user-attachments/assets/143433f4-dc79-4ca4-9cb4-a16406af4783" width="150" height="150"/> <br>  [박용준](https://github.com/dereck-jun) <br>  부팀장 <br>👉ISTJ👈 <br>  AWS 인프라 구성 <br> CI/CD 구축 <br>[블로그](https://velog.io/@dereck-jun)| <img src="https://github.com/user-attachments/assets/58cbd44d-6bab-4a73-bf93-c8da2621e518" width="150" height="150"/> <br>  [문성준](https://github.com/sjMun09) <br>  팀원 <br>👉ESTP👈<br>  USER <br> Elasticsearch & <br> Kibana <br> [블로그](https://velog.io/@ohoh7391/posts) |
 |:--:|:--:|:--:|
@@ -128,11 +133,8 @@ BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활
 
 
 
-<hr>
 
-# 6. 서비스 플로우
-
-## API 명세서 <br>
+<b>📌 API 명세서</b>
 ### Auth API
 | 기능 | method | URL | requestHeader | requestBody | responseBody | responseStatus |
 |:----:|:------:|:---:|:-------------:|:-----------:|:------------:|:---------------:|
@@ -197,27 +199,22 @@ BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활
 
 <hr>
 
+# 6. 서비스 플로우
+
+<hr>
+
 # 7. 프로젝트 아키텍처
 ![image](https://github.com/user-attachments/assets/beb5f99e-78e9-4a69-af82-6531f2a681ad)
 
 <hr>
 
+# 8. 기술적 의사 결정 및 트러블 슈팅
 
-# 8. 모니터링 (그라파나)
-![img.png](img.png)
-<br>
-현재 그라파나를 이용하여 서비스 서버를 모니터링 하고있습니다. <br>
-Spring 애플리케이션의 Heap/Non-Heap 메모리, GC 지연, CPU 사용량, HTTP 요청 지연을 모니터링합니다
-![img_2.png](img_2.png)
-서버가 다운될 시 바로 조치를 취할 수 있도록 slack 알람이 옵니다.
+
 
 <hr>
 
-# 9. 기술적 의사 결정 및 트러블 슈팅
-
-<hr>
-
-# 10. 테스트 환경 실행
+# 9. 테스트 환경 실행
 
 <h4>실행 환경 준비</h4>
 
