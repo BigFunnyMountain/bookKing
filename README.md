@@ -3,13 +3,33 @@
 |:--:|:--:|:--:|
 | <img src="https://github.com/user-attachments/assets/89b22ae8-14c1-4bef-bdd3-d6f64b98900d" width="150" height="150"/> <br>  **[유은호](https://github.com/mapleclover)** <br>  팀원 <br>👉C.U.T.E👈 <br> Book <br> Kibana & <br> Logstash 시각화<br> [블로그](https://velog.io/@mapleclover) | <img src="https://github.com/user-attachments/assets/d550a0a2-592d-4dc1-8978-df02deb22c1a" width="150" height="150"/> <br>  **[이범서](https://github.com/polaris65b)** <br>  팀원 <br>👉ENTJ👈 <br>  Order(구매목록)<br> Review<br> 키워드 추천<br> 모니터링 <br> [블로그](https://polaris65b.tistory.com/) |
 
+<hr>
 
 # 2. 프로젝트 개요
+**BookKing**, <br>
+<i><b>당신의 완벽한 책 찾기 여정을 위한 스마트 도서 검색 서비스</b></i> <br><br>
+더 이상 답답한 도서 검색에 시간을 낭비하지 마세요.<br>
+BookKing은 사용자의 다양한 검색 조건에 **빠르고 정확하게 응답** 하는 혁신적인 키워드 기반 도서 검색 서비스입니다.<br>
+BookKing과 함께라면, 당신이 원하는 바로 그 책을 손쉽게 찾을 수 있습니다.
 
+**BookKing이 선사하는 편리하고 스마트한 검색 경험**
+
+- **번개처럼 빠른 검색 속도:** 기다림 없이 즉각적으로 검색 결과를 확인하세요.
+- **정확한 검색 결과:** 당신이 찾는 책을 놓치지 않고 정확하게 찾아드립니다.
+- **똑똑한 검색 지원 기능**
+    - **정확한 제목 검색:** 떠오르는 책 제목을 입력하는 순간, BookKing이 찾아드립니다.
+    - **자동 완성 기능:** 검색어 입력을 도와 더욱 빠르고 편리하게 검색할 수 있습니다.
+    - **연관 검색 기능:** 검색한 내용과 유사한 검색어 키워드를 보여줘서 비슷한 내용을 빠르게 검색을 해볼 수 있습니다. ****
+    - **AI 연관 키워드 추천:** 인공지능이 당신의 검색 의도를 파악하여 생각지도 못했던 흥미로운 책들을 추천해 줍니다. 새로운 발견의 즐거움을 BookKing이 선사합니다.
+
+BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활을 더욱 풍요롭고 편리하게 만들어 줄 것입니다.<br>
+지금 바로 BookKing을 경험하고, 원하는 책을 그 어느 때보다 쉽고 빠르게 찾아보세요!
 - **서비스 웹사이트**  
   [https://app.tomorrowlearncamp.xyz](https://app.tomorrowlearncamp.xyz)
 - **Notion 문서** <br>
   [BookKing 프로젝트 노션](https://www.notion.so/teamsparta/16-Bookking-1e22dc3ef514809e91f6e1d0aef42603)
+
+<hr>
 
 # 3. 기술 스택
 
@@ -83,11 +103,15 @@
   <img alt="Aurora" src="https://img.shields.io/badge/Aurora-400090?logo=amazonaws&logoColor=white&style=flat-square" />
 </p>
 
+<hr>
+
 # 4. ERD 설계
 ![image](https://github.com/user-attachments/assets/7f8bced7-7ebb-4a97-ab3d-23efbe803a07)
 
+<hr>
+
 # 5. 주요 기능 및 API 명세서
-![image](https://github.com/user-attachments/assets/9bea02f9-f0fa-421d-943e-fc1dcaa4bcc6) <br><hr>
+![image](https://github.com/user-attachments/assets/9bea02f9-f0fa-421d-943e-fc1dcaa4bcc6) <br><br>
 ![image](https://github.com/user-attachments/assets/191bb6ef-d7d2-43f1-bc7d-e3b296f0eb8e) <br><hr>
 <b>사용자 로그 수집</b><br>
 ![image](https://github.com/user-attachments/assets/ae1bcfc4-5fd5-456d-b6f6-fdab2805eca7) <br><hr>
@@ -102,6 +126,8 @@
 | **사용자 로그 수집** | 사용자 구매 로그 정보로 사용자 수요 조사 |
 | **인공지능 사용자 맞춤 추천** | 사용자 키워드 검색 및 구매 목록을 기반, 사용자 맞춤 책 키워드로 검색 및 추천 | 
 <br>
+
+<hr>
 
 # 6. 서비스 플로우
 
@@ -168,17 +194,21 @@
 | 내가 쓴 리뷰 | GET | /api/v1/reviews/my | Authorization(USER) | - | page, size | List&lt;ReviewResponse&gt; | 200 OK, 400 BAD_REQUEST |
 
 
-
+<hr>
 
 # 7. 프로젝트 아키텍처
 ![image](https://github.com/user-attachments/assets/beb5f99e-78e9-4a69-af82-6531f2a681ad)
 
-
+<hr>
 
 
 # 8. 모니터링 (그라파나)
 
+<hr>
+
 # 9. 기술적 의사 결정 및 트러블 슈팅
+
+<hr>
 
 # 10. 테스트 환경 실행
 
