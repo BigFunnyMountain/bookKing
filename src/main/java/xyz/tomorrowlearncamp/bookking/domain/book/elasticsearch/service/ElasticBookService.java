@@ -90,16 +90,16 @@ public class ElasticBookService {
 
             long totalHits = elasticBookDocumentSearchResponse.hits().total() != null ? elasticBookDocumentSearchResponse.hits().total().value() : 0L;
 
-            UserResponse user = userService.getMyInfo(userId);
-
-            Map<String, Object> log = new HashMap<>();
-            log.put("log_type", "search");
-            log.put("age_group", LogUtil.getAgeGroup(user.getAge()));
-            log.put("gender", user.getGender());
-            log.put("keyword", keyword);
-            log.put("timestamp", Instant.now().toString());
-
-            LogUtil.log(LogType.SEARCH, log);
+            if (userId != null) {
+                UserResponse user = userService.getMyInfo(userId);
+                Map<String, Object> log = new HashMap<>();
+                log.put("log_type", "search");
+                log.put("age_group", LogUtil.getAgeGroup(user.getAge()));
+                log.put("gender", user.getGender());
+                log.put("keyword", keyword);
+                log.put("timestamp", Instant.now().toString());
+                LogUtil.log(LogType.SEARCH, log);
+            }
 
             return new PageImpl<>(results, pageable, totalHits);
 

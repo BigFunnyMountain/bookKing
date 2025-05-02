@@ -23,6 +23,7 @@ import xyz.tomorrowlearncamp.bookking.domain.payment.dto.response.PaymentReturnR
 import xyz.tomorrowlearncamp.bookking.domain.payment.enums.PayType;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.UserResponse;
 import xyz.tomorrowlearncamp.bookking.domain.user.enums.UserRole;
+import xyz.tomorrowlearncamp.bookking.domain.user.service.UserService;
 
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
@@ -44,7 +45,8 @@ class PaymentServiceTest {
 	private OrderService orderService;
 	@Mock
 	private RLock rlock;
-
+	@Mock
+	private UserService userService;
 	@InjectMocks
 	private PaymentService paymentService;
 
@@ -80,6 +82,7 @@ class PaymentServiceTest {
 		given(bookRepository.findById(anyLong())).willReturn(Optional.of(book));
 		given(redissonClient.getFairLock(anyString())).willReturn(rlock);
 		given(rlock.tryLock(100L, 10L, TimeUnit.SECONDS)).willReturn(true);
+		given(userService.getMyInfo(anyLong())).willReturn(user);
 
 		// when
 		paymentService.payment(user.getId(), 1L, 1L, 1L, PayType.KAKAO_PAY);
@@ -174,6 +177,7 @@ class PaymentServiceTest {
 		given(bookRepository.findById(anyLong())).willReturn(Optional.of(book));
 		given(redissonClient.getFairLock(anyString())).willReturn(rlock);
 		given(rlock.tryLock(100L, 10L, TimeUnit.SECONDS)).willReturn(true);
+		given(userService.getMyInfo(anyLong())).willReturn(user);
 
 		//when
 		for (int i = 0; i < threadCount; i++) {
