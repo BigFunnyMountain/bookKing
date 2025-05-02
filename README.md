@@ -187,7 +187,7 @@ BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활
 ### Review API
 |         기능         | method | URL | requestHeader | requestBody | requestParam | responseBody | responseStatus |
 |:------------------:|:------:|:---:|:-------------:|:-----------:|:------------:|:------------:|:--------------:|
-| <nobr>리뷰 생성</nobr> | POST | /api/v1/books/{bookId}/reviews | Authorization(USER) | ReviewRequest | - | - | 200 OK, 400 BAD_REQUEST |
+| <nobr>리뷰 생성 | POST | /api/v1/books/{bookId}/reviews | Authorization(USER) | ReviewRequest | - | - | 200 OK, 400 BAD_REQUEST </nobr>|
 |<nobr>리뷰 조회</nobr>| GET | /api/v1/books/{bookId}/reviews | - | - | - | Page&lt;ReviewResponse&gt; | 200 OK, 400 BAD_REQUEST |
 |<nobr>리뷰 수정</nobr>| PATCH | /api/v1/books/{bookId}/reviews/{reviewId} | Authorization(USER) | ReviewUpdateRequest | - | - | 200 OK, 400 BAD_REQUEST |
 |<nobr>리뷰 삭제</nobr>| DELETE | /api/v1/books/{bookId}/reviews/{reviewId} | Authorization(USER) | - | - | - | 200 OK, 400 BAD_REQUEST |
