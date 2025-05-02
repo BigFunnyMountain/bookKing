@@ -6,9 +6,12 @@
 
 # 2. 프로젝트 개요
 
+- **서비스 웹사이트**  
+  [https://app.tomorrowlearncamp.xyz](https://app.tomorrowlearncamp.xyz)
+- **Notion 문서** <br>
+  [BookKing 프로젝트 노션](https://www.notion.so/teamsparta/16-Bookking-1e22dc3ef514809e91f6e1d0aef42603)
 
-
-# 기술 스택
+# 3. 기술 스택
 
 <b>Backend</b>
 <p>
@@ -80,10 +83,10 @@
   <img alt="Aurora" src="https://img.shields.io/badge/Aurora-400090?logo=amazonaws&logoColor=white&style=flat-square" />
 </p>
 
-# 3. ERD 설계
+# 4. ERD 설계
 ![image](https://github.com/user-attachments/assets/7f8bced7-7ebb-4a97-ab3d-23efbe803a07)
 
-# 4. 주요 기능 및 API 명세서
+# 5. 주요 기능 및 API 명세서
 ![image](https://github.com/user-attachments/assets/9bea02f9-f0fa-421d-943e-fc1dcaa4bcc6) <br><hr>
 ![image](https://github.com/user-attachments/assets/191bb6ef-d7d2-43f1-bc7d-e3b296f0eb8e) <br><hr>
 <b>사용자 로그 수집</b><br>
@@ -100,7 +103,7 @@
 | **인공지능 사용자 맞춤 추천** | 사용자 키워드 검색 및 구매 목록을 기반, 사용자 맞춤 책 키워드로 검색 및 추천 | 
 <br>
 
-# 5. 서비스 플로우
+# 6. 서비스 플로우
 
 ## API 명세서 <br>
 ### Auth API
@@ -167,17 +170,17 @@
 
 
 
-# 6. 프로젝트 아키텍처
+# 7. 프로젝트 아키텍처
 ![image](https://github.com/user-attachments/assets/beb5f99e-78e9-4a69-af82-6531f2a681ad)
 
 
 
 
-# 7. 모니터링 (그라파나)
+# 8. 모니터링 (그라파나)
 
-# 8. 기술적 의사 결정 및 트러블 슈팅
+# 9. 기술적 의사 결정 및 트러블 슈팅
 
-# 9. 테스트 환경 실행
+# 10. 테스트 환경 실행
 
 <h4>실행 환경 준비</h4>
 
