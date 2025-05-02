@@ -1,6 +1,10 @@
 #  1. 팀원 소개 🙋🏻‍♂️
+| <img src="https://github.com/user-attachments/assets/4d49dfa7-601c-42ee-ba36-dea4ea83c01a" width="150" height="150"/> <br>  이은성 <br>  팀장 <br>  구매 <br> CICD<br> AWS 인프라 | <img src="https://github.com/user-attachments/assets/143433f4-dc79-4ca4-9cb4-a16406af4783" width="150" height="150"/> <br>  박용준 <br>  부팀장 <br>  AWS 인프라 구성 <br> CI/CD 구축 | <img src="https://github.com/user-attachments/assets/58cbd44d-6bab-4a73-bf93-c8da2621e518" width="150" height="150"/> <br>  문성준 <br>  팀원 <br>  USER <br> Elasticsearch & <br> Kibana |
+|:--:|:--:|:--:|
+| <img src="https://github.com/user-attachments/assets/89b22ae8-14c1-4bef-bdd3-d6f64b98900d" width="150" height="150"/> <br>  **유은호** <br>  팀원 <br>  Book <br> Kibana & <br> Logstash 시각화 | <img src="https://github.com/user-attachments/assets/d550a0a2-592d-4dc1-8978-df02deb22c1a" width="150" height="150"/> <br>  **이범서** <br>  팀원 <br>  Order(구매목록)<br> Review<br> 키워드 추천<br> 모니터링 |
 
 # 2. 프로젝트 개요
+
 
 
 # 기술 스택
@@ -76,7 +80,7 @@
 </p>
 
 # 3. ERD 설계
-
+![image](https://github.com/user-attachments/assets/7f8bced7-7ebb-4a97-ab3d-23efbe803a07)
 
 # 4. 주요 기능 및 API 명세서
 ![image](https://github.com/user-attachments/assets/9bea02f9-f0fa-421d-943e-fc1dcaa4bcc6) <br><hr>
@@ -163,7 +167,8 @@
 
 
 # 6. 프로젝트 아키텍처
-![image](https://github.com/user-attachments/assets/a3af223a-dfdc-46bd-887f-e12d9ff3d06f)
+![image](https://github.com/user-attachments/assets/beb5f99e-78e9-4a69-af82-6531f2a681ad)
+
 
 
 
