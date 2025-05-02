@@ -4,13 +4,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import xyz.tomorrowlearncamp.bookking.domain.common.dto.Response;
 import xyz.tomorrowlearncamp.bookking.domain.common.enums.ErrorMessage;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.InvalidRequestException;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.service.AuthService;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.config.JwtProvider;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.AccessTokenResponse;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.SignupRequest;
@@ -35,7 +36,7 @@ public class AuthController {
         return Response.success(authService.signup(request));
     }
 
-    @PostMapping("/v1/auth/login")
+    @PostMapping("/v1/auth/signin")
     public Response<LoginResponse> login(@Valid @RequestBody LoginRequest request,
                                                HttpServletResponse response) {
         return Response.success(authService.login(request, response));

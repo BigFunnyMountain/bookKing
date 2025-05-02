@@ -38,7 +38,6 @@ public class UserService {
         return UserResponse.of(user);
     }
 
-
     @Transactional
     public UserResponse updateUser(Long userId, UpdateUserRequest updateUserRequest) {
         User user = userRepository.findById(userId)
@@ -55,21 +54,15 @@ public class UserService {
         UserRole currentRole = user.getRole();
         UserRole requestedRole = UserRole.of(updateUserRoleRequest.getRole());
 
-        if (currentRole == UserRole.ROLE_USER && requestedRole == UserRole.ROLE_ADMIN) {
-            user.updateRole(UserRole.ROLE_ADMIN);
-        } else {
+        if (!(currentRole == UserRole.ROLE_USER && requestedRole == UserRole.ROLE_ADMIN)) {
             throw new InvalidRequestException(ErrorMessage.ROLE_CHANGE_NOT_ALLOWED);
         }
-
+        user.updateRole(UserRole.ROLE_ADMIN);
         userRepository.save(user);
         return UserResponse.of(user);
     }
 
-    public void deleteUser(Long userId, Long loginUserId, String checkPassword) {
-        if (!userId.equals(loginUserId)) {
-            throw new NotFoundException(ErrorMessage.NO_AUTHORITY_TO_DELETE_USER);
-        }
-
+    public void deleteUser(Long userId, String checkPassword) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND));
 
