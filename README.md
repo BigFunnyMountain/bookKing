@@ -1,31 +1,31 @@
-# 🙋🏻‍♂️ 팀원 소개
+#  1. 팀원 소개 🙋🏻‍♂️
 
-# 프로젝트 개요
+# 2. 프로젝트 개요
 
 
 # 기술 스택
 
-### Backend
+<b>Backend</b>
 <p>
   <img alt="Java" src="https://img.shields.io/badge/Java-ED8B00?logo=java&logoColor=white&style=flat-square" />
   <img alt="Spring Boot" src="https://img.shields.io/badge/Spring%20Boot-6DB33F?logo=springboot&logoColor=white&style=flat-square" />
   <img alt="Gradle" src="https://img.shields.io/badge/Gradle-02303A?logo=gradle&logoColor=white&style=flat-square" />
 </p>
 
-### Test
+<b>Test</b>
 
 <p>
   <img alt="nGrinder" src="https://img.shields.io/badge/nGrinder-FF6D00?style=flat-square" />
   <img alt="JUnit" src="https://img.shields.io/badge/JUnit-C21325?logo=junit&logoColor=white&style=flat-square" />
 </p>
 
-### Security
+<b>Security</b>
 <p>
   <img alt="Spring Security" src="https://img.shields.io/badge/Spring%20Security-6DB33F?logo=springsecurity&logoColor=white&style=flat-square" />
   <img alt="JWT" src="https://img.shields.io/badge/JWT-000000?logo=jsonwebtokens&logoColor=white&style=flat-square" />
 </p>
 
-### Collaboration
+<b>Collaboration</b> 
 <p>
   <img alt="GitHub" src="https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=white&style=flat-square" />
   <img alt="Notion" src="https://img.shields.io/badge/Notion-000000?logo=notion&logoColor=white&style=flat-square" />
@@ -33,13 +33,13 @@
   <img alt="ERD Cloud" src="https://img.shields.io/badge/ERD%20Cloud-00AEEF?style=flat-square" />
 </p>
 
-### Monitoring
+<b>Monitoring</b> 
 <p>
   <img alt="Prometheus" src="https://img.shields.io/badge/Prometheus-E6522C?logo=prometheus&logoColor=white&style=flat-square" />
   <img alt="Grafana" src="https://img.shields.io/badge/Grafana-F46800?logo=grafana&logoColor=white&style=flat-square" />
 </p>
 
-### Other Tools
+<b>Other Tools</b> 
 <p>
   <img alt="QueryDSL" src="https://img.shields.io/badge/QueryDSL-000000?style=flat-square" />
   <img alt="Postman" src="https://img.shields.io/badge/Postman-FF6C37?logo=postman&logoColor=white&style=flat-square" />
@@ -48,7 +48,7 @@
   <img alt="Swagger" src="https://img.shields.io/badge/Swagger-85EA2D?logo=swagger&logoColor=white&style=flat-square" />
 </p>
 
-### Database, Analysis & Optimization
+<b>Database, Analysis & Optimization</b>
 <p>
   <img alt="MySQL" src="https://img.shields.io/badge/MySQL-4479A1?logo=mysql&logoColor=white&style=flat-square" />
   <img alt="Redis" src="https://img.shields.io/badge/Redis-D82C20?logo=redis&logoColor=white&style=flat-square" />
@@ -57,7 +57,7 @@
   <img alt="Elasticsearch" src="https://img.shields.io/badge/Elasticsearch-005571?logo=elasticsearch&logoColor=white&style=flat-square" />
 </p>
 
-### Deployment & Distribution
+<b>Deployment & Distribution</b>
 <p>
   <img alt="GitHub Actions" src="https://img.shields.io/badge/GitHub%20Actions-2088FF?logo=githubactions&logoColor=white&style=flat-square" />
   <img alt="Docker" src="https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white&style=flat-square" />
@@ -75,10 +75,10 @@
   <img alt="Aurora" src="https://img.shields.io/badge/Aurora-400090?logo=amazonaws&logoColor=white&style=flat-square" />
 </p>
 
-# ERD 설계
+# 3. ERD 설계
 
 
-# 주요 기능 및 API 명세서
+# 4. 주요 기능 및 API 명세서
 ![image](https://github.com/user-attachments/assets/9bea02f9-f0fa-421d-943e-fc1dcaa4bcc6) <br><hr>
 ![image](https://github.com/user-attachments/assets/191bb6ef-d7d2-43f1-bc7d-e3b296f0eb8e) <br><hr>
 <b>사용자 로그 수집</b><br>
@@ -94,6 +94,8 @@
 | **사용자 로그 수집** | 사용자 구매 로그 정보로 사용자 수요 조사 |
 | **인공지능 사용자 맞춤 추천** | 사용자 키워드 검색 및 구매 목록을 기반, 사용자 맞춤 책 키워드로 검색 및 추천 | 
 <br>
+
+# 5. 서비스 플로우
 
 ## API 명세서 <br>
 ### Auth API
@@ -160,16 +162,16 @@
 
 
 
-# 프로젝트 아키텍처
+# 6. 프로젝트 아키텍처
 ![image](https://github.com/user-attachments/assets/a3af223a-dfdc-46bd-887f-e12d9ff3d06f)
 
 
 
-# 모니터링 (그라파나)
+# 7. 모니터링 (그라파나)
 
-# 기술적 의사 결정 및 트러블 슈팅
+# 8. 기술적 의사 결정 및 트러블 슈팅
 
-# 테스트 환경 실행
+# 9. 테스트 환경 실행
 
 <h4>실행 환경 준비</h4>
 
