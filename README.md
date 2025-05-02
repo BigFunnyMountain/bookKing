@@ -114,6 +114,15 @@ docker-compose up -d
 | 리뷰 삭제 | DELETE | /api/v1/books/{bookId}/reviews/{reviewId} | Authorization(USER) | - | - | - | 200 OK, 400 BAD_REQUEST |
 | 내가 쓴 리뷰 | GET | /api/v1/reviews/my | Authorization(USER) | - | page, size | List&lt;ReviewResponse&gt; | 200 OK, 400 BAD_REQUEST |
 
+
+# ERD 설계
+
+# 프로젝트 아키텍처
+![image](https://github.com/user-attachments/assets/a3af223a-dfdc-46bd-887f-e12d9ff3d06f)
+
+
+
+
 # 기술 스택
 
 ### Backend
@@ -185,3 +194,8 @@ docker-compose up -d
   <img alt="ECS" src="https://img.shields.io/badge/ECS-256CFF?logo=amazonaws&logoColor=white&style=flat-square" />
   <img alt="Aurora" src="https://img.shields.io/badge/Aurora-400090?logo=amazonaws&logoColor=white&style=flat-square" />
 </p>
+
+
+# 🔍 팀원 소개
+
+
