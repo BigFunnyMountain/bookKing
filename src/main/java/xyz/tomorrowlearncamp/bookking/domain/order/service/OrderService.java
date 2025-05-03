@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import xyz.tomorrowlearncamp.bookking.common.enums.ErrorMessage;
 import xyz.tomorrowlearncamp.bookking.common.exception.NotFoundException;
+import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.order.dto.OrderResponse;
 import xyz.tomorrowlearncamp.bookking.domain.order.entity.Order;
 import xyz.tomorrowlearncamp.bookking.domain.order.enums.OrderStatus;
@@ -29,14 +30,14 @@ public class OrderService {
     }
 
     @Transactional
-    public Order createOrder(Long userId, Long bookId, String prePrice, Long stock, String publisher, String bookIntroductionUrl, OrderStatus status, PayType payType) {
+    public Order createOrder(Long userId, Book book, Long stock, OrderStatus status, PayType payType) {
         Order order = Order.builder()
                 .userId(userId)
-                .bookId(bookId)
-                .prePrice(prePrice)
+                .bookId(book.getId())
+                .prePrice(book.getPrePrice())
                 .stock(stock)
-                .publisher(publisher)
-                .bookIntroductionUrl(bookIntroductionUrl)
+                .publisher(book.getPublisher())
+                .bookIntroductionUrl(book.getBookIntroductionUrl())
                 .status(status)
                 .payType(payType)
                 .build();

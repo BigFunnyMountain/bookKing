@@ -77,8 +77,9 @@ class AuthServiceTest {
         String email = "test@email.com";
         String inputPassword = "wrongPassword";
         String encodedPassword = "encodedPassword";
+        SignupRequest temp = SignupRequest.of(email, inputPassword, "홍길동", "서울", Gender.valueOf("MALE"), 20, "길동이");
 
-        User user = User.of(email, encodedPassword, "홍길동", UserRole.ROLE_USER, "서울", Gender.valueOf("MALE"), 20, "길동이");
+        User user = User.of(temp, encodedPassword, UserRole.ROLE_USER);
         given(userRepository.findByEmail(email)).willReturn(Optional.of(user));
         given(passwordEncoder.matches(inputPassword, encodedPassword)).willReturn(false);
 
@@ -102,8 +103,9 @@ class AuthServiceTest {
         String accessToken = "Bearer access-token";
         String refreshToken = "Bearer refresh-token";
         Long userId = 1L;
+        SignupRequest temp = SignupRequest.of(email, password, "홍길동", "서울", Gender.valueOf("MALE"), 20, "길동이");
 
-        User user = User.of(email, encodedPassword, "홍길동", UserRole.ROLE_USER, "서울", Gender.MALE, 25, "길동이");
+        User user = User.of(temp, encodedPassword, UserRole.ROLE_USER);
         setField(user, "id", userId);
 
         given(userRepository.findByEmail(email)).willReturn(Optional.of(user));
@@ -208,7 +210,9 @@ class AuthServiceTest {
                 .build();
         setField(token, "id", 1L);
 
-        User user = User.of(email, "encodedPassword", "홍길동", role, "서울", Gender.MALE, 25, "길동이");
+        SignupRequest temp = SignupRequest.of(email, "password", "홍길동", "서울", Gender.valueOf("MALE"), 20, "길동이");
+
+        User user = User.of(temp, "password", UserRole.ROLE_USER);
         setField(user, "id", userId);
 
         given(refreshTokenRepository.findByToken(refreshToken)).willReturn(Optional.of(token));
@@ -271,7 +275,7 @@ class AuthServiceTest {
                 .nickname("길동이")
                 .build();
 
-        User user = User.of(email, encodedPassword, "홍길동", UserRole.ROLE_USER, "서울", Gender.MALE, 25, "길동이");
+        User user = User.of(request, encodedPassword, UserRole.ROLE_USER);
         setField(user, "id", 1L);
 
         given(userRepository.existsByEmail(email)).willReturn(false);
@@ -289,20 +293,5 @@ class AuthServiceTest {
         verify(userRepository).existsByEmail(email);
         verify(passwordEncoder).encode(password);
         verify(userRepository).save(any(User.class));
-    }
-
-    @Test
-    @DisplayName("이메일_중복_확인_성공")
-    void validateEmail_success() {
-        // given
-        String email = "newuser@email.com";
-        given(userRepository.existsByEmail(email)).willReturn(false);
-
-        // when
-        Throwable throwable = catchThrowable(() -> authService.validateEmail(email));
-
-        // then
-        assertThat(throwable).doesNotThrowAnyException();
-        verify(userRepository).existsByEmail(email);
     }
 }

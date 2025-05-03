@@ -100,28 +100,17 @@ public class AuthService {
 
     @Transactional
     public SignupResponse signup(SignupRequest request) {
-        validateEmail(request.getEmail());
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new InvalidRequestException(ErrorMessage.EMAIL_DUPLICATED);
+        }
 
         User user = User.of(
-                request.getEmail(),
+                request,
                 passwordEncoder.encode(request.getPassword()),
-                request.getName(),
-                UserRole.ROLE_USER,
-                request.getAddress(),
-                request.getGender(),
-                request.getAge(),
-                request.getNickname()
+                UserRole.ROLE_USER
         );
 
         User saveUser = userRepository.save(user);
         return SignupResponse.of(saveUser);
-    }
-
-    @Transactional(readOnly = true)
-    public void validateEmail(String email) {
-
-        if (userRepository.existsByEmail(email)) {
-            throw new InvalidRequestException(ErrorMessage.EMAIL_DUPLICATED);
-        }
     }
 }

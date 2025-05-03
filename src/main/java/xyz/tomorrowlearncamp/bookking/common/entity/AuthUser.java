@@ -30,7 +30,6 @@ public class AuthUser {
                 userId,
                 email,
                 List.of(new SimpleGrantedAuthority(userRole.name()))
-
         );
     }
 

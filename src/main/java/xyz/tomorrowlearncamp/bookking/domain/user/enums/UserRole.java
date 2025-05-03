@@ -1,6 +1,7 @@
 package xyz.tomorrowlearncamp.bookking.domain.user.enums;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
@@ -12,10 +13,8 @@ import java.util.Arrays;
 @Getter
 @RequiredArgsConstructor
 public enum UserRole {
-    ROLE_USER(Authority.USER),
-    ROLE_ADMIN(Authority.ADMIN);
-
-    private final String userRole;
+    ROLE_USER,
+    ROLE_ADMIN;
 
     public static UserRole of(String userRole) {
         String roleChange = userRole.startsWith("ROLE_") ? userRole : "ROLE_" + userRole;
@@ -24,10 +23,5 @@ public enum UserRole {
                 .filter(r -> r.name().equalsIgnoreCase(roleChange))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 UserRole 입니다."));
-    }
-
-    public static class Authority {
-        public static final String USER = "ROLE_USER";
-        public static final String ADMIN = "ROLE_ADMIN";
     }
 }
