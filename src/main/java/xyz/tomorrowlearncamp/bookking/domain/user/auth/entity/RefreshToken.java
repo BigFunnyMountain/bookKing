@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import xyz.tomorrowlearncamp.bookking.domain.common.entity.BaseEntity;
+import xyz.tomorrowlearncamp.bookking.common.entity.BaseEntity;
 
 import java.time.LocalDateTime;
 

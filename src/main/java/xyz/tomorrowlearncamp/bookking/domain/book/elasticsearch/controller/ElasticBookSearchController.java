@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.dto.ElasticBookSearchResponse;
 import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.service.ElasticBookService;
 import xyz.tomorrowlearncamp.bookking.domain.book.service.BookService;
-import xyz.tomorrowlearncamp.bookking.domain.common.dto.Response;
+import xyz.tomorrowlearncamp.bookking.common.dto.Response;
 
 @RestController
 @RequiredArgsConstructor

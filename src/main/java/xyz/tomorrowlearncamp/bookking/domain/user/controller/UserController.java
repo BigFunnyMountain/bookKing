@@ -2,10 +2,12 @@ package xyz.tomorrowlearncamp.bookking.domain.user.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import xyz.tomorrowlearncamp.bookking.domain.common.dto.Response;
+import xyz.tomorrowlearncamp.bookking.common.dto.Response;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.AuthUser;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.DeleteUserRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.UpdateUserRequest;
@@ -33,12 +35,12 @@ public class UserController {
         return Response.success(updatingUser);
     }
 
-    @PatchMapping("/v1/users/role")
+    @PatchMapping("/v1/users/{userId}/role")
     public Response<UserResponse> updateUserRole(
-            @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable("userId") Long userId,
             @Valid @RequestBody UpdateUserRoleRequest updateUserRoleRequest
     ) {
-        UserResponse updateUser = userService.updateUserRole(authUser.getUserId(), updateUserRoleRequest);
+        UserResponse updateUser = userService.updateUserRole(userId, updateUserRoleRequest);
         return Response.success(updateUser);
     }
 

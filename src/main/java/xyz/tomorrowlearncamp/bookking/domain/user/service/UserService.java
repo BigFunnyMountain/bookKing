@@ -1,16 +1,16 @@
 package xyz.tomorrowlearncamp.bookking.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
-import xyz.tomorrowlearncamp.bookking.domain.common.enums.ErrorMessage;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.InvalidRequestException;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
-import xyz.tomorrowlearncamp.bookking.domain.user.aws.S3Upload;
+
+import xyz.tomorrowlearncamp.bookking.common.enums.ErrorMessage;
+import xyz.tomorrowlearncamp.bookking.common.exception.InvalidRequestException;
+import xyz.tomorrowlearncamp.bookking.common.exception.NotFoundException;
+import xyz.tomorrowlearncamp.bookking.common.util.S3Upload;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.UpdateUserRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.UpdateUserRoleRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.UserResponse;
@@ -47,21 +47,20 @@ public class UserService {
         return UserResponse.of(user);
     }
 
+    @Transactional
     public UserResponse updateUserRole(Long userId, UpdateUserRoleRequest updateUserRoleRequest) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() ->  new NotFoundException(ErrorMessage.USER_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND));
+        UserRole updateRole = UserRole.of(updateUserRoleRequest.getRole());
 
-        UserRole currentRole = user.getRole();
-        UserRole requestedRole = UserRole.of(updateUserRoleRequest.getRole());
-
-        if (!(currentRole == UserRole.ROLE_USER && requestedRole == UserRole.ROLE_ADMIN)) {
+        if (user.getRole().equals(updateRole)) {
             throw new InvalidRequestException(ErrorMessage.ROLE_CHANGE_NOT_ALLOWED);
         }
-        user.updateRole(UserRole.ROLE_ADMIN);
-        userRepository.save(user);
+        user.updateRole(updateRole);
         return UserResponse.of(user);
     }
 
+    @Transactional
     public void deleteUser(Long userId, String checkPassword) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND));
