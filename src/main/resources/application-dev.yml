@@ -3,12 +3,12 @@ spring:
     hikari:
       writer:
         driver-class-name: com.mysql.cj.jdbc.Driver
-        jdbc-url: jdbc:mysql://mysql-container:3306/testdb
+        jdbc-url: jdbc:mysql://127.0.0.1:3306/testdb
         username: root
         password: ${DB_PASSWORD}
       reader:
         driver-class-name: com.mysql.cj.jdbc.Driver
-        jdbc-url: jdbc:mysql://mysql-container:3306/testdb
+        jdbc-url: jdbc:mysql://127.0.0.1:3306/testdb
         username: root
         password: ${DB_PASSWORD}
 
@@ -23,7 +23,7 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
 
   elasticsearch:
-    uris: http://elasticsearch:9200
+    uris: http://127.0.0.1:9200
 
   servlet:
     multipart:
@@ -32,7 +32,7 @@ spring:
 
   data:
     redis:
-      host: redis://redis-container:6379
+      host: redis://127.0.0.1:6379
 
 cloud:
   aws:
