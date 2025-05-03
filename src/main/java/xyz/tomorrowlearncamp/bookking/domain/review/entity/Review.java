@@ -14,7 +14,7 @@ public class Review extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long reviewId;
+    private Long id;
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
