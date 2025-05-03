@@ -72,7 +72,7 @@ public class UserService {
     }
 
     @Transactional
-    public String updateProfileImage(Long userId, MultipartFile image) throws IOException {
+    public String updateProfileImage(Long userId, MultipartFile image) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND));
 

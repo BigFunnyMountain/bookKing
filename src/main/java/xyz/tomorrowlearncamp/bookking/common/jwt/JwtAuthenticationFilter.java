@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import xyz.tomorrowlearncamp.bookking.common.util.JwtProvider;
-import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.AuthUser;
+import xyz.tomorrowlearncamp.bookking.common.entity.AuthUser;
 import xyz.tomorrowlearncamp.bookking.domain.user.enums.UserRole;
 
 import java.io.IOException;

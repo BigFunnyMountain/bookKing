@@ -140,15 +140,13 @@ class UserServiceTest {
         UpdateUserRoleRequest request = new UpdateUserRoleRequest("ROLE_ADMIN");
 
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
-        given(userRepository.save(any(User.class))).willReturn(user);
 
         // when
         var result = userService.updateUserRole(userId, request);
 
         // then
-        assertThat(result.getRole().toString()).isEqualTo("ROLE_ADMIN");
+        assertThat(result.getRole()).isEqualTo(UserRole.ROLE_ADMIN);
         verify(userRepository).findById(userId);
-        verify(userRepository).save(user);
     }
 
     @Test

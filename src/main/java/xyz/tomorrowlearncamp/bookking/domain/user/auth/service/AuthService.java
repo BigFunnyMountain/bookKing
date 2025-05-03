@@ -1,6 +1,5 @@
 package xyz.tomorrowlearncamp.bookking.domain.user.auth.service;
 
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,10 +17,9 @@ import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.SignupResponse;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.entity.RefreshToken;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.repository.RefreshTokenRepository;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.LoginRequest;
-import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.LoginResponse;
+import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.SignInResponse;
 import xyz.tomorrowlearncamp.bookking.domain.user.entity.User;
 import xyz.tomorrowlearncamp.bookking.domain.user.repository.UserRepository;
-import org.springframework.http.HttpHeaders;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -41,7 +39,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public LoginResponse login(LoginRequest request, HttpServletResponse response) {
+    public SignInResponse signin(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND));
 
@@ -62,8 +60,7 @@ public class AuthService {
                         .expiredAt(LocalDateTime.now().plusDays(14))
                         .build()
         );
-        response.setHeader(HttpHeaders.AUTHORIZATION, accessToken);
-        return LoginResponse.of(user, accessToken, refreshToken);
+        return SignInResponse.of(user, accessToken, refreshToken);
     }
 
     @Transactional(readOnly = true)

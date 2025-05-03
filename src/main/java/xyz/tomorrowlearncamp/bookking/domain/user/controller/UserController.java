@@ -3,12 +3,11 @@ package xyz.tomorrowlearncamp.bookking.domain.user.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import xyz.tomorrowlearncamp.bookking.common.dto.Response;
-import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.AuthUser;
+import xyz.tomorrowlearncamp.bookking.common.entity.AuthUser;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.DeleteUserRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.UpdateUserRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.UpdateUserRoleRequest;
@@ -45,18 +44,17 @@ public class UserController {
     }
 
     @DeleteMapping("/v1/users")
-    public Response<String> deleteUser(
+    public void deleteUser(
             @AuthenticationPrincipal AuthUser authUser,
             @Valid @RequestBody DeleteUserRequest deleteUserRequest
     ) {
         userService.deleteUser(authUser.getUserId(), deleteUserRequest.getPassword());
-        return Response.success("회원 탈퇴가 정상적으로 처리되었습니다");
     }
 
     @PostMapping("/v1/users/profile-image")
     public Response<String> uploadProfileImage(
             @AuthenticationPrincipal AuthUser authUser,
-            @RequestParam("image") MultipartFile image) throws IOException {
+            @RequestPart("image") MultipartFile image) {
 
         String imageUrl = userService.updateProfileImage(authUser.getUserId(), image);
         return Response.success(imageUrl);

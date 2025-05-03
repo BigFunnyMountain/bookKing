@@ -1,4 +1,4 @@
-package xyz.tomorrowlearncamp.bookking.domain.user.auth.dto;
+package xyz.tomorrowlearncamp.bookking.common.entity;
 
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;

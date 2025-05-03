@@ -66,10 +66,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v*/books").permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/api/v*/users/*/role").hasAuthority(UserRole.Authority.ADMIN)
                         .requestMatchers("/api/v*/books/**").hasAuthority(UserRole.Authority.ADMIN)
-                        .requestMatchers("/error").permitAll()
-                        .requestMatchers("/test").hasAuthority(UserRole.Authority.ADMIN)
-                        .anyRequest().permitAll()
-                        //todo : 나중에 변경하기 authenticated()
+                        .requestMatchers("/api/test/**").hasAuthority(UserRole.Authority.ADMIN)
+                        .anyRequest().authenticated()
                 )
                 .build();
     }

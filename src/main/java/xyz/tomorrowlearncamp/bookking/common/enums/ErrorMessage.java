@@ -51,6 +51,7 @@ public enum ErrorMessage {
 	FILE_IO_FAILED(INTERNAL_SERVER_ERROR, "파일 입출력 중 에러가 발생했습니다."),
 	INDEX_FAILED_ERROR(INTERNAL_SERVER_ERROR, "INDEX 작업 중 에러가 발생했습니다."),
 	REINDEXING_IO_ERROR(INTERNAL_SERVER_ERROR, "REINDEX 작업 수행 중 에러가 발생했습니다."),
+	AWS_S3_ERROR(INTERNAL_SERVER_ERROR, "AWS S3 업로드 중 에러가 발생했습니다."),
 	;
 
 	private final HttpStatus status;

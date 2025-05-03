@@ -3,7 +3,6 @@ package xyz.tomorrowlearncamp.bookking.domain.review.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import xyz.tomorrowlearncamp.bookking.common.dto.Response;
@@ -11,7 +10,7 @@ import xyz.tomorrowlearncamp.bookking.domain.review.dto.request.ReviewRequest;
 import xyz.tomorrowlearncamp.bookking.domain.review.dto.request.ReviewUpdateRequest;
 import xyz.tomorrowlearncamp.bookking.domain.review.dto.response.ReviewResponse;
 import xyz.tomorrowlearncamp.bookking.domain.review.service.ReviewService;
-import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.AuthUser;
+import xyz.tomorrowlearncamp.bookking.common.entity.AuthUser;
 
 @RestController
 @RequestMapping("/api")
@@ -39,7 +38,6 @@ public class ReviewController {
     }
 
     @PatchMapping("/v1/books/{bookId}/reviews/{reviewId}")
-    @ResponseStatus(HttpStatus.OK)
     public void updateReview(
             @PathVariable Long bookId,
             @PathVariable Long reviewId,
@@ -50,7 +48,6 @@ public class ReviewController {
     }
 
     @DeleteMapping("/v1/books/{bookId}/reviews/{reviewId}")
-    @ResponseStatus(HttpStatus.OK)
     public void deleteReview(
             @PathVariable Long bookId,
             @PathVariable Long reviewId,

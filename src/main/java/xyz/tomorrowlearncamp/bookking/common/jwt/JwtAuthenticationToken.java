@@ -1,7 +1,7 @@
 package xyz.tomorrowlearncamp.bookking.common.jwt;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.AuthUser;
+import xyz.tomorrowlearncamp.bookking.common.entity.AuthUser;
 
 /**
  * 작성자 : 문성준
