@@ -1,14 +1,19 @@
 package xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.service;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
-
 import co.elastic.clients.elasticsearch._types.aggregations.Aggregation;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch.core.BulkRequest.Builder;
+import co.elastic.clients.elasticsearch.core.BulkResponse;
 import co.elastic.clients.elasticsearch.core.IndexRequest;
 import co.elastic.clients.elasticsearch.core.IndexResponse;
 import co.elastic.clients.elasticsearch.core.SearchRequest;
 import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -16,13 +21,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.document.ElasticBookDocument;
-import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.dto.ElasticBookSearchResponseDto;
+import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.dto.ElasticBookSearchResponse;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import xyz.tomorrowlearncamp.bookking.domain.common.enums.ErrorMessage;
+import xyz.tomorrowlearncamp.bookking.domain.common.exception.ServerException;
 
 @Slf4j
 @Service
@@ -48,7 +50,64 @@ public class ElasticBookService {
         }
     }
 
-    public Page<ElasticBookSearchResponseDto> search(String keyword, Pageable pageable) {
+    public void reindexBulkInsert(List<Book> books) {
+        Builder builder = new Builder();
+
+        for (Book book : books) {
+            ElasticBookDocument document = ElasticBookDocument.of(book);
+            builder.operations(op -> op
+                .index(idx -> idx
+                    .index(INDEX_NAME)
+                    .id(book.getBookId().toString())
+                    .document(document)
+                )
+            );
+        }
+		BulkResponse bulkResponse;
+		try {
+			bulkResponse = elasticsearchClient.bulk(builder.build());
+		} catch (IOException e) {
+            throw new ServerException(ErrorMessage.REINDEXING_IO_ERROR);
+		}
+
+		if (bulkResponse.errors()) {
+            bulkResponse.items().stream()
+                .filter(item -> item.error() != null)
+                .forEach(item ->
+                    log.error("book_id: {}, 색인 실패 이유: {}", item.id(), item.error().reason()));
+        }
+    }
+
+    public Page<ElasticBookSearchResponse> search(Pageable pageable) {
+        try {
+            Query matchAll = Query.of(q -> q.matchAll(m -> m));
+
+            SearchRequest searchRequest = SearchRequest.of(s -> s
+                .index(INDEX_NAME)
+                .query(matchAll)
+                .from((int) pageable.getOffset())
+                .size(pageable.getPageSize()));
+
+            SearchResponse<ElasticBookDocument> response =
+                elasticsearchClient.search(searchRequest, ElasticBookDocument.class);
+
+            List<ElasticBookSearchResponse> results = response.hits().hits().stream()
+                .map(Hit::source)
+                .filter(Objects::nonNull)
+                .map(ElasticBookSearchResponse::of)
+                .toList();
+
+            long totalHits = response.hits().total() != null
+                ? response.hits().total().value() : 0L;
+
+            return new PageImpl<>(results, pageable, totalHits);
+        } catch (IOException e) {
+            log.error("======색인 실패======", e);
+            throw new ServerException(ErrorMessage.INDEX_FAILED_ERROR);
+        }
+    }
+
+    public Page<ElasticBookSearchResponse> searchByKeyword(String keyword, Pageable pageable) {
         try {
             List<Query> mustQueries = new ArrayList<>();
             if (keyword != null && !keyword.isBlank()) {
@@ -74,10 +133,10 @@ public class ElasticBookService {
             SearchResponse<ElasticBookDocument> elasticBookDocumentSearchResponse =
                     elasticsearchClient.search(searchRequest, ElasticBookDocument.class);
 
-            List<ElasticBookSearchResponseDto> results = elasticBookDocumentSearchResponse.hits().hits().stream()
+            List<ElasticBookSearchResponse> results = elasticBookDocumentSearchResponse.hits().hits().stream()
                     .map(Hit::source)
                     .filter(Objects::nonNull)
-                    .map(ElasticBookSearchResponseDto::of)
+                .map(ElasticBookSearchResponse::of)
                     .toList();
 
             long totalHits = elasticBookDocumentSearchResponse.hits().total() != null ? elasticBookDocumentSearchResponse.hits().total().value() : 0L;
