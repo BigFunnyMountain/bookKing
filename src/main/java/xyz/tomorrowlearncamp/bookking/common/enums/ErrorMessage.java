@@ -15,6 +15,9 @@ public enum ErrorMessage {
 	SHORT_ON_MONEY(BAD_REQUEST,"돈이 부족합니다."),
 	REVIEW_ALREADY_WRITTEN(BAD_REQUEST, "이미 작성된 리뷰입니다."),
 	TYPE_MISMATCH(BAD_REQUEST, "올바른 값을 입력해주세요."),
+	INVALID_JWT_SIGNATURE(BAD_REQUEST,"유효하지 않는 JWT 서명 입니다."),
+	UNSUPPORTED_JWT_TOKEN(BAD_REQUEST, "지원되지 않는 JWT 토큰 입니다."),
+	EXPIRED_JWT_REFRESH_TOKEN(BAD_REQUEST, "다시 로그인 해주세요."),
 
     NO_AUTHORITY_TO_WRITE_A_REVIEW(FORBIDDEN, "리뷰를 작성할 권한이 없습니다."),
     INVALID_HEADER(BAD_REQUEST, "Authorization 헤더가 잘못되었습니다."),

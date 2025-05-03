@@ -110,7 +110,6 @@ class AuthServiceTest {
         given(passwordEncoder.matches(password, encodedPassword)).willReturn(true);
         given(jwtProvider.createAccessToken(userId, email, user.getRole())).willReturn(accessToken);
         given(jwtProvider.createRefreshToken(userId, email, user.getRole())).willReturn(refreshToken);
-        given(jwtProvider.removeBearerPrefix(refreshToken)).willReturn("refresh-token");
 
         LoginRequest request = LoginRequest.of(email, password);
 
@@ -125,7 +124,6 @@ class AuthServiceTest {
         verify(passwordEncoder).matches(password, encodedPassword);
         verify(jwtProvider).createAccessToken(userId, email, user.getRole());
         verify(jwtProvider).createRefreshToken(userId, email, user.getRole());
-        verify(jwtProvider).removeBearerPrefix(refreshToken);
         verify(refreshTokenRepository).deleteByUserId(userId);
         verify(refreshTokenRepository).flush();
         verify(refreshTokenRepository).save(any(RefreshToken.class));
