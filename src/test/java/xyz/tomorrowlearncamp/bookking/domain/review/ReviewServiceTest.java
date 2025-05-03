@@ -77,7 +77,7 @@ class ReviewServiceTest {
                 .reviewState(ReviewState.ACTIVE)
                 .build();
 
-        ReflectionTestUtils.setField(savedReview, "reviewId", 10L);
+        ReflectionTestUtils.setField(savedReview, "id", 10L);
 
 
         given(reviewRepository.save(any(Review.class))).willReturn(savedReview);
@@ -167,7 +167,7 @@ class ReviewServiceTest {
                 .reviewState(ReviewState.ACTIVE)
                 .build();
 
-        ReflectionTestUtils.setField(savedReview, "reviewId", 10L);
+        ReflectionTestUtils.setField(savedReview, "id", 10L);
 
 
         given(reviewRepository.findByIdAndUserIdAndBookIdAndState(reviewId, userId, bookId, ReviewState.ACTIVE))

@@ -46,7 +46,7 @@ class BookServiceTest {
 		// given
 		AddBookRequest requestDto = new AddBookRequest();
 		Book book = new Book();
-		ReflectionTestUtils.setField(book, "bookId", 1L);
+		ReflectionTestUtils.setField(book, "id", 1L);
 
 		given(bookMapper.toEntity(requestDto)).willReturn(book);
 		given(bookRepository.save(book)).willReturn(book);

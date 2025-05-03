@@ -34,7 +34,7 @@ public class OrderResponse {
 
     public static OrderResponse of(Order order) {
         return new OrderResponse(
-                order.getOrderId(),
+                order.getId(),
                 order.getBookId(),
                 order.getUserId(),
                 order.getStatus().name(),

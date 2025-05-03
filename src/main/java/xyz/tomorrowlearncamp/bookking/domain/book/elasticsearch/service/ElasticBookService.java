@@ -24,6 +24,7 @@ import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.document.Elastic
 import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.dto.ElasticBookSearchResponse;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.common.enums.ErrorMessage;
+import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.ServerException;
 
 @Slf4j
@@ -45,8 +46,8 @@ public class ElasticBookService {
                     ));
             log.info("elastic 색인 성공 {}", indexResponse.id());
         } catch (IOException e) {
-            log.error("======색인 실패======", e);
-            throw new RuntimeException("======색인 실패======", e);
+            log.error(ErrorMessage.ELASTICSEARCH_ERROR.getMessage());
+            throw new ServerException(ErrorMessage.ELASTICSEARCH_ERROR);
         }
     }
 
@@ -58,7 +59,7 @@ public class ElasticBookService {
             builder.operations(op -> op
                 .index(idx -> idx
                     .index(INDEX_NAME)
-                    .id(book.getBookId().toString())
+                    .id(book.getId().toString())
                     .document(document)
                 )
             );
@@ -144,8 +145,8 @@ public class ElasticBookService {
             return new PageImpl<>(results, pageable, totalHits);
 
         } catch (IOException e) {
-            log.error("Elastic 검색 실패", e);
-            throw new RuntimeException("Elasticsearch 검색 실패", e);
+            log.error(ErrorMessage.ELASTICSEARCH_ERROR.getMessage());
+            throw new ServerException(ErrorMessage.ELASTICSEARCH_ERROR);
         }
     }
 
@@ -175,8 +176,8 @@ public class ElasticBookService {
                     .distinct()
                     .toList();
         } catch (IOException e) {
-            log.error("=====V1, 자동 완성 검색 실패=====", e);
-            throw new RuntimeException("=====V1, 자동 완성 검색 실패==", e);
+            log.error(ErrorMessage.ELASTICSEARCH_ERROR.getMessage());
+            throw new ServerException(ErrorMessage.ELASTICSEARCH_ERROR);
         }
     }
 
@@ -203,8 +204,8 @@ public class ElasticBookService {
                     .map(ElasticBookDocument::getTitle)
                     .toList();
         } catch (IOException e) {
-            log.error("=====V2, 자동 완성 검색 실패=====", e);
-            throw new RuntimeException("=====V2, 자동 완성 검색 실패==", e);
+            log.error(ErrorMessage.ELASTICSEARCH_ERROR.getMessage());
+            throw new ServerException(ErrorMessage.ELASTICSEARCH_ERROR);
         }
     }
 
@@ -233,8 +234,8 @@ public class ElasticBookService {
                     .map(ElasticBookDocument::getTitle)
                     .toList();
         } catch (IOException e) {
-            log.error("=====V3, 자동 완성 검색(가중치) 실패=====", e);
-            throw new RuntimeException("=====V3, 자동 완성 검색(가중치) 실패==", e);
+            log.error(ErrorMessage.ELASTICSEARCH_ERROR.getMessage());
+            throw new ServerException(ErrorMessage.ELASTICSEARCH_ERROR);
         }
     }
 
@@ -266,8 +267,8 @@ public class ElasticBookService {
 
             return results;
         } catch (IOException e) {
-            log.error("=====연관 검색어 조회 실패=====", e);
-            throw new RuntimeException("=====연관 검색어 조회 실패=====",e);
+            log.error(ErrorMessage.ELASTICSEARCH_ERROR.getMessage());
+            throw new ServerException(ErrorMessage.ELASTICSEARCH_ERROR);
         }
     }
 }

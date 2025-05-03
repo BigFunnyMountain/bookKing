@@ -66,7 +66,7 @@ public class BookService {
         Book book = bookMapper.toEntity(addBookRequest);
         Book saved = bookRepository.save(book);
         elasticBookService.save(saved);
-        return saved.getBookId();
+        return saved.getId();
     }
 
     @Transactional

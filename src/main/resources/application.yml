@@ -3,6 +3,9 @@ spring:
     name: bookKing
   profiles:
     default: release
+  web:
+    resources:
+      add-mappings: false
 
 management:
   endpoint:

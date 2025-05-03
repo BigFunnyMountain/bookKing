@@ -1,10 +1,10 @@
 package xyz.tomorrowlearncamp.bookking.domain.common.enums;
 
+import static org.springframework.http.HttpStatus.*;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-
-import static org.springframework.http.HttpStatus.*;
 
 @Getter
 @RequiredArgsConstructor
@@ -27,6 +27,7 @@ public enum ErrorMessage {
     NO_AUTHORITY_TO_DELETE_USER(FORBIDDEN, "본인 계정만 탈퇴할 수 있습니다."),
 	NO_AUTHORITY_TO_RETURN_A_PAYMENT(FORBIDDEN, "환불할 권한이 없습니다."),
 	FORBIDDEN_ADMINISTRATOR(FORBIDDEN, "권한이 없습니다."),
+	FORBIDDEN_USER(FORBIDDEN, "권한이 없습니다."),
 
 	USER_NOT_FOUND(NOT_FOUND, "사용자를 찾을 수 없습니다."),
 	BOOK_NOT_FOUND(NOT_FOUND,"없는 책입니다."),
@@ -41,6 +42,7 @@ public enum ErrorMessage {
 	/* 5xx */
 	CALL_ADMIN(INTERNAL_SERVER_ERROR,"어드민을 호출해주세요."),
 	OPENAPI_ERROR(INTERNAL_SERVER_ERROR, "OPENAPI ERROR"),
+	ELASTICSEARCH_ERROR(INTERNAL_SERVER_ERROR, "ELASTICSEARCH ERROR"),
 	REDIS_ERROR(INTERNAL_SERVER_ERROR,"CACHE ERROR"),
 	ERROR(INTERNAL_SERVER_ERROR,"알 수 없는 에러가 발생했습니다."),
 	DB_AUTHENTICATE_ERROR(INTERNAL_SERVER_ERROR, "DB 인증에 실패했습니다."),

@@ -20,10 +20,10 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 		+ "or lower(cast(b.author as string)) like lower(concat('%', :keyword, '%')) "
 		+ "or lower(b.publisher) like lower(concat('%', :keyword, '%')) "
 		+ "or lower(b.subject) like lower(concat('%', :keyword, '%'))"
-		+ "order by b.bookId asc")
+		+ "order by b.id asc")
 	Page<Book> findAllByKeyword(@Param("keyword") String keyword, Pageable pageable);
 
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
-	@Query("SELECT b FROM Book b WHERE b.bookId = :id")
+	@Query("SELECT b FROM Book b WHERE b.id = :id")
 	Book findByIdWithLock(Long id);
 }

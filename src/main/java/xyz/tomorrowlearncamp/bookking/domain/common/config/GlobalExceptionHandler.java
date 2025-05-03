@@ -15,14 +15,16 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.reactive.function.client.WebClientException;
+import org.springframework.web.servlet.NoHandlerFoundException;
+
 import xyz.tomorrowlearncamp.bookking.domain.common.dto.Response;
 import xyz.tomorrowlearncamp.bookking.domain.common.enums.ErrorMessage;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.CustomExceptionDto;
+import xyz.tomorrowlearncamp.bookking.domain.common.dto.CustomExceptionDto;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.ForbiddenRequestException;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.InvalidRequestException;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.ServerException;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.ValidationExceptionDto;
+import xyz.tomorrowlearncamp.bookking.domain.common.dto.ValidationExceptionDto;
 
 @Slf4j
 @RestControllerAdvice
@@ -177,6 +179,18 @@ public class GlobalExceptionHandler {
 		log.error("[SizeLimitExceededException] actualSize: {}, ", ex.getActualSize(), ex);
 
 		response.setStatus(errorMessage.getStatus().value());
+		return Response.fail(errorMessage.getStatus(), new CustomExceptionDto(errorMessage));
+	}
+
+	@ExceptionHandler(NoHandlerFoundException.class)
+	public Response<CustomExceptionDto> noHandlerFoundExHandler(
+		final NoHandlerFoundException ex,
+		HttpServletResponse response
+	) {
+		ErrorMessage errorMessage = ErrorMessage.NO_HANDLER_FOUND;
+		log.error("[NoHandlerFoundException]: ", ex);
+
+		response.setStatus(ErrorMessage.NO_HANDLER_FOUND.getStatus().value());
 		return Response.fail(errorMessage.getStatus(), new CustomExceptionDto(errorMessage));
 	}
 

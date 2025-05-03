@@ -19,7 +19,7 @@ public class ReviewResponse {
 
     public static ReviewResponse of(Review review) {
         ReviewResponse response = new ReviewResponse();
-        response.reviewId = review.getReviewId();
+        response.reviewId = review.getId();
         response.userId = review.getUserId();
         response.rating = review.getRating();
         response.content = review.getContent();

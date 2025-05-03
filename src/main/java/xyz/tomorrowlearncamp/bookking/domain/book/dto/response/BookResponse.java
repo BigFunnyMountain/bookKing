@@ -16,7 +16,7 @@ public class BookResponse {
 	private final Long stock;
 
 	public BookResponse(Book book) {
-		this.bookId = book.getBookId();
+		this.bookId = book.getId();
 		this.title = book.getTitle();
 		this.subject = book.getSubject();
 		this.author = book.getAuthor();

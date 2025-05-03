@@ -71,26 +71,26 @@ class OrderServiceTest {
 
         Order order1 = Order.builder()
                 .userId(user.getId())
-                .bookId(book.getBookId())
+                .bookId(book.getId())
                 .prePrice("10000")
                 .stock(book.getStock())
                 .publisher("Some Publisher")
                 .bookIntroductionUrl("http://example.com/book")
                 .status(OrderStatus.COMPLETED)
                 .build();
-        ReflectionTestUtils.setField(order1, "orderId", 1L);
+        ReflectionTestUtils.setField(order1, "id", 1L);
         ReflectionTestUtils.setField(order1, "createdAt", LocalDateTime.now().minusDays(1));
 
         Order order2 = Order.builder()
                 .userId(user.getId())
-                .bookId(book.getBookId())
+                .bookId(book.getId())
                 .prePrice("10000")
                 .stock(book.getStock())
                 .publisher("Some Publisher")
                 .bookIntroductionUrl("http://example.com/book")
                 .status(OrderStatus.COMPLETED)
                 .build();
-        ReflectionTestUtils.setField(order2, "orderId", 2L);
+        ReflectionTestUtils.setField(order2, "id", 2L);
         ReflectionTestUtils.setField(order2, "createdAt", LocalDateTime.now());
 
         List<Order> orders = List.of(order2, order1);
@@ -157,7 +157,7 @@ class OrderServiceTest {
                 .status(status)
                 .build();
 
-        ReflectionTestUtils.setField(savedOrder, "orderId", 100L);
+        ReflectionTestUtils.setField(savedOrder, "id", 100L);
         ReflectionTestUtils.setField(savedOrder, "createdAt", LocalDateTime.now());
 
         given(orderRepository.save(any(Order.class))).willReturn(savedOrder);
@@ -167,7 +167,7 @@ class OrderServiceTest {
 
         // then
         assertThat(result).isNotNull();
-        assertThat(result.getOrderId()).isEqualTo(100L);
+        assertThat(result.getId()).isEqualTo(100L);
         assertThat(result.getUserId()).isEqualTo(userId);
         assertThat(result.getBookId()).isEqualTo(bookId);
         assertThat(result.getPrePrice()).isEqualTo(prePrice);
@@ -196,7 +196,7 @@ class OrderServiceTest {
                 .status(OrderStatus.COMPLETED)
                 .build();
 
-        ReflectionTestUtils.setField(order, "orderId", expectedOrderId);
+        ReflectionTestUtils.setField(order, "id", expectedOrderId);
 
         given(orderRepository.findCompletedOrder(userId, bookId, OrderStatus.COMPLETED))
                 .willReturn(Optional.of(order));
@@ -242,7 +242,7 @@ class OrderServiceTest {
                 .status(OrderStatus.COMPLETED)
                 .build();
 
-        ReflectionTestUtils.setField(order, "orderId", orderId);
+        ReflectionTestUtils.setField(order, "id", orderId);
 
         given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
 
@@ -281,7 +281,7 @@ class OrderServiceTest {
                 .bookIntroductionUrl("http://test-url.com")
                 .status(OrderStatus.COMPLETED)
                 .build();
-        ReflectionTestUtils.setField(order, "orderId", 1L);
+        ReflectionTestUtils.setField(order, "id", 1L);
 
         given(orderRepository.findById(anyLong())).willReturn(Optional.of(order));
 

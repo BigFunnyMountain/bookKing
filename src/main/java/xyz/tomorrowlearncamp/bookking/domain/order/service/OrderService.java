@@ -47,7 +47,7 @@ public class OrderService {
     @Transactional(readOnly = true)
     public Long getPurchasedOrderId(Long userId, Long bookId) {
         return orderRepository.findCompletedOrder(userId, bookId, OrderStatus.COMPLETED)
-                .map(Order::getOrderId)
+                .map(Order::getId)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.PURCHASE_HISTORY_NOT_FOUND));
     }
 

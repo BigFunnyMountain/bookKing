@@ -12,9 +12,12 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
 import org.springframework.web.cors.CorsConfiguration;
+
+import xyz.tomorrowlearncamp.bookking.domain.common.exception.AccessDeniedHandlerImpl;
 import xyz.tomorrowlearncamp.bookking.domain.user.enums.UserRole;
 
 import java.util.List;
@@ -31,7 +34,6 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -46,6 +48,10 @@ public class SecurityConfig {
                             return config;
                         })
                 )
+                .exceptionHandling(
+                    configurer ->
+                        configurer.accessDeniedHandler(new AccessDeniedHandlerImpl())
+                )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
@@ -59,11 +65,11 @@ public class SecurityConfig {
                         .requestMatchers(request -> request.getRequestURI().startsWith("/api/v*/auth")).permitAll()
                         .requestMatchers(request -> request.getRequestURI().startsWith("/api/v*/users")).authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/v*/books").permitAll()
-                        .requestMatchers("/api/v*/books").hasAuthority(UserRole.ROLE_ADMIN.name())
+                        .requestMatchers("/api/v*/books/**").hasAuthority(UserRole.Authority.ADMIN)
                         .requestMatchers("/error").permitAll()
-                        .requestMatchers("/test").hasAuthority(UserRole.ROLE_ADMIN.name())
-
-                        .anyRequest().permitAll()  //todo : 나중에 변경하기 authenticated()
+                        .requestMatchers("/test").hasAuthority(UserRole.Authority.ADMIN)
+                        .anyRequest().permitAll()
+                        //todo : 나중에 변경하기 authenticated()
                 )
                 .build();
     }

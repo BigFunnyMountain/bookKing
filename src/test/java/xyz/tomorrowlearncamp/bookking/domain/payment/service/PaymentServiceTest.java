@@ -25,9 +25,6 @@ import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.UserResponse;
 import xyz.tomorrowlearncamp.bookking.domain.user.enums.UserRole;
 
 import java.util.Optional;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -73,7 +70,7 @@ class PaymentServiceTest {
 		ReflectionTestUtils.setField(user, "role", UserRole.ROLE_USER);
 
 		Book book = new Book();
-		ReflectionTestUtils.setField(book, "bookId", 1L);
+		ReflectionTestUtils.setField(book, "id", 1L);
 		ReflectionTestUtils.setField(book, "stock", 1L);
 		ReflectionTestUtils.setField(book, "prePrice", "1");
 
@@ -114,7 +111,7 @@ class PaymentServiceTest {
 	void paymentFailedTest2() throws InterruptedException {
 		//given
 		Book book = new Book();
-		ReflectionTestUtils.setField(book, "bookId", 1L);
+		ReflectionTestUtils.setField(book, "id", 1L);
 		ReflectionTestUtils.setField(book, "stock", 0L);
 		ReflectionTestUtils.setField(book, "prePrice", "1");
 
@@ -135,7 +132,7 @@ class PaymentServiceTest {
 	void paymentFailedTest3() throws InterruptedException {
 		//given
 		Book book = new Book();
-		ReflectionTestUtils.setField(book, "bookId", 1L);
+		ReflectionTestUtils.setField(book, "id", 1L);
 		ReflectionTestUtils.setField(book, "stock", 1L);
 		ReflectionTestUtils.setField(book, "prePrice", "1");
 
@@ -169,10 +166,10 @@ class PaymentServiceTest {
 				.bookIntroductionUrl("http://test-url.com")
 				.status(OrderStatus.COMPLETED)
 				.build();
-		ReflectionTestUtils.setField(order, "orderId", 1L);
+		ReflectionTestUtils.setField(order, "id", 1L);
 
 		Book book = new Book();
-		ReflectionTestUtils.setField(book, "bookId", 1L);
+		ReflectionTestUtils.setField(book, "id", 1L);
 		ReflectionTestUtils.setField(book, "stock", 97L);
 		ReflectionTestUtils.setField(book, "prePrice", "1");
 
@@ -182,12 +179,12 @@ class PaymentServiceTest {
 		given(rlock.tryLock(100L, 10L, TimeUnit.SECONDS)).willReturn(true);
 
 		// when
-		PaymentReturnResponse returnResponse = paymentService.returnPayment(user.getId(), order.getOrderId());
+		PaymentReturnResponse returnResponse = paymentService.returnPayment(user.getId(), order.getId());
 
 		// then
 		verify(bookRepository, times(1)).save(any(book.getClass()));
 		assertEquals(45000, returnResponse.getReturnMoney());
-		assertEquals(order.getOrderId(), returnResponse.getOrderId());
+		assertEquals(order.getId(), returnResponse.getOrderId());
 		assertEquals(100, book.getStock());
 	}
 
@@ -209,13 +206,13 @@ class PaymentServiceTest {
 				.bookIntroductionUrl("http://test-url.com")
 				.status(OrderStatus.COMPLETED)
 				.build();
-		ReflectionTestUtils.setField(order, "orderId", 1L);
+		ReflectionTestUtils.setField(order, "id", 1L);
 
 		given(orderService.getOrder(anyLong())).willReturn(OrderResponse.of(order));
 
 		// when && then
 		try {
-			paymentService.returnPayment(user.getId(), order.getOrderId());
+			paymentService.returnPayment(user.getId(), order.getId());
 		} catch (InvalidRequestException e) {
 			assertInstanceOf(InvalidRequestException.class, e);
 			assertEquals(ErrorMessage.NO_AUTHORITY_TO_RETURN_A_PAYMENT, e.getErrorMessage());
@@ -242,7 +239,7 @@ class PaymentServiceTest {
 				.bookIntroductionUrl("http://test-url.com")
 				.status(OrderStatus.COMPLETED)
 				.build();
-		ReflectionTestUtils.setField(order, "orderId", 1L);
+		ReflectionTestUtils.setField(order, "id", 1L);
 
 		given(orderService.getOrder(anyLong())).willReturn(OrderResponse.of(order));
 		given(redissonClient.getFairLock(anyString())).willReturn(rlock);
@@ -250,7 +247,7 @@ class PaymentServiceTest {
 
 		// when && then
 		try {
-			paymentService.returnPayment(user.getId(), order.getOrderId());
+			paymentService.returnPayment(user.getId(), order.getId());
 		} catch (NotFoundException e) {
 			assertInstanceOf(NotFoundException.class, e);
 			assertEquals(ErrorMessage.BOOK_NOT_FOUND, e.getErrorMessage());
