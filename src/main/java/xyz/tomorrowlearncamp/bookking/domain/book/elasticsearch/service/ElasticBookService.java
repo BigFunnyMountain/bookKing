@@ -47,7 +47,7 @@ public class ElasticBookService {
             log.info("elastic 색인 성공 {}", indexResponse.id());
         } catch (IOException e) {
             log.error(ErrorMessage.ELASTICSEARCH_ERROR.getMessage());
-            throw new NotFoundException(ErrorMessage.ELASTICSEARCH_ERROR);
+            throw new ServerException(ErrorMessage.ELASTICSEARCH_ERROR);
         }
     }
 
@@ -146,7 +146,7 @@ public class ElasticBookService {
 
         } catch (IOException e) {
             log.error(ErrorMessage.ELASTICSEARCH_ERROR.getMessage());
-            throw new NotFoundException(ErrorMessage.ELASTICSEARCH_ERROR);
+            throw new ServerException(ErrorMessage.ELASTICSEARCH_ERROR);
         }
     }
 
@@ -177,7 +177,7 @@ public class ElasticBookService {
                     .toList();
         } catch (IOException e) {
             log.error(ErrorMessage.ELASTICSEARCH_ERROR.getMessage());
-            throw new NotFoundException(ErrorMessage.ELASTICSEARCH_ERROR);
+            throw new ServerException(ErrorMessage.ELASTICSEARCH_ERROR);
         }
     }
 
@@ -205,7 +205,7 @@ public class ElasticBookService {
                     .toList();
         } catch (IOException e) {
             log.error(ErrorMessage.ELASTICSEARCH_ERROR.getMessage());
-            throw new NotFoundException(ErrorMessage.ELASTICSEARCH_ERROR);
+            throw new ServerException(ErrorMessage.ELASTICSEARCH_ERROR);
         }
     }
 
@@ -235,7 +235,7 @@ public class ElasticBookService {
                     .toList();
         } catch (IOException e) {
             log.error(ErrorMessage.ELASTICSEARCH_ERROR.getMessage());
-            throw new NotFoundException(ErrorMessage.ELASTICSEARCH_ERROR);
+            throw new ServerException(ErrorMessage.ELASTICSEARCH_ERROR);
         }
     }
 
@@ -268,7 +268,7 @@ public class ElasticBookService {
             return results;
         } catch (IOException e) {
             log.error(ErrorMessage.ELASTICSEARCH_ERROR.getMessage());
-            throw new NotFoundException(ErrorMessage.ELASTICSEARCH_ERROR);
+            throw new ServerException(ErrorMessage.ELASTICSEARCH_ERROR);
         }
     }
 }
