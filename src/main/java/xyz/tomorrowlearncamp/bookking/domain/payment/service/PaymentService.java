@@ -54,7 +54,7 @@ public class PaymentService {
 
 		book.updateStock(book.getStock() - buyStock);
 
-		orderService.createOrder(userId, book.getId(), book.getPrePrice(), buyStock, book.getPublisher(), book.getBookIntroductionUrl(), OrderStatus.COMPLETED, payType);
+		orderService.createOrder(userId, book, buyStock, OrderStatus.COMPLETED, payType);
 	}
 
 	public void paymentV2(Long userId, Long bookId, Long buyStock, Long money, PayType payType) {
@@ -89,7 +89,7 @@ public class PaymentService {
 		} finally {
 			lock.unlock();
 		}
-		orderService.createOrder(userId, book.getId(), book.getPrePrice(), buyStock, book.getPublisher(), book.getBookIntroductionUrl(), OrderStatus.COMPLETED, payType);
+		orderService.createOrder(userId, book, buyStock, OrderStatus.COMPLETED, payType);
 	}
 
 	public PaymentReturnResponse returnPayment(Long userId, Long orderId) {

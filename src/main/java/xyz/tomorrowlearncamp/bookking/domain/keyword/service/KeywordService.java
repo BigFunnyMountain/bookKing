@@ -41,7 +41,7 @@ public class KeywordService {
         List<Book> purchasedBooks = recentOrders.stream()
                 .map(order -> bookRepository.findById(order.getBookId())
                         .orElseThrow(() -> new RuntimeException("Book not found")))
-                .collect(Collectors.toList());
+                .toList();
 
         // 책들의 정보를 기반으로 프롬프트 생성
         String bookInfo = purchasedBooks.stream()
@@ -49,9 +49,11 @@ public class KeywordService {
                 .collect(Collectors.joining("\n"));
 
         String prompt = String.format(
-                "Based on the user's recent book purchases:\n%s\n\n" +
-                        "Suggest 5 related book categories or topics that the user might be interested in. " +
-                        "Respond in Korean. Return only the keywords separated by commas, no additional text.",
+                """
+                        Based on the user's recent book purchases:%s"
+                        "Suggest 5 related book categories or topics that the user might be interested in. "
+                        "Respond in Korean. Return only the keywords separated by commas, no additional text.
+                """,
                 bookInfo
         );
 
@@ -75,9 +77,8 @@ public class KeywordService {
 
         List<String> keywords = Arrays.stream(response.split(","))
                 .map(String::trim)
-                .collect(Collectors.toList());
+                .toList();
 
-        KeywordResponse keywordResponse = KeywordResponse.of(keywords);
-        return keywordResponse;
+        return KeywordResponse.of(keywords);
     }
 } 

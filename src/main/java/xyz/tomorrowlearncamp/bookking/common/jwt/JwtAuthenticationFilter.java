@@ -42,6 +42,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+	private static final String APP_JSON = "application/json";
+	private static final String UTF = "UTF-8";
+
 	private final JwtProvider jwtProvider;
 
 	private final RefreshTokenRepository refreshTokenRepository;
@@ -101,8 +104,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		ObjectMapper objectMapper = new ObjectMapper();
 		String errorJson = objectMapper.writeValueAsString(Response.fail(error.getStatus(), ex));
 
-		response.setContentType("application/json");
-		response.setCharacterEncoding("UTF-8");
+		response.setContentType(APP_JSON);
+		response.setCharacterEncoding(UTF);
 		response.getWriter().write(errorJson);
 	}
 
@@ -112,8 +115,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		ObjectMapper objectMapper = new ObjectMapper();
 		String redirect = objectMapper.writeValueAsString(Response.success(message.getStatus()));
 
-		response.setContentType("application/json");
-		response.setCharacterEncoding("UTF-8");
+		response.setContentType(APP_JSON);
+		response.setCharacterEncoding(UTF);
 		response.getWriter().write(redirect);
 	}
 
@@ -121,7 +124,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		log.info("accessToken 재발급");
 		String refreshToken = request.getHeader("refreshToken");
 
-		// 엑세스토큰이 만료가 됬고 ( 엑세스 토큰 있음 ) , 리프레쉬 토큰이 없는 경우
 		if (refreshToken == null) {
 			response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
 			sendRedirect(response, RedirectionMessage.EXPIRED_JWT_ACCESS_TOKEN);
@@ -147,8 +149,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		ObjectMapper objectMapper = new ObjectMapper();
 		String returnToken = objectMapper.writeValueAsString(Response.success(AccessTokenResponse.of(accessToken)));
 
-		response.setContentType("application/json");
-		response.setCharacterEncoding("UTF-8");
+		response.setContentType(APP_JSON);
+		response.setCharacterEncoding(UTF);
 		response.getWriter().write(returnToken);
 	}
 }

@@ -31,8 +31,11 @@ import xyz.tomorrowlearncamp.bookking.common.exception.ServerException;
 @RequiredArgsConstructor
 public class ElasticBookService {
 
-    private final ElasticsearchClient elasticsearchClient;
     private static final String INDEX_NAME = "books";
+    private static final String FIELD_TITLE = "title";
+    private static final String FIELD_AUTHOR = "author";
+
+    private final ElasticsearchClient elasticsearchClient;
 
     public void save(Book book) {
         ElasticBookDocument elasticBookDocument = ElasticBookDocument.of(book);
@@ -113,7 +116,7 @@ public class ElasticBookService {
             if (keyword != null && !keyword.isBlank()) {
                 mustQueries.add(Query.of(q -> q
                         .multiMatch(m -> m
-                                .fields("title", "author", "publisher", "subject")
+                                .fields(FIELD_TITLE, FIELD_AUTHOR, "publisher", "subject")
                                 .query(keyword)
                         )
                 ));
@@ -156,7 +159,7 @@ public class ElasticBookService {
         try {
             Query autoCompleteQuery = Query.of(q -> q
                     .matchPhrasePrefix(m -> m
-                            .field("title").query(keyword)));
+                            .field(FIELD_TITLE).query(keyword)));
 
             SearchRequest searchRequest = SearchRequest.of(s -> s
                     .index(INDEX_NAME)
@@ -216,7 +219,7 @@ public class ElasticBookService {
             Query query = Query.of(q -> q
                     .multiMatch(m -> m
                             .query(keyword)
-                            .fields("title^3", "subject^2", "author")
+                            .fields("title^3", "subject^2", FIELD_AUTHOR)
                             .fuzziness("AUTO")));
 
             SearchRequest searchRequest = SearchRequest.of(s -> s
@@ -246,7 +249,7 @@ public class ElasticBookService {
             Query query = Query.of(q -> q
                     .multiMatch(m -> m
                             .query(keyword)
-                            .fields("title", "subject", "author", "publisher")));
+                            .fields(FIELD_TITLE, "subject", FIELD_AUTHOR, "publisher")));
 
             Aggregation aggregation = Aggregation.of(a -> a
                     .terms(t -> t

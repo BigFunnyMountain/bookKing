@@ -33,7 +33,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
@@ -140,20 +140,23 @@ class OrderServiceTest {
         // given
         Long userId = 1L;
         Long bookId = 2L;
-        String prePrice = "15000";
-        Long stock = 5L;
-        String publisher = "테스트 출판사";
-        String bookIntroductionUrl = "http://test-url.com";
+        Long stock = 10L;
+
+        Book book = new Book();
+        ReflectionTestUtils.setField(book, "id", bookId);
+        ReflectionTestUtils.setField(book, "prePrice", "15000");
+        ReflectionTestUtils.setField(book, "publisher", "테스트 출판사");
+        ReflectionTestUtils.setField(book, "bookIntroductionUrl", "http://test-url.com");
         OrderStatus status = OrderStatus.COMPLETED;
         PayType payType = PayType.CARD;
 
         Order savedOrder = Order.builder()
                 .userId(userId)
                 .bookId(bookId)
-                .prePrice(prePrice)
-                .stock(stock)
-                .publisher(publisher)
-                .bookIntroductionUrl(bookIntroductionUrl)
+                .prePrice(book.getPrePrice())
+                .stock(10L)
+                .publisher(book.getPublisher())
+                .bookIntroductionUrl(book.getBookIntroductionUrl())
                 .status(status)
                 .build();
 
@@ -163,17 +166,17 @@ class OrderServiceTest {
         given(orderRepository.save(any(Order.class))).willReturn(savedOrder);
 
         // when
-        Order result = orderService.createOrder(userId, bookId, prePrice, stock, publisher, bookIntroductionUrl, status, payType);
+        Order result = orderService.createOrder(userId, book, stock, status, payType);
 
         // then
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(100L);
         assertThat(result.getUserId()).isEqualTo(userId);
         assertThat(result.getBookId()).isEqualTo(bookId);
-        assertThat(result.getPrePrice()).isEqualTo(prePrice);
+        assertThat(result.getPrePrice()).isEqualTo(book.getPrePrice());
         assertThat(result.getBuyStock()).isEqualTo(stock);
-        assertThat(result.getPublisher()).isEqualTo(publisher);
-        assertThat(result.getBookIntroductionUrl()).isEqualTo(bookIntroductionUrl);
+        assertThat(result.getPublisher()).isEqualTo(book.getPublisher());
+        assertThat(result.getBookIntroductionUrl()).isEqualTo(book.getBookIntroductionUrl());
         assertThat(result.getStatus()).isEqualTo(status);
 
         verify(orderRepository).save(any(Order.class));

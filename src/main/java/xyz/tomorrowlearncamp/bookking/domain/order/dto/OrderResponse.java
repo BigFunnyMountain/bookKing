@@ -7,43 +7,31 @@ import java.time.LocalDateTime;
 
 @Getter
 public class OrderResponse {
-    private Long orderId;
-    private Long bookId;
-    private Long userId;
-    private String status;
-    private boolean isReviewed;
-    private LocalDateTime createdAt;
-    private String prePrice;
-    private Long buyStock;
-    private String publisher;
-    private String bookIntroductionUrl;
+    private final Long orderId;
+    private final Long bookId;
+    private final Long userId;
+    private final String status;
+    private final boolean isReviewed;
+    private final LocalDateTime createdAt;
+    private final String prePrice;
+    private final Long buyStock;
+    private final String publisher;
+    private final String bookIntroductionUrl;
 
-    public OrderResponse(Long orderId, Long bookId, Long userId, String status, boolean isReviewed, LocalDateTime createdAt,
-                         String prePrice, Long stock, String publisher, String bookIntroductionUrl) {
-        this.orderId = orderId;
-        this.bookId = bookId;
-        this.userId = userId;
-        this.status = status;
-        this.isReviewed = isReviewed;
-        this.createdAt = createdAt;
-        this.prePrice = prePrice;
-        this.buyStock = stock;
-        this.publisher = publisher;
-        this.bookIntroductionUrl = bookIntroductionUrl;
+    public OrderResponse(Order order) {
+        this.orderId = order.getId();
+        this.bookId = order.getBookId();
+        this.userId = order.getUserId();
+        this.status = order.getStatus().name();
+        this.isReviewed = order.isReviewed();
+        this.createdAt = order.getCreatedAt();
+        this.prePrice = order.getPrePrice();
+        this.buyStock = order.getBuyStock();
+        this.publisher = order.getPublisher();
+        this.bookIntroductionUrl = order.getBookIntroductionUrl();
     }
 
     public static OrderResponse of(Order order) {
-        return new OrderResponse(
-                order.getId(),
-                order.getBookId(),
-                order.getUserId(),
-                order.getStatus().name(),
-                order.isReviewed(),
-                order.getCreatedAt(),
-                order.getPrePrice(),
-                order.getBuyStock(),
-                order.getPublisher(),
-                order.getBookIntroductionUrl()
-        );
+        return new OrderResponse(order);
     }
 }

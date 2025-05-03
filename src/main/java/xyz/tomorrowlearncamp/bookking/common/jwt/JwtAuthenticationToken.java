@@ -1,6 +1,7 @@
 package xyz.tomorrowlearncamp.bookking.common.jwt;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
+
 import xyz.tomorrowlearncamp.bookking.common.entity.AuthUser;
 
 /**
@@ -9,7 +10,7 @@ import xyz.tomorrowlearncamp.bookking.common.entity.AuthUser;
  */
 public class JwtAuthenticationToken extends AbstractAuthenticationToken {
 
-    private final AuthUser authUser;
+    private final transient AuthUser authUser;
 
     private JwtAuthenticationToken(AuthUser authUser) {
         super(authUser.getAuthorities());
@@ -29,5 +30,15 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
     @Override
     public Object getPrincipal() {
         return authUser;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof JwtAuthenticationToken && super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }
