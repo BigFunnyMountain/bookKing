@@ -56,15 +56,14 @@ public class SecurityConfig {
                 .logout(AbstractHttpConfigurer::disable)
                 .rememberMe(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(request -> request.getRequestURI().startsWith("/api/v*/auth")).permitAll()
+                        .requestMatchers(request -> request.getRequestURI().startsWith("/api/v*/users")).authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/v*/books").permitAll()
+                        .requestMatchers("/api/v*/books").hasAuthority(UserRole.ROLE_ADMIN.name())
                         .requestMatchers("/error").permitAll()
-                        .requestMatchers(request -> request.getRequestURI().startsWith("/api/v1/auth")).permitAll()
-                                .requestMatchers(HttpMethod.GET, "/api/v1/books/**").permitAll()
-                                // 테스트를 위해 임시 허용
-                                //.requestMatchers(HttpMethod.POST, "/api/v1/books").hasRole("ADMIN")
-                                //.requestMatchers(HttpMethod.PUT, "/api/v1/books/**").authenticated()
                         .requestMatchers("/test").hasAuthority(UserRole.ROLE_ADMIN.name())
-                        .requestMatchers(request -> request.getRequestURI().startsWith("/api/v1/users")).authenticated()
-                        .anyRequest().permitAll()
+
+                        .anyRequest().permitAll()  //todo : 나중에 변경하기 authenticated()
                 )
                 .build();
     }

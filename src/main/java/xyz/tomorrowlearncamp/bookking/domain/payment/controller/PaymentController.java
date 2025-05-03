@@ -18,11 +18,25 @@ public class PaymentController {
 	private final PaymentService paymentService;
 
 	@PostMapping("/v1/payments")
-	public void payment(
+	public void paymentV1(
 			@AuthenticationPrincipal AuthUser user,
 			@Valid @RequestBody PaymentBuyRequest paymentBuyRequest
 	) {
-		paymentService.payment(
+		paymentService.paymentV1(
+			user.getUserId(),
+			paymentBuyRequest.getBookId(),
+			paymentBuyRequest.getBuyStock(),
+			paymentBuyRequest.getMoney(),
+			paymentBuyRequest.getPayType()
+		);
+	}
+
+	@PostMapping("/v2/payments")
+	public void paymentV2(
+			@AuthenticationPrincipal AuthUser user,
+			@Valid @RequestBody PaymentBuyRequest paymentBuyRequest
+	) {
+		paymentService.paymentV2(
 			user.getUserId(),
 			paymentBuyRequest.getBookId(),
 			paymentBuyRequest.getBuyStock(),

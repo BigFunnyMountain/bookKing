@@ -29,12 +29,12 @@ public class AuthUser {
         return new AuthUser(
                 userId,
                 email,
-                List.of(new SimpleGrantedAuthority("ROLE_" + userRole.name()))
+                List.of(new SimpleGrantedAuthority(userRole.name()))
 
         );
     }
 
     public String getRole() {
-        return UserRole.valueOf(authorities.get(0).toString()).name();
+        return authorities.get(0).getAuthority();
     }
 }
