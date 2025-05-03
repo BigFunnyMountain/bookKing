@@ -53,7 +53,6 @@ public class PaymentService {
 		}
 
 		book.updateStock(book.getStock() - buyStock);
-		bookRepository.save(book);
 
 		orderService.createOrder(userId, book.getBookId(), book.getPrePrice(), buyStock, book.getPublisher(), book.getBookIntroductionUrl(), OrderStatus.COMPLETED, payType);
 	}

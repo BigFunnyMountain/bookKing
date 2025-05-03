@@ -191,7 +191,6 @@ class PaymentServiceTest {
 		executorService.shutdown();
 
 		// then
-		verify(bookRepository, times(100)).save(any(book.getClass()));
 		assertEquals(0, book.getStock());
 	}
 
