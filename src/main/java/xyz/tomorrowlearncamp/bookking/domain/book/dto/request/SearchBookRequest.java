@@ -1,15 +1,14 @@
 package xyz.tomorrowlearncamp.bookking.domain.book.dto.request;
 
+import jakarta.validation.constraints.NotNull;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class SearchBookRequestDto {
+public class SearchBookRequest {
 	@NotNull
 	private int pageNo = 1;
 	@NotNull

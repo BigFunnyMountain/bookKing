@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 @Getter
-public class UpdateBookStockRequestDto {
+public class UpdateBookStockRequest {
 	@NotNull
 	private Long stock;
 }

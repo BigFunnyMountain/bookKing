@@ -13,10 +13,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
-import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.AddBookRequestDto;
-import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.UpdateBookRequestDto;
-import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.UpdateBookStockRequestDto;
-import xyz.tomorrowlearncamp.bookking.domain.book.dto.response.BookResponseDto;
+import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.AddBookRequest;
+import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.UpdateBookRequest;
+import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.UpdateBookStockRequest;
+import xyz.tomorrowlearncamp.bookking.domain.book.dto.response.BookResponse;
 import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.service.ElasticBookService;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.book.mapper.BookMapper;
@@ -44,7 +44,7 @@ class BookServiceTest {
 	@Test
 	void 책_등록() {
 		// given
-		AddBookRequestDto requestDto = new AddBookRequestDto();
+		AddBookRequest requestDto = new AddBookRequest();
 		Book book = new Book();
 		ReflectionTestUtils.setField(book, "bookId", 1L);
 
@@ -64,7 +64,7 @@ class BookServiceTest {
 		// given
 		Long id = 1L;
 		Book book = new Book();
-		UpdateBookRequestDto requestDto = new UpdateBookRequestDto();
+		UpdateBookRequest requestDto = new UpdateBookRequest();
 
 		given(bookRepository.findById(id)).willReturn(Optional.of(book));
 
@@ -80,7 +80,7 @@ class BookServiceTest {
 		// given
 		Long id = 1L;
 		Book book = new Book();
-		UpdateBookRequestDto requestDto = new UpdateBookRequestDto();
+		UpdateBookRequest requestDto = new UpdateBookRequest();
 
 		given(bookRepository.findById(id)).willThrow(NotFoundException.class);
 
@@ -95,7 +95,7 @@ class BookServiceTest {
 		// given
 		Long id = 1L;
 		Book book = mock(Book.class);
-		UpdateBookStockRequestDto requestDto = new UpdateBookStockRequestDto();
+		UpdateBookStockRequest requestDto = new UpdateBookStockRequest();
 		ReflectionTestUtils.setField(requestDto, "stock", 5L);
 
 		given(bookRepository.findById(id)).willReturn(Optional.of(book));
@@ -112,7 +112,7 @@ class BookServiceTest {
 		// given
 		Long id = 1L;
 		Book book = mock(Book.class);
-		UpdateBookStockRequestDto requestDto = new UpdateBookStockRequestDto();
+		UpdateBookStockRequest requestDto = new UpdateBookStockRequest();
 		ReflectionTestUtils.setField(requestDto, "stock", 5L);
 
 		given(bookRepository.findById(id)).willThrow(NotFoundException.class);
@@ -132,10 +132,10 @@ class BookServiceTest {
 		given(bookRepository.findById(id)).willReturn(Optional.of(book));
 
 		// when
-		BookResponseDto response = bookService.getBookById(id);
+		BookResponse response = bookService.getBookById(id);
 
 		// then
-		assertThat(response).isInstanceOf(BookResponseDto.class);
+		assertThat(response).isInstanceOf(BookResponse.class);
 	}
 
 	@Test

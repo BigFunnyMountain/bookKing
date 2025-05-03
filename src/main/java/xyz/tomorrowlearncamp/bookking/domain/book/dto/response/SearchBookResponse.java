@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 @Getter
-public class SearchBookResponseDto {
+public class SearchBookResponse {
 	@JsonProperty("TOTAL_COUNT")
 	private String totalCount;
 
