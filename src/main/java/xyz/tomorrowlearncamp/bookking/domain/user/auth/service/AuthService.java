@@ -56,7 +56,7 @@ public class AuthService {
         refreshTokenRepository.save(
                 RefreshToken.builder()
                         .userId(user.getId())
-                        .token(jwtProvider.removeBearerPrefix(refreshToken))
+                        .token(refreshToken)
                         .expiredAt(LocalDateTime.now().plusDays(14))
                         .build()
         );

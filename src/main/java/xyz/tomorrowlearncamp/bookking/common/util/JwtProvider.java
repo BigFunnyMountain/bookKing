@@ -24,7 +24,7 @@ public class JwtProvider {
     private static final String CLAIM_ROLE = "role";
 
     private static final String BEARER_PREFIX = "Bearer ";
-    private static final long ACCESS_TOKEN_VALIDITY = 1000L * 60 * 30;
+    private static final long ACCESS_TOKEN_VALIDITY = 1000L * 60;
     private static final long REFRESH_TOKEN_VALIDITY = 1000L * 60 * 60 * 24 * 14;
 
     @Value("${jwt.secret.key}")
