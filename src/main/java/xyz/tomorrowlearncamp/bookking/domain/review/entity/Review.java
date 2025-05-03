@@ -2,7 +2,7 @@ package xyz.tomorrowlearncamp.bookking.domain.review.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import xyz.tomorrowlearncamp.bookking.domain.common.entity.BaseEntity;
+import xyz.tomorrowlearncamp.bookking.common.entity.BaseEntity;
 import xyz.tomorrowlearncamp.bookking.domain.review.enums.ReviewState;
 import xyz.tomorrowlearncamp.bookking.domain.review.enums.StarRating;
 

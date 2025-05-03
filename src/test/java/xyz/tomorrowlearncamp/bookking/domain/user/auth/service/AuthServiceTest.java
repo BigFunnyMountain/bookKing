@@ -9,12 +9,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
-import xyz.tomorrowlearncamp.bookking.domain.common.enums.ErrorMessage;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.InvalidRequestException;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
-import xyz.tomorrowlearncamp.bookking.domain.user.auth.config.JwtProvider;
+import xyz.tomorrowlearncamp.bookking.common.enums.ErrorMessage;
+import xyz.tomorrowlearncamp.bookking.common.exception.InvalidRequestException;
+import xyz.tomorrowlearncamp.bookking.common.exception.NotFoundException;
+import xyz.tomorrowlearncamp.bookking.common.util.JwtProvider;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.SignupRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.entity.RefreshToken;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.repository.RefreshTokenRepository;
@@ -53,9 +54,6 @@ class AuthServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
-    @Mock
-    private HttpServletResponse response;
-
     @Test
     @DisplayName("로그인_실패-존재하지_않는_사용자")
     void login_fail_userNotFound() {
@@ -66,7 +64,7 @@ class AuthServiceTest {
 
         // when && then
         NotFoundException assertThrows = assertThrows(NotFoundException.class,
-                () -> authService.login(request, response));
+                () -> authService.signin(request));
 
         assertInstanceOf(NotFoundException.class, assertThrows);
         assertEquals(ErrorMessage.USER_NOT_FOUND, assertThrows.getErrorMessage());
@@ -88,7 +86,7 @@ class AuthServiceTest {
 
         // when && then
         InvalidRequestException assertThrows = assertThrows(InvalidRequestException.class,
-                () -> authService.login(request, response));
+                () -> authService.signin(request));
 
         assertInstanceOf(InvalidRequestException.class, assertThrows);
         assertEquals(ErrorMessage.WRONG_PASSWORD, assertThrows.getErrorMessage());
@@ -117,7 +115,7 @@ class AuthServiceTest {
         LoginRequest request = LoginRequest.of(email, password);
 
         //when
-        var result = authService.login(request, response);
+        var result = authService.signin(request);
 
         //then
         assertThat(result.getAccessToken()).isEqualTo(accessToken);
@@ -131,7 +129,6 @@ class AuthServiceTest {
         verify(refreshTokenRepository).deleteByUserId(userId);
         verify(refreshTokenRepository).flush();
         verify(refreshTokenRepository).save(any(RefreshToken.class));
-        verify(response).setHeader(HttpHeaders.AUTHORIZATION, accessToken);
     }
 
 

@@ -15,8 +15,8 @@ import xyz.tomorrowlearncamp.bookking.domain.book.dto.response.BookResponse;
 import xyz.tomorrowlearncamp.bookking.domain.book.dto.response.SearchBookResponse;
 import xyz.tomorrowlearncamp.bookking.domain.book.service.BookService;
 import xyz.tomorrowlearncamp.bookking.domain.book.service.SearchBookService;
-import xyz.tomorrowlearncamp.bookking.domain.common.dto.Response;
-import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.AuthUser;
+import xyz.tomorrowlearncamp.bookking.common.dto.Response;
+import xyz.tomorrowlearncamp.bookking.common.entity.AuthUser;
 
 @RestController
 @RequiredArgsConstructor

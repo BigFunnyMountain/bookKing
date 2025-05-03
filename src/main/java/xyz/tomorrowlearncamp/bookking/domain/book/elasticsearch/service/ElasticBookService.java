@@ -23,9 +23,8 @@ import org.springframework.stereotype.Service;
 import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.document.ElasticBookDocument;
 import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.dto.ElasticBookSearchResponse;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
-import xyz.tomorrowlearncamp.bookking.domain.common.enums.ErrorMessage;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.ServerException;
+import xyz.tomorrowlearncamp.bookking.common.enums.ErrorMessage;
+import xyz.tomorrowlearncamp.bookking.common.exception.ServerException;
 
 @Slf4j
 @Service

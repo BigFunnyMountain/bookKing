@@ -19,8 +19,8 @@ import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.service.ElasticB
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.book.mapper.BookMapper;
 import xyz.tomorrowlearncamp.bookking.domain.book.repository.BookRepository;
-import xyz.tomorrowlearncamp.bookking.domain.common.enums.ErrorMessage;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
+import xyz.tomorrowlearncamp.bookking.common.enums.ErrorMessage;
+import xyz.tomorrowlearncamp.bookking.common.exception.NotFoundException;
 
 @Slf4j
 @Service
