@@ -10,10 +10,6 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ErrorMessage {
 
-	/* 3xx */
-	EXPIRED_JWT_TOKEN(MOVED_PERMANENTLY, "만료된 JWT token 입니다."),
-	RESIGNIN(MOVED_PERMANENTLY, "다시 로그인 해주세요."),
-
 	/* 4xx */
 	ZERO_BOOK_STOCK(BAD_REQUEST,"남은 책이 없습니다."),
 	SHORT_ON_MONEY(BAD_REQUEST,"돈이 부족합니다."),
@@ -21,8 +17,7 @@ public enum ErrorMessage {
 	TYPE_MISMATCH(BAD_REQUEST, "올바른 값을 입력해주세요."),
 	INVALID_JWT_SIGNATURE(BAD_REQUEST,"유효하지 않는 JWT 서명 입니다."),
 	UNSUPPORTED_JWT_TOKEN(BAD_REQUEST, "지원되지 않는 JWT 토큰 입니다."),
-
-
+	EXPIRED_JWT_REFRESH_TOKEN(BAD_REQUEST, "다시 로그인 해주세요."),
 
     NO_AUTHORITY_TO_WRITE_A_REVIEW(FORBIDDEN, "리뷰를 작성할 권한이 없습니다."),
     INVALID_HEADER(BAD_REQUEST, "Authorization 헤더가 잘못되었습니다."),

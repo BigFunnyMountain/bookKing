@@ -18,6 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import xyz.tomorrowlearncamp.bookking.common.dto.CustomExceptionDto;
 import xyz.tomorrowlearncamp.bookking.common.dto.Response;
 import xyz.tomorrowlearncamp.bookking.common.enums.ErrorMessage;
+import xyz.tomorrowlearncamp.bookking.common.enums.RedirectionMessage;
 import xyz.tomorrowlearncamp.bookking.common.exception.InvalidRequestException;
 import xyz.tomorrowlearncamp.bookking.common.util.JwtProvider;
 import xyz.tomorrowlearncamp.bookking.common.entity.AuthUser;
@@ -105,13 +106,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		response.getWriter().write(errorJson);
 	}
 
+	private void sendRedirect(HttpServletResponse response, RedirectionMessage message) throws IOException {
+		log.info(message.name() + " : ", message.getMessage() );
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		String redirect = objectMapper.writeValueAsString(Response.success(message.getStatus()));
+
+		response.setContentType("application/json");
+		response.setCharacterEncoding("UTF-8");
+		response.getWriter().write(redirect);
+	}
+
 	private void handleExpiredToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		log.info("accessToken 재발급");
 		String refreshToken = request.getHeader("refreshToken");
 
+		// 엑세스토큰이 만료가 됬고 ( 엑세스 토큰 있음 ) , 리프레쉬 토큰이 없는 경우
 		if (refreshToken == null) {
 			response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-			sendError(response, ErrorMessage.EXPIRED_JWT_TOKEN);
+			sendRedirect(response, RedirectionMessage.EXPIRED_JWT_ACCESS_TOKEN);
 			return;
 		}
 
@@ -119,7 +132,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			() -> new InvalidRequestException(ErrorMessage.INVALID_REFRESH_TOKEN)
 		);
 		if( getToken.getExpiredAt().isBefore(java.time.LocalDateTime.now()) ) {
-			throw new InvalidRequestException(ErrorMessage.EXPIRED_JWT_TOKEN);
+			throw new InvalidRequestException(ErrorMessage.EXPIRED_JWT_REFRESH_TOKEN);
 		}
 		if( !getToken.getToken().equals(refreshToken) ) {
 			throw new InvalidRequestException(ErrorMessage.INVALID_REFRESH_TOKEN);
