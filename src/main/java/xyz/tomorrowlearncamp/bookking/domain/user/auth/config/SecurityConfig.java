@@ -12,9 +12,12 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter;
 import org.springframework.web.cors.CorsConfiguration;
+
+import xyz.tomorrowlearncamp.bookking.domain.common.exception.AccessDeniedHandlerImpl;
 import xyz.tomorrowlearncamp.bookking.domain.user.enums.UserRole;
 
 import java.util.List;
@@ -31,7 +34,6 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
@@ -45,6 +47,10 @@ public class SecurityConfig {
                             config.setAllowCredentials(true);
                             return config;
                         })
+                )
+                .exceptionHandling(
+                    configurer ->
+                        configurer.accessDeniedHandler(new AccessDeniedHandlerImpl())
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
