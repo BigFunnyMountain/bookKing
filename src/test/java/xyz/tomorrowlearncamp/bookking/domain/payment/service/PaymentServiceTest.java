@@ -70,7 +70,7 @@ class PaymentServiceTest {
 		ReflectionTestUtils.setField(user, "role", UserRole.ROLE_USER);
 
 		Book book = new Book();
-		ReflectionTestUtils.setField(book, "bookId", 1L);
+		ReflectionTestUtils.setField(book, "id", 1L);
 		ReflectionTestUtils.setField(book, "stock", 1L);
 		ReflectionTestUtils.setField(book, "prePrice", "1");
 
@@ -111,7 +111,7 @@ class PaymentServiceTest {
 	void paymentFailedTest2() throws InterruptedException {
 		//given
 		Book book = new Book();
-		ReflectionTestUtils.setField(book, "bookId", 1L);
+		ReflectionTestUtils.setField(book, "id", 1L);
 		ReflectionTestUtils.setField(book, "stock", 0L);
 		ReflectionTestUtils.setField(book, "prePrice", "1");
 
@@ -132,7 +132,7 @@ class PaymentServiceTest {
 	void paymentFailedTest3() throws InterruptedException {
 		//given
 		Book book = new Book();
-		ReflectionTestUtils.setField(book, "bookId", 1L);
+		ReflectionTestUtils.setField(book, "id", 1L);
 		ReflectionTestUtils.setField(book, "stock", 1L);
 		ReflectionTestUtils.setField(book, "prePrice", "1");
 
@@ -166,10 +166,10 @@ class PaymentServiceTest {
 				.bookIntroductionUrl("http://test-url.com")
 				.status(OrderStatus.COMPLETED)
 				.build();
-		ReflectionTestUtils.setField(order, "orderId", 1L);
+		ReflectionTestUtils.setField(order, "id", 1L);
 
 		Book book = new Book();
-		ReflectionTestUtils.setField(book, "bookId", 1L);
+		ReflectionTestUtils.setField(book, "id", 1L);
 		ReflectionTestUtils.setField(book, "stock", 97L);
 		ReflectionTestUtils.setField(book, "prePrice", "1");
 
@@ -206,7 +206,7 @@ class PaymentServiceTest {
 				.bookIntroductionUrl("http://test-url.com")
 				.status(OrderStatus.COMPLETED)
 				.build();
-		ReflectionTestUtils.setField(order, "orderId", 1L);
+		ReflectionTestUtils.setField(order, "id", 1L);
 
 		given(orderService.getOrder(anyLong())).willReturn(OrderResponse.of(order));
 
@@ -239,7 +239,7 @@ class PaymentServiceTest {
 				.bookIntroductionUrl("http://test-url.com")
 				.status(OrderStatus.COMPLETED)
 				.build();
-		ReflectionTestUtils.setField(order, "orderId", 1L);
+		ReflectionTestUtils.setField(order, "id", 1L);
 
 		given(orderService.getOrder(anyLong())).willReturn(OrderResponse.of(order));
 		given(redissonClient.getFairLock(anyString())).willReturn(rlock);
