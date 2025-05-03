@@ -1,4 +1,4 @@
-package xyz.tomorrowlearncamp.bookking.domain.common.exception;
+package xyz.tomorrowlearncamp.bookking.domain.common.dto;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -19,12 +19,12 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 
 import xyz.tomorrowlearncamp.bookking.domain.common.dto.Response;
 import xyz.tomorrowlearncamp.bookking.domain.common.enums.ErrorMessage;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.CustomExceptionDto;
+import xyz.tomorrowlearncamp.bookking.domain.common.dto.CustomExceptionDto;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.ForbiddenRequestException;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.InvalidRequestException;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.ServerException;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.ValidationExceptionDto;
+import xyz.tomorrowlearncamp.bookking.domain.common.dto.ValidationExceptionDto;
 
 @Slf4j
 @RestControllerAdvice

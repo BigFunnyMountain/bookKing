@@ -65,11 +65,11 @@ public class SecurityConfig {
                         .requestMatchers(request -> request.getRequestURI().startsWith("/api/v*/auth")).permitAll()
                         .requestMatchers(request -> request.getRequestURI().startsWith("/api/v*/users")).authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/v*/books").permitAll()
-                        .requestMatchers("/api/v*/books").hasAuthority(UserRole.ROLE_ADMIN.name())
+                        .requestMatchers("/api/v*/books/**").hasAuthority(UserRole.Authority.ADMIN)
                         .requestMatchers("/error").permitAll()
-                        .requestMatchers("/test").hasAuthority(UserRole.ROLE_ADMIN.name())
-
-                        .anyRequest().permitAll()  //todo : 나중에 변경하기 authenticated()
+                        .requestMatchers("/test").hasAuthority(UserRole.Authority.ADMIN)
+                        .anyRequest().permitAll()
+                        //todo : 나중에 변경하기 authenticated()
                 )
                 .build();
     }
