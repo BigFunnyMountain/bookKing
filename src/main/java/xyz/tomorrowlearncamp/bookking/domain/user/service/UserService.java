@@ -31,6 +31,11 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final S3Upload s3Upload;
 
+    @Transactional
+    public boolean existsById(Long userId) {
+        return userRepository.existsById(userId);
+    }
+
     @Transactional(readOnly = true)
     public UserResponse getMyInfo(Long userId) {
         User user = userRepository.findById(userId)
