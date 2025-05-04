@@ -10,6 +10,8 @@ import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.SignupRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.enums.Gender;
 import xyz.tomorrowlearncamp.bookking.domain.user.enums.UserRole;
 
+import java.time.LocalDateTime;
+
 /**
  * 작성자 : 문성준
  * 일시 : 2025.04.03 - v1
@@ -54,8 +56,8 @@ public class User extends BaseEntity {
     @Column(name = "profile_image_url")
     private String profileImageUrl;
 
-    @Column(nullable = false)
-    private boolean deleted = false;
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     @Builder
     private User(String email, String password, String name, UserRole role, String address, Gender gender, int age, String nickname) {
@@ -101,10 +103,10 @@ public class User extends BaseEntity {
     }
 
     public void softDelete() {
-        this.deleted = true;
+        this.deletedAt = LocalDateTime.now();
     }
 
     public boolean isDeleted() {
-        return this.deleted;
+        return this.deletedAt != null;
     }
 }

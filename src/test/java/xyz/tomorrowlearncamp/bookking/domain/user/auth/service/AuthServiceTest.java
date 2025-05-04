@@ -8,8 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpHeaders;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import xyz.tomorrowlearncamp.bookking.common.enums.ErrorMessage;
@@ -62,7 +60,7 @@ class AuthServiceTest {
     void login_fail_userNotFound() {
         // given
         LoginRequest request = LoginRequest.of("notfound@email.com", "1234");
-        given(userRepository.findByEmailAndDeletedFalse(request.getEmail())).willReturn(Optional.empty());
+        given(userRepository.findByEmailAndDeletedAtIsNull(request.getEmail())).willReturn(Optional.empty());
 
         // when
         Throwable throwable = catchThrowable(() -> authService.signin(request));
@@ -85,7 +83,7 @@ class AuthServiceTest {
         SignupRequest temp = SignupRequest.of(email, inputPassword, "홍길동", "서울", Gender.valueOf("MALE"), 20, "길동이");
 
         User user = User.of(temp, encodedPassword, UserRole.ROLE_USER);
-        given(userRepository.findByEmailAndDeletedFalse(email)).willReturn(Optional.of(user));
+        given(userRepository.findByEmailAndDeletedAtIsNull(email)).willReturn(Optional.of(user));
         given(passwordEncoder.matches(inputPassword, encodedPassword)).willReturn(false);
 
         LoginRequest request = LoginRequest.of(email, inputPassword);
@@ -113,7 +111,7 @@ class AuthServiceTest {
         User user = User.of(temp, encodedPassword, UserRole.ROLE_USER);
         setField(user, "id", userId);
 
-        given(userRepository.findByEmailAndDeletedFalse(email)).willReturn(Optional.of(user));
+        given(userRepository.findByEmailAndDeletedAtIsNull(email)).willReturn(Optional.of(user));
         given(passwordEncoder.matches(password, encodedPassword)).willReturn(true);
         given(jwtProvider.createAccessToken(userId, email, user.getRole())).willReturn(accessToken);
         given(jwtProvider.createRefreshToken(userId, email, user.getRole())).willReturn(refreshToken);
@@ -127,7 +125,7 @@ class AuthServiceTest {
         assertThat(result.getAccessToken()).isEqualTo(accessToken);
         assertThat(result.getRefreshToken()).isEqualTo(refreshToken);
 
-        verify(userRepository).findByEmailAndDeletedFalse(email);
+        verify(userRepository).findByEmailAndDeletedAtIsNull(email);
         verify(passwordEncoder).matches(password, encodedPassword);
         verify(jwtProvider).createAccessToken(userId, email, user.getRole());
         verify(jwtProvider).createRefreshToken(userId, email, user.getRole());
@@ -142,7 +140,7 @@ class AuthServiceTest {
     void refresh_fail_tokenNotFound() {
         // given
         String refreshToken = "not_in_db_token";
-        given(refreshTokenRepository.findByTokenAndDeletedFalse(refreshToken)).willReturn(Optional.empty());
+        given(refreshTokenRepository.findByTokenAndDeletedAtIsNull(refreshToken)).willReturn(Optional.empty());
 
         // when && then
         InvalidRequestException assertThrows = assertThrows(InvalidRequestException.class,
@@ -164,7 +162,7 @@ class AuthServiceTest {
                 .expiredAt(LocalDateTime.now().minusMinutes(1))
                 .build();
 
-        given(refreshTokenRepository.findByTokenAndDeletedFalse(refreshToken)).willReturn(Optional.of(token));
+        given(refreshTokenRepository.findByTokenAndDeletedAtIsNull(refreshToken)).willReturn(Optional.of(token));
 
         // when && then
         InvalidRequestException assertThrows = assertThrows(InvalidRequestException.class,
@@ -187,7 +185,7 @@ class AuthServiceTest {
                 .build();
 
         setField(token, "id", 1L);
-        given(refreshTokenRepository.findByTokenAndDeletedFalse(refreshToken)).willReturn(Optional.of(token));
+        given(refreshTokenRepository.findByTokenAndDeletedAtIsNull(refreshToken)).willReturn(Optional.of(token));
         given(userRepository.findById(999L)).willReturn(Optional.empty());
 
         // when && then
@@ -220,7 +218,7 @@ class AuthServiceTest {
         User user = User.of(temp, "password", UserRole.ROLE_USER);
         setField(user, "id", userId);
 
-        given(refreshTokenRepository.findByTokenAndDeletedFalse(refreshToken)).willReturn(Optional.of(token));
+        given(refreshTokenRepository.findByTokenAndDeletedAtIsNull(refreshToken)).willReturn(Optional.of(token));
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
         given(jwtProvider.createAccessToken(userId, email, role)).willReturn(newAccessToken);
 
@@ -231,7 +229,7 @@ class AuthServiceTest {
         assertThat(result).isNotNull();
         assertThat(result.getAccessToken()).isEqualTo(newAccessToken);
 
-        verify(refreshTokenRepository).findByTokenAndDeletedFalse(refreshToken);
+        verify(refreshTokenRepository).findByTokenAndDeletedAtIsNull(refreshToken);
         verify(userRepository).findById(userId);
         verify(jwtProvider).createAccessToken(userId, email, role);
     }

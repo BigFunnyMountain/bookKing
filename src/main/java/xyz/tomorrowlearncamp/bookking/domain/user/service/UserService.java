@@ -29,14 +29,14 @@ public class UserService {
     private final S3Upload s3Upload;
 
     public UserResponse getMyInfo(Long userId) {
-        User user = userRepository.findByIdAndDeletedFalse(userId)
+        User user = userRepository.findByIdAndDeletedAtIsNull(userId)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND));
         return UserResponse.of(user);
     }
 
     @Transactional
     public UserResponse updateUser(Long userId, UpdateUserRequest updateUserRequest) {
-        User user = userRepository.findByIdAndDeletedFalse(userId)
+        User user = userRepository.findByIdAndDeletedAtIsNull(userId)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND));
 
         user.updateUserInfo(updateUserRequest.getNickname(), updateUserRequest.getAddress());
@@ -45,7 +45,7 @@ public class UserService {
 
     @Transactional
     public UserResponse updateUserRole(Long userId, UpdateUserRoleRequest updateUserRoleRequest) {
-        User user = userRepository.findByIdAndDeletedFalse(userId)
+        User user = userRepository.findByIdAndDeletedAtIsNull(userId)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND));
         UserRole updateRole = UserRole.of(updateUserRoleRequest.getRole());
 
@@ -59,7 +59,7 @@ public class UserService {
 
     @Transactional
     public void deleteUser(Long userId, String checkPassword) {
-        User user = userRepository.findByIdAndDeletedFalse(userId)
+        User user = userRepository.findByIdAndDeletedAtIsNull(userId)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(checkPassword, user.getPassword())) {
@@ -70,7 +70,7 @@ public class UserService {
 
     @Transactional
     public String updateProfileImage(Long userId, MultipartFile image) {
-        User user = userRepository.findByIdAndDeletedFalse(userId)
+        User user = userRepository.findByIdAndDeletedAtIsNull(userId)
             .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND));
 
         String imageUrl = s3Upload.uploadProfileImage(image);

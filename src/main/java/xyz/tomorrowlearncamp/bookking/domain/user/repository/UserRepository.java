@@ -12,11 +12,11 @@ import java.util.Optional;
  * 일시 : 2025.04.03 - v1
  */
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByEmailAndDeletedFalse(String email);
+    Optional<User> findByEmailAndDeletedAtIsNull(String email);
 
     boolean existsByEmailAndDeletedFalse(String email);
 
-    Optional<User> findByIdAndDeletedFalse(Long id);
+    Optional<User> findByIdAndDeletedAtIsNull(Long id);
 
 
     // 삭제 여부와는 상관없이 조회하는거 (관리자)
