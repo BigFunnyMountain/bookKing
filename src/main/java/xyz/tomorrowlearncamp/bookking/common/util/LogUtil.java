@@ -13,6 +13,9 @@ import xyz.tomorrowlearncamp.bookking.common.enums.LogType;
 
 @Slf4j
 public class LogUtil {
+	private LogUtil(){
+		throw new IllegalStateException("Utility class");
+	}
 	private static final Logger searchLogger = LoggerFactory.getLogger("SEARCH_LOG");
 	private static final Logger purchaseLogger = LoggerFactory.getLogger("BUY_LOG");
 	private static final ObjectMapper objectMapper = new ObjectMapper();
