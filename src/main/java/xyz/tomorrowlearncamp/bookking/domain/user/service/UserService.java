@@ -30,22 +30,27 @@ public class UserService {
 
     public UserResponse getMyInfo(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."
-                ));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+
+        if (user.isDeleted()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "탈퇴한 사용자입니다.");
+        }
+
         return UserResponse.of(user);
     }
 
+
+    @Transactional
     public UserResponse updateUser(Long userId, UpdateUserRequest updateUserRequest) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다"));
 
         user.updateUserInfo(updateUserRequest.getNickname(), updateUserRequest.getAddress());
-        userRepository.save(user);
 
         return UserResponse.of(user);
     }
 
+    @Transactional
     public UserResponse updateUserRole(Long userId, UpdateUserRoleRequest updateUserRoleRequest) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다"));
@@ -59,10 +64,10 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "권한 변경이 허용되지 않습니다. \n ROLE_USER만 ROLE_ADMIN으로 변경할 수 있습니다.");
         }
 
-        userRepository.save(user);
         return UserResponse.of(user);
     }
 
+    @Transactional
     public void deleteUser(Long userId, Long loginUserId, String checkPassword) {
         if (!userId.equals(loginUserId)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "본인 게정만 탈퇴가 가능합니다");
@@ -74,7 +79,7 @@ public class UserService {
         if (!passwordEncoder.matches(checkPassword, user.getPassword())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "비밀번호가 일치하지 않습니다");
         }
-        userRepository.delete(user);
+        user.softDelete();
     }
 
     @Transactional

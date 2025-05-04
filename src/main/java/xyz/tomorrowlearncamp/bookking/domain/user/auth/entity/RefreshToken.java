@@ -26,11 +26,22 @@ public class RefreshToken extends BaseEntity {
     @Column(nullable = false)
     private Long userId;
 
-    @Column(nullable = false, length = 512,unique = true)
+    @Column(nullable = false, length = 512, unique = true)
     private String token;
 
     @Column(nullable = false)
     private LocalDateTime expiredAt;
+
+    @Column(nullable = false)
+    private boolean deleted = false;
+
+    public void softDelete() {
+        this.deleted = true;
+    }
+
+    public boolean isDeleted() {
+        return this.deleted;
+    }
 
     @Builder
     public RefreshToken(Long userId, String token, LocalDateTime expiredAt) {

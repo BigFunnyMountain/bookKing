@@ -53,6 +53,9 @@ public class User extends BaseEntity {
     @Column(name = "profile_image_url")
     private String profileImageUrl;
 
+    @Column(nullable = false)
+    private boolean deleted = false;
+
     @Builder
     private User(String email, String password, String name, UserRole role, String address, Gender gender, int age, String nickname) {
         this.email = email;
@@ -100,6 +103,12 @@ public class User extends BaseEntity {
     public void updateRole(UserRole newRole) {
         this.role = newRole;
     }
-    // TODO : soft 딜리트 구현 (리팩토링 시에 진행할 예정)
 
+    public void softDelete() {
+        this.deleted = true;
+    }
+
+    public boolean isDeleted() {
+        return this.deleted;
+    }
 }

@@ -22,6 +22,7 @@ import xyz.tomorrowlearncamp.bookking.domain.user.repository.UserRepository;
 import org.springframework.http.HttpHeaders;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -40,7 +41,7 @@ public class AuthService {
 
     @Transactional
     public LoginResponse login(LoginRequest request, HttpServletResponse response) {
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository.findByEmailAndDeletedFalse(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
@@ -50,8 +51,9 @@ public class AuthService {
         String accessToken = jwtProvider.createAccessToken(user.getId(), user.getEmail(), user.getRole());
         String refreshToken = jwtProvider.createRefreshToken(user.getId(), user.getEmail(), user.getRole());
 
-        refreshTokenRepository.deleteByUserId(user.getId());
-        refreshTokenRepository.flush();
+        List<RefreshToken> tokens = refreshTokenRepository.findAllByUserId(user.getId());
+        tokens.forEach(RefreshToken::softDelete);
+
 
         refreshTokenRepository.save(
                 RefreshToken.builder()
@@ -69,7 +71,7 @@ public class AuthService {
         // 값 넘어온거 확인
         log.info("======== [refresh] 클라이언트로부터 받은 refreshToken: {}", refreshToken);
 
-        Optional<RefreshToken> optionalToken = refreshTokenRepository.findByToken(refreshToken);
+        Optional<RefreshToken> optionalToken = refreshTokenRepository.findByTokenAndDeletedFalse(refreshToken);
 
         if (optionalToken.isEmpty()) {
             log.warn("======== [refresh] DB에서 일치하는 RefreshToken을 찾지 못했음. 요청 토큰: {}", refreshToken);
@@ -87,8 +89,9 @@ public class AuthService {
         }
 
         User user = userRepository.findById(token.getUserId())
+                .filter(u -> !u.isDeleted()) // delete된 유저가 refresh 토큰으로 accessToken을 재발급받는 거 막음
                 .orElseThrow(() -> {
-                    log.warn("======== [refresh] userId={} 에 해당하는 유저를 찾지 못했습니다.", token.getUserId());
+                    log.warn("======== [refresh] 유저가 없거나 탈퇴 상태입니다. userId={}", token.getUserId());
                     return new UsernameNotFoundException("사용자를 찾을 수 없습니다.");
                 });
 
@@ -121,7 +124,7 @@ public class AuthService {
     @Transactional(readOnly = true)
     public void validateEmail(String email) {
 
-        if (userRepository.existsByEmail(email)) {
+        if (userRepository.existsByEmailAndDeletedFalse(email)) {
             throw new IllegalArgumentException("이미 가입된 email 입니다.");
         }
     }
