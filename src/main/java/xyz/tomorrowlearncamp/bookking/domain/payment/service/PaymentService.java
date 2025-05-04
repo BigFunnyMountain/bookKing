@@ -9,17 +9,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.book.repository.BookRepository;
+import xyz.tomorrowlearncamp.bookking.common.enums.LogType;
 import xyz.tomorrowlearncamp.bookking.common.enums.ErrorMessage;
 import xyz.tomorrowlearncamp.bookking.common.exception.InvalidRequestException;
 import xyz.tomorrowlearncamp.bookking.common.exception.NotFoundException;
 import xyz.tomorrowlearncamp.bookking.common.exception.ServerException;
+import xyz.tomorrowlearncamp.bookking.common.util.LogUtil;
+
 import xyz.tomorrowlearncamp.bookking.domain.order.dto.OrderResponse;
 import xyz.tomorrowlearncamp.bookking.domain.order.enums.OrderStatus;
 import xyz.tomorrowlearncamp.bookking.domain.order.service.OrderService;
 import xyz.tomorrowlearncamp.bookking.domain.payment.dto.response.PaymentReturnResponse;
 import xyz.tomorrowlearncamp.bookking.domain.payment.enums.PayType;
+import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.UserResponse;
 import xyz.tomorrowlearncamp.bookking.domain.user.service.UserService;
 
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -76,6 +83,18 @@ public class PaymentService {
 			lock.unlock();
 		}
 		orderService.createOrder(userId, book, buyStock, OrderStatus.COMPLETED, payType);
+
+		UserResponse user = userService.getMyInfo(userId);
+
+		Map<String, Object> log = new HashMap<>();
+		log.put("log_type", "buy");
+		log.put("age_group", LogUtil.getAgeGroup(user.getAge()));
+		log.put("gender", user.getGender());
+		log.put("price", book.getPrePrice());
+		log.put("book_name", book.getTitle());
+		log.put("timestamp", Instant.now().toString());
+
+		LogUtil.log(LogType.PURCHASE, log);
 	}
 
 	public PaymentReturnResponse returnPayment(Long userId, Long orderId) {

@@ -4,6 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,14 +12,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.dto.ElasticBookSearchResponse;
 import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.service.ElasticBookService;
-import xyz.tomorrowlearncamp.bookking.domain.book.service.BookService;
 import xyz.tomorrowlearncamp.bookking.common.dto.Response;
+import xyz.tomorrowlearncamp.bookking.common.entity.AuthUser;
+import xyz.tomorrowlearncamp.bookking.domain.book.service.BookService;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class ElasticBookSearchController {
-
 	private final ElasticBookService elasticBookService;
 	private final BookService bookService;
 
@@ -30,10 +31,11 @@ public class ElasticBookSearchController {
 
 	@GetMapping("/v1/elasticsearch/keyword")
 	public Response<Page<ElasticBookSearchResponse>> searchBooksByKeyword(
+   		@AuthenticationPrincipal AuthUser user,
 		@RequestParam String keyword,
 		Pageable pageable
 	) {
-		Page<ElasticBookSearchResponse> result = elasticBookService.searchByKeyword(keyword, pageable);
+		Page<ElasticBookSearchResponse> result = elasticBookService.searchByKeyword(user.getUserId(), keyword, pageable);
 		return Response.success(result);
 	}
 

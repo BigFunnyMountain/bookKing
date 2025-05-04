@@ -22,6 +22,7 @@ import xyz.tomorrowlearncamp.bookking.domain.order.service.OrderService;
 import xyz.tomorrowlearncamp.bookking.domain.payment.dto.response.PaymentReturnResponse;
 import xyz.tomorrowlearncamp.bookking.domain.payment.enums.PayType;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.UserResponse;
+import xyz.tomorrowlearncamp.bookking.domain.user.entity.User;
 import xyz.tomorrowlearncamp.bookking.domain.user.enums.UserRole;
 import xyz.tomorrowlearncamp.bookking.domain.user.service.UserService;
 
@@ -44,7 +45,6 @@ class PaymentServiceTest {
 	private OrderService orderService;
 	@Mock
 	private RLock rlock;
-
 	@InjectMocks
 	private PaymentService paymentService;
 
@@ -86,11 +86,13 @@ class PaymentServiceTest {
 		ReflectionTestUtils.setField(book, "id", 1L);
 		ReflectionTestUtils.setField(book, "stock", 1L);
 		ReflectionTestUtils.setField(book, "prePrice", "1");
+		UserResponse userResponse = new UserResponse();
 
 		given(userService.existsById(anyLong())).willReturn(true);
 		given(bookRepository.findById(anyLong())).willReturn(Optional.of(book));
 		given(redissonClient.getFairLock(anyString())).willReturn(rlock);
 		given(rlock.tryLock(100L, 10L, TimeUnit.SECONDS)).willReturn(true);
+		given(userService.getMyInfo(anyLong())).willReturn(userResponse);
 
 		// when
 		paymentService.paymentV2(1L, 1L, 1L, 1L, PayType.KAKAO_PAY);
