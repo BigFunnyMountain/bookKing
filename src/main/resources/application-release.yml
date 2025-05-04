@@ -21,9 +21,14 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
     properties:
       hibernate:
+        connection:
+          provider_disables_autocommit: false
         dialect: org.hibernate.dialect.MySQL8Dialect
+    open-in-view: false
 
   elasticsearch:
     uris: ${ES_URI}

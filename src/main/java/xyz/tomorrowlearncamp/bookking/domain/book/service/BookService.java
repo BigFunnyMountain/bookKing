@@ -11,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import xyz.tomorrowlearncamp.bookking.common.enums.ErrorMessage;
+import xyz.tomorrowlearncamp.bookking.common.exception.NotFoundException;
 import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.AddBookRequest;
 import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.UpdateBookRequest;
 import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.UpdateBookStockRequest;
@@ -19,8 +21,6 @@ import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.service.ElasticB
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.book.mapper.BookMapper;
 import xyz.tomorrowlearncamp.bookking.domain.book.repository.BookRepository;
-import xyz.tomorrowlearncamp.bookking.common.enums.ErrorMessage;
-import xyz.tomorrowlearncamp.bookking.common.exception.NotFoundException;
 
 @Slf4j
 @Service
@@ -48,13 +48,13 @@ public class BookService {
 
         jdbcTemplate.batchUpdate(INSERT_SQL, books, batchSize,
                 (ps, book) -> {
-                    ps.setString(1, convertString(book.getTitle(),"제목없음"));
-                    ps.setString(2, convertString(book.getSubject(), "주제없음"));
-                    ps.setString(3, convertString(book.getAuthor(), "저자없음"));
-                    ps.setString(4, convertString(book.getPublisher(), "출판사없음"));
-                    ps.setString(5, convertString(book.getBookIntroductionUrl(), "소개없음"));
-                    ps.setString(6, convertString(book.getPrePrice(), "가격없음"));
-                    ps.setString(7, convertString(book.getPublicationDate(),"출판날자없음"));
+                    ps.setString(1, convertString(book.getTitle(),"제목 없음"));
+                    ps.setString(2, convertString(book.getSubject(), "주제 없음"));
+                    ps.setString(3, convertString(book.getAuthor(), "저자 없음"));
+                    ps.setString(4, convertString(book.getPublisher(), "출판사 없음"));
+                    ps.setString(5, convertString(book.getBookIntroductionUrl(), "소개 없음"));
+                    ps.setString(6, convertString(book.getPrePrice(), "가격 없음"));
+                    ps.setString(7, convertString(book.getPublicationDate(),"출판날짜 없음"));
                     ps.setLong(8, 0L);
                     ps.setTimestamp(9, Timestamp.valueOf(now));
                     ps.setTimestamp(10, Timestamp.valueOf(now));
