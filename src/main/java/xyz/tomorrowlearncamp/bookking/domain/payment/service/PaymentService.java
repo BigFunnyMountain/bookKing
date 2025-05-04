@@ -96,7 +96,7 @@ public class PaymentService {
 		} finally {
 			lock.unlock();
 		}
-		orderService.createOrder(userId, book.getBookId(), book.getPrePrice(), buyStock, book.getPublisher(), book.getBookIntroductionUrl(), OrderStatus.COMPLETED, payType);
+		orderService.createOrder(userId, book, buyStock, OrderStatus.COMPLETED, payType);
 
 		UserResponse user = userService.getMyInfo(userId);
 

@@ -1,4 +1,4 @@
-package xyz.tomorrowlearncamp.bookking.domain.common.util;
+package xyz.tomorrowlearncamp.bookking.common.util;
 
 import java.util.Map;
 
@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import xyz.tomorrowlearncamp.bookking.domain.common.enums.LogType;
+import xyz.tomorrowlearncamp.bookking.common.enums.LogType;
 
 
 public class LogUtil {

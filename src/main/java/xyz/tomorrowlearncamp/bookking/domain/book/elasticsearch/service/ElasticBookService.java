@@ -24,18 +24,14 @@ import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.document.Elastic
 import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.dto.ElasticBookSearchResponse;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 
-import xyz.tomorrowlearncamp.bookking.domain.common.enums.LogType;
-import xyz.tomorrowlearncamp.bookking.domain.common.util.LogUtil;
+import xyz.tomorrowlearncamp.bookking.common.enums.LogType;
+import xyz.tomorrowlearncamp.bookking.common.util.LogUtil;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.UserResponse;
 import xyz.tomorrowlearncamp.bookking.domain.user.service.UserService;
 
-import java.io.IOException;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import xyz.tomorrowlearncamp.bookking.common.enums.ErrorMessage;
 import xyz.tomorrowlearncamp.bookking.common.exception.ServerException;
