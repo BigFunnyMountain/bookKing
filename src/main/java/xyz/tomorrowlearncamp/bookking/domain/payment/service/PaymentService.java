@@ -39,43 +39,29 @@ public class PaymentService {
 
 	@Transactional
 	public void paymentV1(Long userId, Long bookId, Long buyStock, Long money, PayType payType) {
+		if(userService.existsById(userId)) {
+			throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
+		}
 		Book book = bookRepository.findByIdWithLock(bookId);
 
-		// 책이 재고가 0개인 경우 || 구매하려는 개수 만큼 없는 경우
-		if (book.getStock() == 0 || book.getStock() < buyStock) {
-			throw new InvalidRequestException(ErrorMessage.ZERO_BOOK_STOCK);
-		}
-
-		// 돈이 부족한 경우
-		long price = Long.parseLong(book.getPrePrice());
-		if (price * buyStock > money) {
-			throw new InvalidRequestException(ErrorMessage.SHORT_ON_MONEY);
-		}
-
+		checkPayment(book, buyStock, money);
 		book.updateStock(book.getStock() - buyStock);
-
 		orderService.createOrder(userId, book, buyStock, OrderStatus.COMPLETED, payType);
 	}
 
 	public void paymentV2(Long userId, Long bookId, Long buyStock, Long money, PayType payType) {
+		if(!userService.existsById(userId)) {
+			throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
+		}
 		Book book = new Book();
-		setFairLock(bookId);
 
 		try {
+			setFairLock(bookId);
 			book = bookRepository.findById(bookId).orElseThrow(
 				() -> new NotFoundException(ErrorMessage.BOOK_NOT_FOUND)
 			);
-			// 책이 재고가 0개인 경우 || 구매하려는 개수 만큼 없는 경우
-			if (book.getStock() == 0 || book.getStock() < buyStock) {
-				throw new InvalidRequestException(ErrorMessage.ZERO_BOOK_STOCK);
-			}
 
-			// 돈이 부족한 경우
-			long price = Long.parseLong(book.getPrePrice());
-			if (price * buyStock > money) {
-				throw new InvalidRequestException(ErrorMessage.SHORT_ON_MONEY);
-			}
-
+			checkPayment(book, buyStock, money);
 			book.updateStock(book.getStock() - buyStock);
 			bookRepository.save(book);
 		} catch (NotFoundException ex) {
@@ -84,7 +70,7 @@ public class PaymentService {
 			throw new InvalidRequestException(ErrorMessage.CALL_ADMIN);
 		} catch (InvalidRequestException ex) {
 			throw new InvalidRequestException(ex.getErrorMessage());
-		}catch (Exception ex) {
+		} catch (Exception ex) {
 			throw new ServerException(ErrorMessage.ERROR);
 		} finally {
 			lock.unlock();
@@ -93,14 +79,16 @@ public class PaymentService {
 	}
 
 	public PaymentReturnResponse returnPayment(Long userId, Long orderId) {
+		if(!userService.existsById(userId)) {
+			throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
+		}
 		OrderResponse order = orderService.getOrder(orderId);
 		if(!ObjectUtils.nullSafeEquals(userId, order.getUserId())) {
 			throw new InvalidRequestException(ErrorMessage.NO_AUTHORITY_TO_RETURN_A_PAYMENT);
 		}
 
-		setFairLock(order.getBookId());
-
 		try {
+			setFairLock(order.getBookId());
 			Book book = bookRepository.findById(order.getBookId()).orElseThrow(
 					() -> new NotFoundException(ErrorMessage.BOOK_NOT_FOUND)
 			);
@@ -113,6 +101,7 @@ public class PaymentService {
 		} finally {
 			lock.unlock();
 		}
+		orderService.updateOrderStatus(orderId, OrderStatus.REFUNDED);
 
 		Long price = Long.parseLong(order.getPrePrice());
 		return PaymentReturnResponse.builder()
@@ -133,6 +122,19 @@ public class PaymentService {
 			log.warn("redis Interrupted!");
 			Thread.currentThread().interrupt();
 			throw new ServerException(ErrorMessage.REDIS_ERROR);
+		}
+	}
+
+	private void checkPayment(Book book, Long buyStock, Long money) {
+		// 책이 재고가 0개인 경우 || 구매하려는 개수 만큼 없는 경우
+		if (book.getStock() == 0 || book.getStock() < buyStock) {
+			throw new InvalidRequestException(ErrorMessage.ZERO_BOOK_STOCK);
+		}
+
+		// 돈이 부족한 경우
+		long price = Long.parseLong(book.getPrePrice());
+		if (price * buyStock > money) {
+			throw new InvalidRequestException(ErrorMessage.SHORT_ON_MONEY);
 		}
 	}
 }

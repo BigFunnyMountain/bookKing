@@ -1,4 +1,4 @@
-package xyz.tomorrowlearncamp.bookking.domain.order;
+package xyz.tomorrowlearncamp.bookking.domain.order.service;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,6 @@ import xyz.tomorrowlearncamp.bookking.domain.order.dto.OrderResponse;
 import xyz.tomorrowlearncamp.bookking.domain.order.entity.Order;
 import xyz.tomorrowlearncamp.bookking.domain.order.enums.OrderStatus;
 import xyz.tomorrowlearncamp.bookking.domain.order.repository.OrderRepository;
-import xyz.tomorrowlearncamp.bookking.domain.order.service.OrderService;
 import xyz.tomorrowlearncamp.bookking.domain.payment.enums.PayType;
 import xyz.tomorrowlearncamp.bookking.domain.user.entity.User;
 import xyz.tomorrowlearncamp.bookking.domain.user.enums.Gender;
@@ -305,5 +304,41 @@ class OrderServiceTest {
 
         assertInstanceOf(NotFoundException.class, assertThrows);
         assertEquals(ErrorMessage.ORDER_NOT_FOUND, assertThrows.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("주문 상태 업데이트 실패")
+    void updateOrderStatus_failed() {
+        // given
+        given(orderRepository.findById(anyLong())).willReturn(Optional.empty());
+
+        // when && then
+        NotFoundException assertThrows = assertThrows(NotFoundException.class,
+            () -> orderService.getOrder(1L));
+
+        assertInstanceOf(NotFoundException.class, assertThrows);
+        assertEquals(ErrorMessage.ORDER_NOT_FOUND, assertThrows.getErrorMessage());
+    }
+
+    @Test
+    @DisplayName("주문 상태 업데이트")
+    void updateOrderStatus_success() {
+        // given
+        Order order = Order.builder()
+            .userId(1L)
+            .bookId(2L)
+            .prePrice("15000")
+            .stock(3L)
+            .publisher("테스트 출판사")
+            .bookIntroductionUrl("http://test-url.com")
+            .status(OrderStatus.COMPLETED)
+            .build();
+        ReflectionTestUtils.setField(order, "id", 1L);
+        given(orderRepository.findById(anyLong())).willReturn(Optional.of(order));
+
+        // when && then
+        orderService.getOrder(1L);
+
+        verify(orderRepository,times(1)).findById(anyLong());
     }
 }
