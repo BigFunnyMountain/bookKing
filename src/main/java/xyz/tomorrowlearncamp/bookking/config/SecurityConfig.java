@@ -65,12 +65,14 @@ public class SecurityConfig {
 				.requestMatchers("/api/v*/auth/**").permitAll()
 				.requestMatchers("/api/v*/users/**").authenticated()
 				.requestMatchers(HttpMethod.GET, "/api/v*/books").permitAll()
+				.requestMatchers(HttpMethod.GET, "/api/v*/elasticsearch/**").permitAll()
 				.requestMatchers(HttpMethod.PATCH, "/api/v*/users/*/role").hasAuthority(UserRole.ROLE_ADMIN.name())
 				.requestMatchers("/api/v*/books/**").hasAuthority(UserRole.ROLE_ADMIN.name())
+				.requestMatchers("/api/v1/elasticsearch/reindex").hasAuthority(UserRole.ROLE_ADMIN.name())
 				.requestMatchers("/api/test/**").hasAuthority(UserRole.ROLE_ADMIN.name())
 				.requestMatchers("/swagger", "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**",
 					"/v3/api-docs/**").permitAll()
-				.requestMatchers("/actuator", "/actuator/**").permitAll()
+				.requestMatchers("/actuator", "/actuator/**", "/_cluster/health").permitAll()
 				.anyRequest().authenticated()
 			)
 			.build();
