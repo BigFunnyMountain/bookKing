@@ -8,9 +8,10 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import lombok.extern.slf4j.Slf4j;
 import xyz.tomorrowlearncamp.bookking.common.enums.LogType;
 
-
+@Slf4j
 public class LogUtil {
 	private static final Logger searchLogger = LoggerFactory.getLogger("SEARCH_LOG");
 	private static final Logger purchaseLogger = LoggerFactory.getLogger("BUY_LOG");
@@ -19,12 +20,13 @@ public class LogUtil {
 	public static void log(LogType logType, Map<String, Object> data) {
 		try {
 			String jsonLog = objectMapper.writeValueAsString(data);
-			switch (logType) {
-				case SEARCH -> searchLogger.info(jsonLog);
-				case PURCHASE -> purchaseLogger.info(jsonLog);
+			if(logType == LogType.SEARCH) {
+				searchLogger.info(jsonLog);
+			} else if(logType == LogType.PURCHASE) {
+				purchaseLogger.info(jsonLog);
 			}
 		} catch (JsonProcessingException e) {
-			e.printStackTrace();
+			log.error("[InvalidRequestException] name: {}, ", e.getMessage(), e);
 		}
 	}
 
