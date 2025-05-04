@@ -45,7 +45,6 @@ public class ReviewService {
         }
 
         Long orderId = orderService.getPurchasedOrderId(userId, bookId);
-
         orderService.switchReviewStatus(orderId);
 
         Review review = Review.builder()
@@ -69,7 +68,7 @@ public class ReviewService {
     @Transactional(readOnly = true)
     public Page<ReviewResponse> getMyReviews(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return reviewRepository.findByUserIdAndState(userId, ReviewState.ACTIVE, pageable)
+        return reviewRepository.findByUserIdAndDeletedAtIsNull(userId, pageable)
                 .map(ReviewResponse::of);
     }
 
@@ -82,15 +81,15 @@ public class ReviewService {
     @Transactional
     public void deleteReview(Long userId, Long bookId, Long reviewId) {
         Review review = getReviewOwnedByUser(reviewId, userId, bookId);
-        review.deleteReview();
+        review.softDelete();
 
         Long orderId = orderService.getPurchasedOrderId(userId, bookId);
-
         orderService.switchReviewStatus(orderId);
     }
 
     private Review getReviewOwnedByUser(Long reviewId, Long userId, Long bookId) {
         return reviewRepository.findByIdAndUserIdAndBookIdAndState(reviewId, userId, bookId, ReviewState.ACTIVE)
+                .filter(r -> !r.isDeleted())
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.REVIEW_ALREADY_WRITTEN));
     }
 }

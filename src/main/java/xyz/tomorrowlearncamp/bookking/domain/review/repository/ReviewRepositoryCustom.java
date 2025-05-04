@@ -16,4 +16,8 @@ public interface ReviewRepositoryCustom {
     Page<Review> findByUserIdAndState(Long userId, ReviewState state, Pageable pageable);
 
     Optional<Review> findByIdAndUserIdAndBookIdAndState(Long reviewId, Long userId, Long bookId, ReviewState state);
+
+    Page<Review> findByUserIdAndDeletedAtIsNull(Long userId, Pageable pageable);
+
+    Optional<Review> findByIdAndDeletedAtIsNull(Long reviewId);
 }

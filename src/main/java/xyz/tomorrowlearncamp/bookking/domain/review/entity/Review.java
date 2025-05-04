@@ -6,6 +6,8 @@ import xyz.tomorrowlearncamp.bookking.common.entity.BaseEntity;
 import xyz.tomorrowlearncamp.bookking.domain.review.enums.ReviewState;
 import xyz.tomorrowlearncamp.bookking.domain.review.enums.StarRating;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -32,6 +34,17 @@ public class Review extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ReviewState reviewState;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
+    public void softDelete() {
+        this.deletedAt = LocalDateTime.now();
+    }
+
+    public boolean isDeleted() {
+        return this.deletedAt != null;
+    }
 
     @Builder
     public Review(Long userId, Long bookId, StarRating rating, String content, ReviewState reviewState) {
