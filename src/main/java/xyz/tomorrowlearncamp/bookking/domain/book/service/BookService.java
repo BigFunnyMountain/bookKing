@@ -104,8 +104,13 @@ public class BookService {
             .map(BookResponse::of);
     }
 
+    /**
+     * @param pageSize   페이지 당 처리할 데이터 개수 (한 번에 색인할 데이터 양)
+     * @param startPage  재색인을 시작할 페이지 번호
+     * @param endPage    재색인을 종료할 페이지 번호 (이 페이지 직전까지 처리)
+     */
     @Transactional(readOnly = true)
-    public void reindexBooks(int pageSize, int startPage, int endPage) { // 페이지 하나의 사이즈, 읽어올 페이지의 수, 시작할 페이지
+    public void reindexBooks(int pageSize, int startPage, int endPage) {
         long totalIndexed = 0;
         int currentPage = startPage;
         boolean hasNextPages = true;
