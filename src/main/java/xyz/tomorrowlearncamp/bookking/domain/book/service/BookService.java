@@ -33,7 +33,7 @@ public class BookService {
     private final ElasticBookService elasticBookService;
 
     private static final String INSERT_SQL = """
-                INSERT INTO book (
+                INSERT INTO books (
                     title, subject, author, publisher,
                     book_introduction_url, pre_price,
                     publication_date, stock, created_at, modified_at

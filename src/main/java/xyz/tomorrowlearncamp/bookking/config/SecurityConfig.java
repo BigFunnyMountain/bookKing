@@ -70,6 +70,7 @@ public class SecurityConfig {
 				.requestMatchers("/api/test/**").hasAuthority(UserRole.ROLE_ADMIN.name())
 				.requestMatchers("/swagger", "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**",
 					"/v3/api-docs/**").permitAll()
+				.requestMatchers("/actuator", "/actuator/**").permitAll()
 				.anyRequest().authenticated()
 			)
 			.build();
