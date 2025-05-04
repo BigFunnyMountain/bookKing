@@ -26,7 +26,7 @@ public class LogUtil {
 				purchaseLogger.info(jsonLog);
 			}
 		} catch (JsonProcessingException e) {
-			log.error("[InvalidRequestException] name: {}, ", e.getMessage(), e);
+			log.error("[JsonProcessingException] name: {}, ", e.getMessage(), e);
 		}
 	}
 
