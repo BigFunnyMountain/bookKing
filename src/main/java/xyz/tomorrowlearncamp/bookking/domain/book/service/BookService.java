@@ -105,12 +105,12 @@ public class BookService {
     }
 
     @Transactional(readOnly = true)
-    public void reindexBooks(int pageSize, int totalPages, int startPage) {
+    public void reindexBooks(int pageSize, int startPage, int endPage) { // 페이지 하나의 사이즈, 읽어올 페이지의 수, 시작할 페이지
         long totalIndexed = 0;
         int currentPage = startPage;
         boolean hasNextPages = true;
 
-        while (hasNextPages && currentPage < (startPage + totalPages)) {
+        while (hasNextPages && currentPage < endPage) {
             Page<Book> pagingBook = bookRepository.findAll(PageRequest.of(currentPage, pageSize));
             List<Book> books = pagingBook.getContent();
 
