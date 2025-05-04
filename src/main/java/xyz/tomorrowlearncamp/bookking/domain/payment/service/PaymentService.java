@@ -37,7 +37,6 @@ public class PaymentService {
 
 	private RLock lock;
 
-	@Transactional
 	public void paymentV1(Long userId, Long bookId, Long buyStock, Long money, PayType payType) {
 		Book book = bookRepository.findByIdWithLock(bookId);
 

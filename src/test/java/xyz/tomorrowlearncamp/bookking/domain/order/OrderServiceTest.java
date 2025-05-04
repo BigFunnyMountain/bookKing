@@ -96,7 +96,7 @@ class OrderServiceTest {
         List<Order> orders = List.of(order2, order1);
         Page<Order> orderPage = new PageImpl<>(orders);
 
-        given(orderRepository.findByUserId(eq(userId), any(Pageable.class)))
+        given(orderRepository.findByUserIdAndDeletedAtIsNull(eq(userId), any(Pageable.class)))
                 .willReturn(orderPage);
 
         // when
@@ -111,7 +111,7 @@ class OrderServiceTest {
         assertThat(result.getContent().get(0).getPrePrice()).isEqualTo("10000");
         assertThat(result.getContent().get(0).getPublisher()).isEqualTo("Some Publisher");
 
-        verify(orderRepository).findByUserId(eq(userId), any(Pageable.class));
+        verify(orderRepository).findByUserIdAndDeletedAtIsNull(eq(userId), any(Pageable.class));
     }
 
     @Test
@@ -122,7 +122,7 @@ class OrderServiceTest {
         int size = 2;
 
         Page<Order> emptyPage = Page.empty();
-        given(orderRepository.findByUserId(eq(userId), any(Pageable.class)))
+        given(orderRepository.findByUserIdAndDeletedAtIsNull(eq(userId), any(Pageable.class)))
                 .willReturn(emptyPage);
 
         // when
@@ -132,7 +132,7 @@ class OrderServiceTest {
         assertThat(result).isNotNull();
         assertThat(result.getContent()).isEmpty();
 
-        verify(orderRepository).findByUserId(eq(userId), any(Pageable.class));
+        verify(orderRepository).findByUserIdAndDeletedAtIsNull(eq(userId), any(Pageable.class));
     }
 
     @Test

@@ -20,38 +20,58 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 
-    // todo user soft delete 구현되면 고려하여 수정
     @Override
-    public Page<Order> findByUserId(Long userId, Pageable pageable) {
-        List<Order> content = queryFactory
+        public Page<Order> findByUserIdAndDeletedAtIsNull(Long userId, Pageable pageable) {
+            List<Order> content = queryFactory
                 .selectFrom(order)
-                .where(order.userId.eq(userId))
+                .where(
+                    order.userId.eq(userId),
+                    order.deletedAt.isNull()
+                )
                 .orderBy(order.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        Long count = queryFactory
+            Long count = queryFactory
                 .select(order.count())
                 .from(order)
-                .where(order.userId.eq(userId))
-                .fetchOne();
-
-        return new PageImpl<>(content, pageable, count != null ? count : 0);
-    }
-
-    @Override
-    public Optional<Order> findCompletedOrder(Long userId, Long bookId, OrderStatus status) {
-        Order result = queryFactory
-                .selectFrom(order)
                 .where(
-                        order.userId.eq(userId),
-                        order.bookId.eq(bookId),
-                        order.status.eq(status),
-                        order.isReviewed.isFalse()
+                    order.userId.eq(userId),
+                    order.deletedAt.isNull()
                 )
                 .fetchOne();
 
-        return Optional.ofNullable(result);
-    }
+            return new PageImpl<>(content, pageable, count != null ? count : 0);
+        }
+
+        @Override
+        public Optional<Order> findCompletedOrder(Long userId, Long bookId, OrderStatus status) {
+            Order result = queryFactory
+                .selectFrom(order)
+                .where(
+                    order.userId.eq(userId),
+                    order.bookId.eq(bookId),
+                    order.status.eq(status),
+                    order.isReviewed.isFalse(),
+                    order.deletedAt.isNull()
+                )
+                .fetchOne();
+
+            return Optional.ofNullable(result);
+        }
+
+        @Override
+        public Optional<Order> findByIdAndDeletedAtIsNull(Long orderId) {
+            Order result = queryFactory
+                .selectFrom(order)
+                .where(
+                    order.id.eq(orderId),
+                    order.deletedAt.isNull()
+                )
+                .fetchOne();
+
+            return Optional.ofNullable(result);
+        }
+
 }
