@@ -1,13 +1,14 @@
 package xyz.tomorrowlearncamp.bookking.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
-import xyz.tomorrowlearncamp.bookking.domain.user.aws.S3Upload;
+import xyz.tomorrowlearncamp.bookking.common.enums.ErrorMessage;
+import xyz.tomorrowlearncamp.bookking.common.exception.InvalidRequestException;
+import xyz.tomorrowlearncamp.bookking.common.exception.NotFoundException;
+import xyz.tomorrowlearncamp.bookking.common.util.S3Upload;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.UpdateUserRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.UpdateUserRoleRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.UserResponse;
@@ -15,7 +16,6 @@ import xyz.tomorrowlearncamp.bookking.domain.user.entity.User;
 import xyz.tomorrowlearncamp.bookking.domain.user.enums.UserRole;
 import xyz.tomorrowlearncamp.bookking.domain.user.repository.UserRepository;
 
-import java.io.IOException;
 
 /**
  * 작성자 : 문성준
@@ -29,14 +29,14 @@ public class UserService {
     private final S3Upload s3Upload;
 
     public UserResponse getMyInfo(Long userId) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByIdAndDeletedFalse(userId)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND));
         return UserResponse.of(user);
     }
 
     @Transactional
     public UserResponse updateUser(Long userId, UpdateUserRequest updateUserRequest) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByIdAndDeletedFalse(userId)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND));
 
         user.updateUserInfo(updateUserRequest.getNickname(), updateUserRequest.getAddress());
@@ -45,7 +45,7 @@ public class UserService {
 
     @Transactional
     public UserResponse updateUserRole(Long userId, UpdateUserRoleRequest updateUserRoleRequest) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByIdAndDeletedFalse(userId)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND));
         UserRole updateRole = UserRole.of(updateUserRoleRequest.getRole());
 
@@ -59,19 +59,19 @@ public class UserService {
 
     @Transactional
     public void deleteUser(Long userId, String checkPassword) {
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByIdAndDeletedFalse(userId)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(checkPassword, user.getPassword())) {
-            throw new NotFoundException(ErrorMessage.WRONG_PASSWORD);
+            throw new InvalidRequestException(ErrorMessage.WRONG_PASSWORD);
         }
         user.softDelete();
     }
 
     @Transactional
     public String updateProfileImage(Long userId, MultipartFile image) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND));
+        User user = userRepository.findByIdAndDeletedFalse(userId)
+            .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND));
 
         String imageUrl = s3Upload.uploadProfileImage(image);
         user.updateProfileImageUrl(imageUrl);

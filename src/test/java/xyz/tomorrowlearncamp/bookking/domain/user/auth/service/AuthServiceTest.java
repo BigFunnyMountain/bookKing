@@ -65,7 +65,7 @@ class AuthServiceTest {
         given(userRepository.findByEmailAndDeletedFalse(request.getEmail())).willReturn(Optional.empty());
 
         // when
-        Throwable throwable = catchThrowable(() -> authService.login(request, response));
+        Throwable throwable = catchThrowable(() -> authService.signin(request));
 
         // when && then
         NotFoundException assertThrows = assertThrows(NotFoundException.class,
@@ -85,7 +85,7 @@ class AuthServiceTest {
         SignupRequest temp = SignupRequest.of(email, inputPassword, "홍길동", "서울", Gender.valueOf("MALE"), 20, "길동이");
 
         User user = User.of(temp, encodedPassword, UserRole.ROLE_USER);
-        given(userRepository.findByEmail(email)).willReturn(Optional.of(user));
+        given(userRepository.findByEmailAndDeletedFalse(email)).willReturn(Optional.of(user));
         given(passwordEncoder.matches(inputPassword, encodedPassword)).willReturn(false);
 
         LoginRequest request = LoginRequest.of(email, inputPassword);

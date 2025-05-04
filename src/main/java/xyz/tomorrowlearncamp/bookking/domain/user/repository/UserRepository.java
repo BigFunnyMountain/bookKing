@@ -16,10 +16,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmailAndDeletedFalse(String email);
 
+    Optional<User> findByIdAndDeletedFalse(Long id);
+
+
     // 삭제 여부와는 상관없이 조회하는거 (관리자)
     @Query("SELECT u FROM User u WHERE u.email = :email")
     Optional<User> findByEmailIncludingDeleted(@Param("email") String email);
 
     @Query("SELECT u FROM User u WHERE u.id = :id")
     Optional<User> findByIdIncludingDeleted(@Param("id") Long id);
+
 }

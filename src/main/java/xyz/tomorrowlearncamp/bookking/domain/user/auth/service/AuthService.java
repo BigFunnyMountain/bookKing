@@ -89,8 +89,8 @@ public class AuthService {
             throw new InvalidRequestException(ErrorMessage.EXPIRED_REFRESH_TOKEN);
         }
 
-        User user = userRepository.findById(token.getUserId())
-                .filter(u -> !u.isDeleted()) // delete된 유저가 refresh 토큰으로 accessToken을 재발급받는 거 막음
+        User user = userRepository.findByIdAndDeletedFalse(token.getUserId())
+                //.filter(u -> !u.isDeleted()) // delete된 유저가 refresh 토큰으로 accessToken을 재발급받는 거 막음
                 .orElseThrow(() -> {
                     log.warn("======== [refresh] userId={} 에 해당하는 유저를 찾지 못했습니다.", token.getUserId());
                     return new NotFoundException(ErrorMessage.USER_NOT_FOUND);
@@ -105,7 +105,7 @@ public class AuthService {
 
     @Transactional
     public SignupResponse signup(SignupRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
+        if (userRepository.existsByEmailAndDeletedFalse(request.getEmail())) {
             throw new InvalidRequestException(ErrorMessage.EMAIL_DUPLICATED);
         }
 
