@@ -1,7 +1,7 @@
 <configuration>
     <springProperty name="LOGSTASH_SERVER"
                     source="LOGSTASH_SERVER"
-                    defaultValue="localhost:4560" />
+                    defaultValue="localhost" />
     <springProfile name="release">
         <property resource="application-release.yml" />
     </springProfile>

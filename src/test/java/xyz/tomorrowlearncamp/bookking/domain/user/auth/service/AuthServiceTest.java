@@ -9,12 +9,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
-import xyz.tomorrowlearncamp.bookking.domain.common.enums.ErrorMessage;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.InvalidRequestException;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
-import xyz.tomorrowlearncamp.bookking.domain.user.auth.config.JwtProvider;
+import xyz.tomorrowlearncamp.bookking.common.enums.ErrorMessage;
+import xyz.tomorrowlearncamp.bookking.common.exception.InvalidRequestException;
+import xyz.tomorrowlearncamp.bookking.common.exception.NotFoundException;
+import xyz.tomorrowlearncamp.bookking.common.util.JwtProvider;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.SignupRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.entity.RefreshToken;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.repository.RefreshTokenRepository;
@@ -53,9 +54,6 @@ class AuthServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
-    @Mock
-    private HttpServletResponse response;
-
     @Test
     @DisplayName("로그인_실패-존재하지_않는_사용자")
     void login_fail_userNotFound() {
@@ -66,7 +64,7 @@ class AuthServiceTest {
 
         // when && then
         NotFoundException assertThrows = assertThrows(NotFoundException.class,
-                () -> authService.login(request, response));
+                () -> authService.signin(request));
 
         assertInstanceOf(NotFoundException.class, assertThrows);
         assertEquals(ErrorMessage.USER_NOT_FOUND, assertThrows.getErrorMessage());
@@ -79,8 +77,9 @@ class AuthServiceTest {
         String email = "test@email.com";
         String inputPassword = "wrongPassword";
         String encodedPassword = "encodedPassword";
+        SignupRequest temp = SignupRequest.of(email, inputPassword, "홍길동", "서울", Gender.valueOf("MALE"), 20, "길동이");
 
-        User user = User.of(email, encodedPassword, "홍길동", UserRole.ROLE_USER, "서울", Gender.valueOf("MALE"), 20, "길동이");
+        User user = User.of(temp, encodedPassword, UserRole.ROLE_USER);
         given(userRepository.findByEmail(email)).willReturn(Optional.of(user));
         given(passwordEncoder.matches(inputPassword, encodedPassword)).willReturn(false);
 
@@ -88,7 +87,7 @@ class AuthServiceTest {
 
         // when && then
         InvalidRequestException assertThrows = assertThrows(InvalidRequestException.class,
-                () -> authService.login(request, response));
+                () -> authService.signin(request));
 
         assertInstanceOf(InvalidRequestException.class, assertThrows);
         assertEquals(ErrorMessage.WRONG_PASSWORD, assertThrows.getErrorMessage());
@@ -104,20 +103,20 @@ class AuthServiceTest {
         String accessToken = "Bearer access-token";
         String refreshToken = "Bearer refresh-token";
         Long userId = 1L;
+        SignupRequest temp = SignupRequest.of(email, password, "홍길동", "서울", Gender.valueOf("MALE"), 20, "길동이");
 
-        User user = User.of(email, encodedPassword, "홍길동", UserRole.ROLE_USER, "서울", Gender.MALE, 25, "길동이");
+        User user = User.of(temp, encodedPassword, UserRole.ROLE_USER);
         setField(user, "id", userId);
 
         given(userRepository.findByEmail(email)).willReturn(Optional.of(user));
         given(passwordEncoder.matches(password, encodedPassword)).willReturn(true);
         given(jwtProvider.createAccessToken(userId, email, user.getRole())).willReturn(accessToken);
         given(jwtProvider.createRefreshToken(userId, email, user.getRole())).willReturn(refreshToken);
-        given(jwtProvider.removeBearerPrefix(refreshToken)).willReturn("refresh-token");
 
         LoginRequest request = LoginRequest.of(email, password);
 
         //when
-        var result = authService.login(request, response);
+        var result = authService.signin(request);
 
         //then
         assertThat(result.getAccessToken()).isEqualTo(accessToken);
@@ -127,11 +126,9 @@ class AuthServiceTest {
         verify(passwordEncoder).matches(password, encodedPassword);
         verify(jwtProvider).createAccessToken(userId, email, user.getRole());
         verify(jwtProvider).createRefreshToken(userId, email, user.getRole());
-        verify(jwtProvider).removeBearerPrefix(refreshToken);
         verify(refreshTokenRepository).deleteByUserId(userId);
         verify(refreshTokenRepository).flush();
         verify(refreshTokenRepository).save(any(RefreshToken.class));
-        verify(response).setHeader(HttpHeaders.AUTHORIZATION, accessToken);
     }
 
 
@@ -213,7 +210,9 @@ class AuthServiceTest {
                 .build();
         setField(token, "id", 1L);
 
-        User user = User.of(email, "encodedPassword", "홍길동", role, "서울", Gender.MALE, 25, "길동이");
+        SignupRequest temp = SignupRequest.of(email, "password", "홍길동", "서울", Gender.valueOf("MALE"), 20, "길동이");
+
+        User user = User.of(temp, "password", UserRole.ROLE_USER);
         setField(user, "id", userId);
 
         given(refreshTokenRepository.findByToken(refreshToken)).willReturn(Optional.of(token));
@@ -276,7 +275,7 @@ class AuthServiceTest {
                 .nickname("길동이")
                 .build();
 
-        User user = User.of(email, encodedPassword, "홍길동", UserRole.ROLE_USER, "서울", Gender.MALE, 25, "길동이");
+        User user = User.of(request, encodedPassword, UserRole.ROLE_USER);
         setField(user, "id", 1L);
 
         given(userRepository.existsByEmail(email)).willReturn(false);
@@ -294,20 +293,5 @@ class AuthServiceTest {
         verify(userRepository).existsByEmail(email);
         verify(passwordEncoder).encode(password);
         verify(userRepository).save(any(User.class));
-    }
-
-    @Test
-    @DisplayName("이메일_중복_확인_성공")
-    void validateEmail_success() {
-        // given
-        String email = "newuser@email.com";
-        given(userRepository.existsByEmail(email)).willReturn(false);
-
-        // when
-        Throwable throwable = catchThrowable(() -> authService.validateEmail(email));
-
-        // then
-        assertThat(throwable).doesNotThrowAnyException();
-        verify(userRepository).existsByEmail(email);
     }
 }

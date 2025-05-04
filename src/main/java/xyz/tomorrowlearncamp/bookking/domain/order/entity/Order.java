@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import xyz.tomorrowlearncamp.bookking.domain.common.entity.BaseEntity;
+import xyz.tomorrowlearncamp.bookking.common.entity.BaseEntity;
 import xyz.tomorrowlearncamp.bookking.domain.order.enums.OrderStatus;
 import xyz.tomorrowlearncamp.bookking.domain.payment.enums.PayType;
 
@@ -16,7 +16,7 @@ public class Order extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long orderId;
+    private Long id;
 
     @Column(name = "user_id", nullable = false)
     private Long userId;

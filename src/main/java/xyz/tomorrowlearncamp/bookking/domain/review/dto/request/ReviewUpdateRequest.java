@@ -1,12 +1,12 @@
 package xyz.tomorrowlearncamp.bookking.domain.review.dto.request;
 
+import static xyz.tomorrowlearncamp.bookking.domain.review.consts.ReviewConstants.*;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import xyz.tomorrowlearncamp.bookking.domain.review.enums.StarRating;
-
-import static xyz.tomorrowlearncamp.bookking.domain.review.constant.ReviewConstants.*;
 
 @Getter
 public class ReviewUpdateRequest {

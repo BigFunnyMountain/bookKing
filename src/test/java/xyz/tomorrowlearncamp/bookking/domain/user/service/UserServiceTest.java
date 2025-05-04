@@ -10,10 +10,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
-import xyz.tomorrowlearncamp.bookking.domain.common.enums.ErrorMessage;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.InvalidRequestException;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
-import xyz.tomorrowlearncamp.bookking.domain.user.aws.S3Upload;
+import xyz.tomorrowlearncamp.bookking.common.enums.ErrorMessage;
+import xyz.tomorrowlearncamp.bookking.common.exception.InvalidRequestException;
+import xyz.tomorrowlearncamp.bookking.common.exception.NotFoundException;
+import xyz.tomorrowlearncamp.bookking.common.util.S3Upload;
+import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.SignupRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.UpdateUserRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.UpdateUserRoleRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.UserResponse;
@@ -49,16 +50,9 @@ class UserServiceTest {
 
     @BeforeEach
     void setup() {
-        user = User.of(
-                "test@email.com",
-                "encodedPassword",
-                "테스터",
-                UserRole.ROLE_USER,
-                "한국",
-                Gender.MALE,
-                25,
-                "tester"
-        );
+        SignupRequest temp = SignupRequest.of("email@gmail.com", "inputPassword", "홍길동", "서울", Gender.valueOf("MALE"), 20, "길동이");
+
+        user = User.of(temp, "inputPassword", UserRole.ROLE_USER);
         ReflectionTestUtils.setField(user, "id", 1L);
     }
 
@@ -140,15 +134,13 @@ class UserServiceTest {
         UpdateUserRoleRequest request = new UpdateUserRoleRequest("ROLE_ADMIN");
 
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
-        given(userRepository.save(any(User.class))).willReturn(user);
 
         // when
         var result = userService.updateUserRole(userId, request);
 
         // then
-        assertThat(result.getRole().toString()).isEqualTo("ROLE_ADMIN");
+        assertThat(result.getRole()).isEqualTo(UserRole.ROLE_ADMIN);
         verify(userRepository).findById(userId);
-        verify(userRepository).save(user);
     }
 
     @Test

@@ -4,11 +4,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import xyz.tomorrowlearncamp.bookking.domain.common.dto.Response;
+import xyz.tomorrowlearncamp.bookking.common.dto.Response;
 import xyz.tomorrowlearncamp.bookking.domain.payment.dto.request.PaymentBuyRequest;
 import xyz.tomorrowlearncamp.bookking.domain.payment.dto.response.PaymentReturnResponse;
 import xyz.tomorrowlearncamp.bookking.domain.payment.service.PaymentService;
-import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.AuthUser;
+import xyz.tomorrowlearncamp.bookking.common.entity.AuthUser;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,11 +18,25 @@ public class PaymentController {
 	private final PaymentService paymentService;
 
 	@PostMapping("/v1/payments")
-	public void payment(
+	public void paymentV1(
 			@AuthenticationPrincipal AuthUser user,
 			@Valid @RequestBody PaymentBuyRequest paymentBuyRequest
 	) {
-		paymentService.payment(
+		paymentService.paymentV1(
+			user.getUserId(),
+			paymentBuyRequest.getBookId(),
+			paymentBuyRequest.getBuyStock(),
+			paymentBuyRequest.getMoney(),
+			paymentBuyRequest.getPayType()
+		);
+	}
+
+	@PostMapping("/v2/payments")
+	public void paymentV2(
+			@AuthenticationPrincipal AuthUser user,
+			@Valid @RequestBody PaymentBuyRequest paymentBuyRequest
+	) {
+		paymentService.paymentV2(
 			user.getUserId(),
 			paymentBuyRequest.getBookId(),
 			paymentBuyRequest.getBuyStock(),

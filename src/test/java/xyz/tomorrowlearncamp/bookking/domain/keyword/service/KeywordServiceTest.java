@@ -92,7 +92,7 @@ class KeywordServiceTest {
                 .bookId(bookId)
                 .status(OrderStatus.COMPLETED)
                 .build();
-        ReflectionTestUtils.setField(order, "orderId", 1L);
+        ReflectionTestUtils.setField(order, "id", 1L);
         ReflectionTestUtils.setField(order, "createdAt", LocalDateTime.now());
 
         Page<OrderResponse> orderPage = new PageImpl<>(List.of(OrderResponse.of(order)));
@@ -134,7 +134,7 @@ class KeywordServiceTest {
                 .bookId(bookId)
                 .status(OrderStatus.COMPLETED)
                 .build();
-        ReflectionTestUtils.setField(order, "orderId", 1L);
+        ReflectionTestUtils.setField(order, "id", 1L);
         ReflectionTestUtils.setField(order, "createdAt", LocalDateTime.now());
 
         Page<OrderResponse> orderPage = new PageImpl<>(List.of(OrderResponse.of(order)));

@@ -4,11 +4,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import xyz.tomorrowlearncamp.bookking.domain.common.dto.Response;
+import xyz.tomorrowlearncamp.bookking.common.dto.Response;
 import xyz.tomorrowlearncamp.bookking.domain.keyword.dto.KeywordRequest;
 import xyz.tomorrowlearncamp.bookking.domain.keyword.dto.KeywordResponse;
 import xyz.tomorrowlearncamp.bookking.domain.keyword.service.KeywordService;
-import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.AuthUser;
+import xyz.tomorrowlearncamp.bookking.common.entity.AuthUser;
 
 @RestController
 @RequestMapping("/api")

@@ -41,7 +41,7 @@ public class ElasticBookDocument {
 
     public static ElasticBookDocument of(Book book) {
         return ElasticBookDocument.builder()
-                .bookId(book.getBookId())
+                .bookId(book.getId())
                 .title(book.getTitle())
                 .author(book.getAuthor())
                 .publisher(book.getPublisher())

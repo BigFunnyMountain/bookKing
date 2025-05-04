@@ -2,11 +2,12 @@ package xyz.tomorrowlearncamp.bookking.domain.user.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import xyz.tomorrowlearncamp.bookking.domain.common.dto.Response;
-import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.AuthUser;
+import xyz.tomorrowlearncamp.bookking.common.dto.Response;
+import xyz.tomorrowlearncamp.bookking.common.entity.AuthUser;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.DeleteUserRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.UpdateUserRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.UpdateUserRoleRequest;
@@ -33,28 +34,27 @@ public class UserController {
         return Response.success(updatingUser);
     }
 
-    @PatchMapping("/v1/users/role")
+    @PatchMapping("/v1/users/{userId}/role")
     public Response<UserResponse> updateUserRole(
-            @AuthenticationPrincipal AuthUser authUser,
+            @PathVariable("userId") Long userId,
             @Valid @RequestBody UpdateUserRoleRequest updateUserRoleRequest
     ) {
-        UserResponse updateUser = userService.updateUserRole(authUser.getUserId(), updateUserRoleRequest);
+        UserResponse updateUser = userService.updateUserRole(userId, updateUserRoleRequest);
         return Response.success(updateUser);
     }
 
     @DeleteMapping("/v1/users")
-    public Response<String> deleteUser(
+    public void deleteUser(
             @AuthenticationPrincipal AuthUser authUser,
             @Valid @RequestBody DeleteUserRequest deleteUserRequest
     ) {
         userService.deleteUser(authUser.getUserId(), deleteUserRequest.getPassword());
-        return Response.success("회원 탈퇴가 정상적으로 처리되었습니다");
     }
 
     @PostMapping("/v1/users/profile-image")
     public Response<String> uploadProfileImage(
             @AuthenticationPrincipal AuthUser authUser,
-            @RequestParam("image") MultipartFile image) throws IOException {
+            @RequestPart("image") MultipartFile image) {
 
         String imageUrl = userService.updateProfileImage(authUser.getUserId(), image);
         return Response.success(imageUrl);

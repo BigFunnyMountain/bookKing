@@ -1,5 +1,6 @@
 package xyz.tomorrowlearncamp.bookking.domain.payment.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
@@ -14,6 +15,7 @@ import xyz.tomorrowlearncamp.bookking.domain.common.exception.InvalidRequestExce
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
 import xyz.tomorrowlearncamp.bookking.domain.common.exception.ServerException;
 import xyz.tomorrowlearncamp.bookking.domain.common.util.LogUtil;
+
 import xyz.tomorrowlearncamp.bookking.domain.order.dto.OrderResponse;
 import xyz.tomorrowlearncamp.bookking.domain.order.enums.OrderStatus;
 import xyz.tomorrowlearncamp.bookking.domain.order.service.OrderService;
@@ -42,13 +44,33 @@ public class PaymentService {
 
 	private RLock lock;
 
-	public void payment(Long userId, Long bookId, Long buyStock, Long money, PayType payType) {
+	@Transactional
+	public void paymentV1(Long userId, Long bookId, Long buyStock, Long money, PayType payType) {
+		Book book = bookRepository.findByIdWithLock(bookId);
+
+		// 책이 재고가 0개인 경우 || 구매하려는 개수 만큼 없는 경우
+		if (book.getStock() == 0 || book.getStock() < buyStock) {
+			throw new InvalidRequestException(ErrorMessage.ZERO_BOOK_STOCK);
+		}
+
+		// 돈이 부족한 경우
+		long price = Long.parseLong(book.getPrePrice());
+		if (price * buyStock > money) {
+			throw new InvalidRequestException(ErrorMessage.SHORT_ON_MONEY);
+		}
+
+		book.updateStock(book.getStock() - buyStock);
+
+		orderService.createOrder(userId, book, buyStock, OrderStatus.COMPLETED, payType);
+	}
+
+	public void paymentV2(Long userId, Long bookId, Long buyStock, Long money, PayType payType) {
 		Book book = new Book();
 		setFairLock(bookId);
 
 		try {
 			book = bookRepository.findById(bookId).orElseThrow(
-					() -> new NotFoundException(ErrorMessage.BOOK_NOT_FOUND)
+				() -> new NotFoundException(ErrorMessage.BOOK_NOT_FOUND)
 			);
 			// 책이 재고가 0개인 경우 || 구매하려는 개수 만큼 없는 경우
 			if (book.getStock() == 0 || book.getStock() < buyStock) {
@@ -61,7 +83,6 @@ public class PaymentService {
 				throw new InvalidRequestException(ErrorMessage.SHORT_ON_MONEY);
 			}
 
-			// buyStock 만큼 구매
 			book.updateStock(book.getStock() - buyStock);
 			bookRepository.save(book);
 		} catch (NotFoundException ex) {

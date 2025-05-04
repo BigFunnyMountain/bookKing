@@ -11,7 +11,7 @@ public record ElasticBookDocument(
 ) {
     public static ElasticBookDocument of(Book book) {
         return new ElasticBookDocument(
-            book.getBookId(),
+            book.getId(),
             book.getTitle(),
             book.getAuthor(),
             book.getPublisher(),

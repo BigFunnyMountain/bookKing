@@ -8,8 +8,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.book.repository.BookRepository;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.InvalidRequestException;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
+import xyz.tomorrowlearncamp.bookking.common.exception.InvalidRequestException;
+import xyz.tomorrowlearncamp.bookking.common.exception.NotFoundException;
 import xyz.tomorrowlearncamp.bookking.domain.order.service.OrderService;
 import xyz.tomorrowlearncamp.bookking.domain.review.dto.request.ReviewRequest;
 import xyz.tomorrowlearncamp.bookking.domain.review.dto.response.ReviewResponse;
@@ -28,7 +28,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static xyz.tomorrowlearncamp.bookking.domain.common.enums.ErrorMessage.PURCHASE_HISTORY_NOT_FOUND;
+import static xyz.tomorrowlearncamp.bookking.common.enums.ErrorMessage.PURCHASE_HISTORY_NOT_FOUND;
 
 @ExtendWith(MockitoExtension.class)
 class ReviewServiceTest {
@@ -77,7 +77,7 @@ class ReviewServiceTest {
                 .reviewState(ReviewState.ACTIVE)
                 .build();
 
-        ReflectionTestUtils.setField(savedReview, "reviewId", 10L);
+        ReflectionTestUtils.setField(savedReview, "id", 10L);
 
 
         given(reviewRepository.save(any(Review.class))).willReturn(savedReview);
@@ -167,7 +167,7 @@ class ReviewServiceTest {
                 .reviewState(ReviewState.ACTIVE)
                 .build();
 
-        ReflectionTestUtils.setField(savedReview, "reviewId", 10L);
+        ReflectionTestUtils.setField(savedReview, "id", 10L);
 
 
         given(reviewRepository.findByIdAndUserIdAndBookIdAndState(reviewId, userId, bookId, ReviewState.ACTIVE))

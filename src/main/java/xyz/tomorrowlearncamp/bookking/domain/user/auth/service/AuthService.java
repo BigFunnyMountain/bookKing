@@ -1,28 +1,25 @@
 package xyz.tomorrowlearncamp.bookking.domain.user.auth.service;
 
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import xyz.tomorrowlearncamp.bookking.domain.common.enums.ErrorMessage;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.InvalidRequestException;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
+import xyz.tomorrowlearncamp.bookking.common.enums.ErrorMessage;
+import xyz.tomorrowlearncamp.bookking.common.exception.InvalidRequestException;
+import xyz.tomorrowlearncamp.bookking.common.exception.NotFoundException;
 import xyz.tomorrowlearncamp.bookking.domain.user.enums.UserRole;
-import xyz.tomorrowlearncamp.bookking.domain.user.auth.config.JwtProvider;
+import xyz.tomorrowlearncamp.bookking.common.util.JwtProvider;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.AccessTokenResponse;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.SignupRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.SignupResponse;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.entity.RefreshToken;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.repository.RefreshTokenRepository;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.LoginRequest;
-import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.LoginResponse;
+import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.SignInResponse;
 import xyz.tomorrowlearncamp.bookking.domain.user.entity.User;
 import xyz.tomorrowlearncamp.bookking.domain.user.repository.UserRepository;
-import org.springframework.http.HttpHeaders;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -42,7 +39,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public LoginResponse login(LoginRequest request, HttpServletResponse response) {
+    public SignInResponse signin(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND));
 
@@ -59,12 +56,11 @@ public class AuthService {
         refreshTokenRepository.save(
                 RefreshToken.builder()
                         .userId(user.getId())
-                        .token(jwtProvider.removeBearerPrefix(refreshToken))
+                        .token(refreshToken)
                         .expiredAt(LocalDateTime.now().plusDays(14))
                         .build()
         );
-        response.setHeader(HttpHeaders.AUTHORIZATION, accessToken);
-        return LoginResponse.of(user, accessToken, refreshToken);
+        return SignInResponse.of(user, accessToken, refreshToken);
     }
 
     @Transactional(readOnly = true)
@@ -104,28 +100,17 @@ public class AuthService {
 
     @Transactional
     public SignupResponse signup(SignupRequest request) {
-        validateEmail(request.getEmail());
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new InvalidRequestException(ErrorMessage.EMAIL_DUPLICATED);
+        }
 
         User user = User.of(
-                request.getEmail(),
+                request,
                 passwordEncoder.encode(request.getPassword()),
-                request.getName(),
-                UserRole.ROLE_USER,
-                request.getAddress(),
-                request.getGender(),
-                request.getAge(),
-                request.getNickname()
+                UserRole.ROLE_USER
         );
 
         User saveUser = userRepository.save(user);
         return SignupResponse.of(saveUser);
-    }
-
-    @Transactional(readOnly = true)
-    public void validateEmail(String email) {
-
-        if (userRepository.existsByEmail(email)) {
-            throw new InvalidRequestException(ErrorMessage.EMAIL_DUPLICATED);
-        }
     }
 }
