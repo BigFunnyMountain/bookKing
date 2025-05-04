@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.dto.ElasticBookSearchResponse;
 import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.service.ElasticBookService;
 
-import xyz.tomorrowlearncamp.bookking.domain.common.dto.Response;
-import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.AuthUser;
+import xyz.tomorrowlearncamp.bookking.common.dto.Response;
+import xyz.tomorrowlearncamp.bookking.common.entity.AuthUser;
 
 import java.util.List;
 import xyz.tomorrowlearncamp.bookking.domain.book.service.BookService;
@@ -36,7 +36,7 @@ public class ElasticBookSearchController {
 
 	@GetMapping("/v1/elasticsearch/keyword")
 	public Response<Page<ElasticBookSearchResponse>> searchBooksByKeyword(
-    @AuthenticationPrincipal AuthUser user,
+   		@AuthenticationPrincipal AuthUser user,
 		@RequestParam String keyword,
 		Pageable pageable
 	) {
