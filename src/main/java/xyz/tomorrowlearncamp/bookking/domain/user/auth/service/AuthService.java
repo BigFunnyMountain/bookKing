@@ -3,20 +3,22 @@ package xyz.tomorrowlearncamp.bookking.domain.user.auth.service;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import xyz.tomorrowlearncamp.bookking.common.enums.ErrorMessage;
+import xyz.tomorrowlearncamp.bookking.common.exception.InvalidRequestException;
+import xyz.tomorrowlearncamp.bookking.common.exception.NotFoundException;
 import xyz.tomorrowlearncamp.bookking.domain.user.enums.UserRole;
-import xyz.tomorrowlearncamp.bookking.domain.user.auth.config.JwtProvider;
+import xyz.tomorrowlearncamp.bookking.common.util.JwtProvider;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.AccessTokenResponse;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.SignupRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.SignupResponse;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.entity.RefreshToken;
 import xyz.tomorrowlearncamp.bookking.domain.user.auth.repository.RefreshTokenRepository;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.LoginRequest;
-import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.LoginResponse;
+import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.SignInResponse;
 import xyz.tomorrowlearncamp.bookking.domain.user.entity.User;
 import xyz.tomorrowlearncamp.bookking.domain.user.repository.UserRepository;
 import org.springframework.http.HttpHeaders;
@@ -40,12 +42,12 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public LoginResponse login(LoginRequest request, HttpServletResponse response) {
+    public SignInResponse signin(LoginRequest request) {
         User user = userRepository.findByEmailAndDeletedFalse(request.getEmail())
-                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
+            throw new InvalidRequestException(ErrorMessage.WRONG_PASSWORD);
         }
 
         String accessToken = jwtProvider.createAccessToken(user.getId(), user.getEmail(), user.getRole());
@@ -58,12 +60,11 @@ public class AuthService {
         refreshTokenRepository.save(
                 RefreshToken.builder()
                         .userId(user.getId())
-                        .token(jwtProvider.removeBearerPrefix(refreshToken))
+                        .token(refreshToken)
                         .expiredAt(LocalDateTime.now().plusDays(14))
                         .build()
         );
-        response.setHeader(HttpHeaders.AUTHORIZATION, accessToken);
-        return LoginResponse.of(user, accessToken, refreshToken);
+        return SignInResponse.of(user, accessToken, refreshToken);
     }
 
     @Transactional(readOnly = true)
@@ -75,7 +76,7 @@ public class AuthService {
 
         if (optionalToken.isEmpty()) {
             log.warn("======== [refresh] DB에서 일치하는 RefreshToken을 찾지 못했음. 요청 토큰: {}", refreshToken);
-            throw new IllegalArgumentException("유효하지 않은 Refresh Token.");
+            throw new InvalidRequestException(ErrorMessage.INVALID_REFRESH_TOKEN);
         }
 
         RefreshToken token = optionalToken.get();
@@ -85,14 +86,14 @@ public class AuthService {
 
         if (token.getExpiredAt().isBefore(LocalDateTime.now())) {
             log.warn("======== [refresh] 만료된 Refresh Token. expiredAt: {}", token.getExpiredAt());
-            throw new IllegalArgumentException("만료된 Refresh Token.");
+            throw new InvalidRequestException(ErrorMessage.EXPIRED_REFRESH_TOKEN);
         }
 
         User user = userRepository.findById(token.getUserId())
                 .filter(u -> !u.isDeleted()) // delete된 유저가 refresh 토큰으로 accessToken을 재발급받는 거 막음
                 .orElseThrow(() -> {
-                    log.warn("======== [refresh] 유저가 없거나 탈퇴 상태입니다. userId={}", token.getUserId());
-                    return new UsernameNotFoundException("사용자를 찾을 수 없습니다.");
+                    log.warn("======== [refresh] userId={} 에 해당하는 유저를 찾지 못했습니다.", token.getUserId());
+                    return new NotFoundException(ErrorMessage.USER_NOT_FOUND);
                 });
 
         log.info("======== [refresh] AccessToken 재발급 성공 (userId={}, email={})", user.getId(), user.getEmail());
@@ -104,17 +105,14 @@ public class AuthService {
 
     @Transactional
     public SignupResponse signup(SignupRequest request) {
-        validateEmail(request.getEmail());
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new InvalidRequestException(ErrorMessage.EMAIL_DUPLICATED);
+        }
 
         User user = User.of(
-                request.getEmail(),
+                request,
                 passwordEncoder.encode(request.getPassword()),
-                request.getName(),
-                UserRole.ROLE_USER,
-                request.getAddress(),
-                request.getGender(),
-                request.getAge(),
-                request.getNickname()
+                UserRole.ROLE_USER
         );
 
         User saveUser = userRepository.save(user);

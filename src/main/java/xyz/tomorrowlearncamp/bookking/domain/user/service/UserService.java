@@ -30,62 +30,48 @@ public class UserService {
 
     public UserResponse getMyInfo(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
-
-        if (user.isDeleted()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "탈퇴한 사용자입니다.");
-        }
-
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND));
         return UserResponse.of(user);
     }
-
 
     @Transactional
     public UserResponse updateUser(Long userId, UpdateUserRequest updateUserRequest) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다"));
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND));
 
         user.updateUserInfo(updateUserRequest.getNickname(), updateUserRequest.getAddress());
-
         return UserResponse.of(user);
     }
 
     @Transactional
     public UserResponse updateUserRole(Long userId, UpdateUserRoleRequest updateUserRoleRequest) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다"));
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND));
+        UserRole updateRole = UserRole.of(updateUserRoleRequest.getRole());
 
-        UserRole currentRole = user.getRole();
-        UserRole requestedRole = UserRole.of(updateUserRoleRequest.getRole());
-
-        if (currentRole == UserRole.ROLE_USER && requestedRole == UserRole.ROLE_ADMIN) {
-            user.updateRole(UserRole.ROLE_ADMIN);
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "권한 변경이 허용되지 않습니다. \n ROLE_USER만 ROLE_ADMIN으로 변경할 수 있습니다.");
+        if (user.getRole().equals(updateRole)) {
+            throw new InvalidRequestException(ErrorMessage.ROLE_CHANGE_NOT_ALLOWED);
         }
 
+        user.updateRole(updateRole);
         return UserResponse.of(user);
     }
 
     @Transactional
-    public void deleteUser(Long userId, Long loginUserId, String checkPassword) {
-        if (!userId.equals(loginUserId)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "본인 게정만 탈퇴가 가능합니다");
-        }
-
+    public void deleteUser(Long userId, String checkPassword) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(checkPassword, user.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "비밀번호가 일치하지 않습니다");
+            throw new NotFoundException(ErrorMessage.WRONG_PASSWORD);
         }
         user.softDelete();
     }
 
     @Transactional
-    public String updateProfileImage(Long userId, MultipartFile image) throws IOException {
+    public String updateProfileImage(Long userId, MultipartFile image) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND));
 
         String imageUrl = s3Upload.uploadProfileImage(image);
         user.updateProfileImageUrl(imageUrl);

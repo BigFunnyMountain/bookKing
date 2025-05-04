@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import xyz.tomorrowlearncamp.bookking.domain.user.enums.Gender;
 
 /**
@@ -19,6 +20,7 @@ public class SignupRequest {
     @Email
     private String email;
 
+    @Setter
     @NotBlank
     @Size(min = 8, max = 20)
     private String password;

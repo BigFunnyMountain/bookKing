@@ -23,7 +23,7 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
 
   elasticsearch:
-    uris: http://elastic-container:9200
+    uris: http://elasticsearch:9200
 
   servlet:
     multipart:
@@ -59,3 +59,7 @@ jwt:
 library:
   api:
     key: ${LIBRARY_API_KEY}
+
+openai:
+  api:
+    key: ${OPENAI_API_KEY}

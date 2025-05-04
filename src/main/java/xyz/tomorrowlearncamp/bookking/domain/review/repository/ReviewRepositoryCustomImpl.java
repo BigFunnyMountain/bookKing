@@ -85,11 +85,11 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
     }
 
     @Override
-    public Optional<Review> findByIdAndUserIdAndBookIdAndState(Long reviewId, Long userId, Long bookId, ReviewState state) {
+    public Optional<Review> findByIdAndUserIdAndBookIdAndState(Long id, Long userId, Long bookId, ReviewState state) {
         Review result = queryFactory
                 .selectFrom(review)
                 .where(
-                        review.reviewId.eq(reviewId),
+                        review.id.eq(id),
                         review.userId.eq(userId),
                         review.bookId.eq(bookId),
                         review.reviewState.eq(state)

@@ -2,7 +2,7 @@ package xyz.tomorrowlearncamp.bookking.domain.review.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import xyz.tomorrowlearncamp.bookking.domain.common.entity.BaseEntity;
+import xyz.tomorrowlearncamp.bookking.common.entity.BaseEntity;
 import xyz.tomorrowlearncamp.bookking.domain.review.enums.ReviewState;
 import xyz.tomorrowlearncamp.bookking.domain.review.enums.StarRating;
 
@@ -14,7 +14,13 @@ public class Review extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long reviewId;
+    private Long id;
+
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+
+    @Column(name = "book_id", nullable = false)
+    private Long bookId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -26,12 +32,6 @@ public class Review extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ReviewState reviewState;
-
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
-
-    @Column(name = "book_id", nullable = false)
-    private Long bookId;
 
     @Builder
     public Review(Long userId, Long bookId, StarRating rating, String content, ReviewState reviewState) {

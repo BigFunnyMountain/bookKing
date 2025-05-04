@@ -1,20 +1,16 @@
 package xyz.tomorrowlearncamp.bookking.domain.book.service;
 
+import com.esotericsoftware.minlog.Log;
 import java.util.List;
-import java.util.stream.Collectors;
-
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import com.esotericsoftware.minlog.Log;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.SearchBookRequestDto;
+import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.SearchBookRequest;
 import xyz.tomorrowlearncamp.bookking.domain.book.dto.response.BookDto;
-import xyz.tomorrowlearncamp.bookking.domain.book.dto.response.SearchBookResponseDto;
+import xyz.tomorrowlearncamp.bookking.domain.book.dto.response.SearchBookResponse;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.book.mapper.BookMapper;
 
@@ -31,17 +27,17 @@ public class SearchBookService {
 
 	private static final String BASE_URL = "https://www.nl.go.kr/seoji/SearchApi.do?";
 
-	public SearchBookResponseDto searchBooks(SearchBookRequestDto requestDto) {
+	public SearchBookResponse searchBooks(SearchBookRequest requestDto) {
 		String url = buildUrl(requestDto);
 		Log.info(url);
 		return webClient.get()
 			.uri(url)
 			.retrieve()
-			.bodyToMono(SearchBookResponseDto.class)
+			.bodyToMono(SearchBookResponse.class)
 			.block();
 	}
 
-	public String buildUrl(SearchBookRequestDto requestDto) {
+	private String buildUrl(SearchBookRequest requestDto) {
 		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(BASE_URL)
 			.queryParam("cert_key", apiKey)
 			.queryParam("result_style", "json")
@@ -57,25 +53,29 @@ public class SearchBookService {
 		return builder.build().toUriString();
 	}
 
-	public void fetchBooksFromLibraryApi(int pageSize, int totalPage) {
+	public void fetchBooksFromLibraryApi(int pageSize, int totalPage, int startPage) {
 		long start = System.currentTimeMillis();
 		int bookCount = 0;
-		for (int page = 1; page <= totalPage; page++) {
-			log.info("Fetching page {}/{}", page, totalPage);
-			SearchBookRequestDto requestDto = new SearchBookRequestDto();
-			requestDto.setPageNo(page);
-			requestDto.setPageSize(pageSize);
+		for (int page = startPage; page <= totalPage + startPage - 1; page++) {
+			try {
+				log.info("Fetching page {}/{}", page, totalPage + startPage);
+				SearchBookRequest requestDto = new SearchBookRequest();
+				requestDto.setPageNo(page);
+				requestDto.setPageSize(pageSize);
 
-			SearchBookResponseDto responseDto = searchBooks(requestDto);
-			List<BookDto> bookDtos = responseDto.getDocs();
+				SearchBookResponse responseDto = searchBooks(requestDto);
+				List<BookDto> bookDtos = responseDto.getDocs();
 
-			List<Book> books = bookDtos.stream()
-				.map(bookMapper::toEntity)
-				.collect(Collectors.toList());
+				List<Book> books = bookDtos.stream()
+					.map(bookMapper::toEntity)
+					.toList();
 
-			bookService.saveBooksInBatch(books, pageSize);
+				bookService.saveBooksInBatch(books, pageSize);
 
-			bookCount += books.size();
+				bookCount += books.size();
+			} catch (Exception e) {
+				log.error("[Exception]: ", e);
+			}
 
 			try {
 				Thread.sleep(1000);
