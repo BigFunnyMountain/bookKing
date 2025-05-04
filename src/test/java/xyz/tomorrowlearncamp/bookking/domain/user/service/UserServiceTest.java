@@ -57,6 +57,28 @@ class UserServiceTest {
     }
 
     @Test
+    @DisplayName("존재하는 유저 실패")
+    void existsById_Failed() {
+        //given
+        Long userId = 1L;
+        given(userRepository.existsById(userId)).willReturn(false);
+
+        // when && then
+        assertFalse(userService.existsById(userId));
+    }
+
+    @Test
+    @DisplayName("존재하는 유저 성공")
+    void existsById_success() {
+        //given
+        Long userId = 1L;
+        given(userRepository.existsById(userId)).willReturn(true);
+
+        // when && then
+        assertTrue(userService.existsById(userId));
+    }
+
+    @Test
     @DisplayName("내_정보_조회_성공")
     void getMyInfo_success() {
         // given

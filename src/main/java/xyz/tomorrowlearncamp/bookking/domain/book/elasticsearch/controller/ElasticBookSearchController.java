@@ -47,10 +47,10 @@ public class ElasticBookSearchController {
 	@PostMapping("/v1/elasticsearch/reindex")
 	public void reindexBooks(
 		@RequestParam(defaultValue = "500") int pageSize,
-		@RequestParam(defaultValue = "10") int totalPage,
-		@RequestParam(defaultValue = "0") int startPage
+		@RequestParam(defaultValue = "0") int startPage,
+		@RequestParam(defaultValue = "100") int endPage
 	) {
-		bookService.reindexBooks(pageSize, totalPage, startPage);
+		bookService.reindexBooks(pageSize, startPage, endPage);
 	}
 
 	@GetMapping("/v1/elasticsearch/autocomplete")
