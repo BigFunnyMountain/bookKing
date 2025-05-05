@@ -163,7 +163,7 @@ public class PaymentService {
 		log.put("log_type", "buy");
 		log.put("age_group", LogUtil.getAgeGroup(user.getAge()));
 		log.put("gender", user.getGender());
-		log.put("price", book.getPrePrice());
+		log.put("price", Integer.parseInt(book.getPrePrice()));
 		log.put("book_name", book.getTitle());
 		log.put("timestamp", Instant.now().toString());
 
