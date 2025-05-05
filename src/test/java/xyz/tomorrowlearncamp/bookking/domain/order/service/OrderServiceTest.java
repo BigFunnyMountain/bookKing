@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
+import static xyz.tomorrowlearncamp.bookking.domain.payment.enums.PayType.CARD;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
@@ -95,7 +96,7 @@ class OrderServiceTest {
         List<Order> orders = List.of(order2, order1);
         Page<Order> orderPage = new PageImpl<>(orders);
 
-        given(orderRepository.findByUserId(eq(userId), any(Pageable.class)))
+        given(orderRepository.findByUserIdAndDeletedAtIsNull(eq(userId), any(Pageable.class)))
                 .willReturn(orderPage);
 
         // when
@@ -110,7 +111,7 @@ class OrderServiceTest {
         assertThat(result.getContent().get(0).getPrePrice()).isEqualTo("10000");
         assertThat(result.getContent().get(0).getPublisher()).isEqualTo("Some Publisher");
 
-        verify(orderRepository).findByUserId(eq(userId), any(Pageable.class));
+        verify(orderRepository).findByUserIdAndDeletedAtIsNull(eq(userId), any(Pageable.class));
     }
 
     @Test
@@ -121,7 +122,7 @@ class OrderServiceTest {
         int size = 2;
 
         Page<Order> emptyPage = Page.empty();
-        given(orderRepository.findByUserId(eq(userId), any(Pageable.class)))
+        given(orderRepository.findByUserIdAndDeletedAtIsNull(eq(userId), any(Pageable.class)))
                 .willReturn(emptyPage);
 
         // when
@@ -131,7 +132,7 @@ class OrderServiceTest {
         assertThat(result).isNotNull();
         assertThat(result.getContent()).isEmpty();
 
-        verify(orderRepository).findByUserId(eq(userId), any(Pageable.class));
+        verify(orderRepository).findByUserIdAndDeletedAtIsNull(eq(userId), any(Pageable.class));
     }
 
     @Test
@@ -147,7 +148,7 @@ class OrderServiceTest {
         ReflectionTestUtils.setField(book, "publisher", "테스트 출판사");
         ReflectionTestUtils.setField(book, "bookIntroductionUrl", "http://test-url.com");
         OrderStatus status = OrderStatus.COMPLETED;
-        PayType payType = PayType.CARD;
+        PayType payType = CARD;
 
         Order savedOrder = Order.builder()
                 .userId(userId)
@@ -246,14 +247,14 @@ class OrderServiceTest {
 
         ReflectionTestUtils.setField(order, "id", orderId);
 
-        given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
+        given(orderRepository.findByIdAndDeletedAtIsNull(orderId)).willReturn(Optional.of(order));
 
         // when
         orderService.switchReviewStatus(orderId);
 
         // then
         assertThat(order.isReviewed()).isTrue(); // 토글 한 번 -> true
-        verify(orderRepository).findById(orderId);
+        verify(orderRepository).findByIdAndDeletedAtIsNull(orderId);
     }
 
     @Test
@@ -261,13 +262,13 @@ class OrderServiceTest {
         // given
         Long orderId = 999L;
 
-        given(orderRepository.findById(orderId)).willReturn(Optional.empty());
+        given(orderRepository.findByIdAndDeletedAtIsNull(orderId)).willReturn(Optional.empty());
 
         // when & then
         assertThatThrownBy(() -> orderService.switchReviewStatus(orderId))
                 .isInstanceOf(NotFoundException.class);
 
-        verify(orderRepository).findById(orderId);
+        verify(orderRepository).findByIdAndDeletedAtIsNull(orderId);
     }
 
     @Test
@@ -285,7 +286,7 @@ class OrderServiceTest {
                 .build();
         ReflectionTestUtils.setField(order, "id", 1L);
 
-        given(orderRepository.findById(anyLong())).willReturn(Optional.of(order));
+        given(orderRepository.findByIdAndDeletedAtIsNull(anyLong())).willReturn(Optional.of(order));
 
         OrderResponse getOrder = orderService.getOrder(1L);
 
@@ -296,7 +297,7 @@ class OrderServiceTest {
     @DisplayName("없는 오더 가져오기")
     void 오더_엔티티_가져오기_실패() {
         // given
-        given(orderRepository.findById(anyLong())).willReturn(Optional.empty());
+        given(orderRepository.findByIdAndDeletedAtIsNull(anyLong())).willReturn(Optional.empty());
 
         // when && then
         NotFoundException assertThrows = assertThrows(NotFoundException.class,
@@ -307,38 +308,48 @@ class OrderServiceTest {
     }
 
     @Test
-    @DisplayName("주문 상태 업데이트 실패")
+    @DisplayName("주문 상태 업데이트 실패 – 주문이 존재하지 않음")
     void updateOrderStatus_failed() {
         // given
-        given(orderRepository.findById(anyLong())).willReturn(Optional.empty());
+        Long orderId = 999L;
+        given(orderRepository.findById(orderId))
+                .willReturn(Optional.empty());
 
-        // when && then
-        NotFoundException assertThrows = assertThrows(NotFoundException.class,
-            () -> orderService.getOrder(1L));
+        // when & then
+        NotFoundException ex = assertThrows(
+                NotFoundException.class,
+                () -> orderService.updateOrderStatus(orderId, OrderStatus.CANCELLED)
+        );
+        assertEquals(ErrorMessage.ORDER_NOT_FOUND, ex.getErrorMessage());
 
-        assertInstanceOf(NotFoundException.class, assertThrows);
-        assertEquals(ErrorMessage.ORDER_NOT_FOUND, assertThrows.getErrorMessage());
+        verify(orderRepository).findById(orderId);
     }
 
     @Test
-    @DisplayName("주문 상태 업데이트")
+    @DisplayName("주문 상태 업데이트 성공")
     void updateOrderStatus_success() {
         // given
+        Long orderId = 1L;
         Order order = Order.builder()
-            .userId(1L)
-            .bookId(2L)
-            .prePrice("15000")
-            .stock(3L)
-            .publisher("테스트 출판사")
-            .bookIntroductionUrl("http://test-url.com")
-            .status(OrderStatus.COMPLETED)
-            .build();
-        ReflectionTestUtils.setField(order, "id", 1L);
-        given(orderRepository.findById(anyLong())).willReturn(Optional.of(order));
+                .userId(1L)
+                .bookId(2L)
+                .prePrice("15000")
+                .stock(3L)
+                .publisher("테스트 출판사")
+                .bookIntroductionUrl("http://test-url.com")
+                .status(OrderStatus.COMPLETED)
+                .payType(PayType.CARD)
+                .build();
+        ReflectionTestUtils.setField(order, "id", orderId);
 
-        // when && then
-        orderService.getOrder(1L);
+        given(orderRepository.findById(orderId))
+                .willReturn(Optional.of(order));
 
-        verify(orderRepository,times(1)).findById(anyLong());
+        // when
+        orderService.updateOrderStatus(orderId, OrderStatus.CANCELLED);
+
+        // then
+        assertThat(order.getStatus()).isEqualTo(OrderStatus.CANCELLED);
+        verify(orderRepository).findById(orderId);
     }
 }

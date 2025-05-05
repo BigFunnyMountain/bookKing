@@ -17,6 +17,11 @@ public interface BookMapper {
 	@BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 	void updateBookFromDto(UpdateBookRequest dto, @MappingTarget Book book);
 
+// 	25.05.05 팀 내 회의를 통해 진행할예정
+//	@Mapping(source = "publishPredate", target = "publicationDate")
+//	@Mapping(target = "source", constant = "API")
+//	@Mapping(target = "bookId", ignore = true)
+//	@Mapping(target = "stock", ignore = true)
 	default Book toEntity(AddBookRequest dto) {
 	        return Book.builder()
 	                .title(dto.getTitle())

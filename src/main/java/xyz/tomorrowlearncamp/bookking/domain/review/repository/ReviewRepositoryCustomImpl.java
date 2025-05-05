@@ -98,4 +98,42 @@ public class ReviewRepositoryCustomImpl implements ReviewRepositoryCustom {
 
         return Optional.ofNullable(result);
     }
+
+    @Override
+    public Page<Review> findByUserIdAndDeletedAtIsNull(Long userId, Pageable pageable) {
+        List<Review> content = queryFactory
+                .selectFrom(review)
+                .where(
+                        review.userId.eq(userId),
+                        review.deletedAt.isNull()
+                )
+                .orderBy(review.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        Long count = queryFactory
+                .select(review.count())
+                .from(review)
+                .where(
+                        review.userId.eq(userId),
+                        review.deletedAt.isNull()
+                )
+                .fetchOne();
+
+        return new PageImpl<>(content, pageable, count != null ? count : 0);
+    }
+
+    @Override
+    public Optional<Review> findByIdAndDeletedAtIsNull(Long reviewId) {
+        Review result = queryFactory
+                .selectFrom(review)
+                .where(
+                        review.id.eq(reviewId),
+                        review.deletedAt.isNull()
+                )
+                .fetchOne();
+
+        return Optional.ofNullable(result);
+    }
 }

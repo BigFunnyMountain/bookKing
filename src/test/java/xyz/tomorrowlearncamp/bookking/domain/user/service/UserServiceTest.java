@@ -61,7 +61,7 @@ class UserServiceTest {
     void existsById_Failed() {
         //given
         Long userId = 1L;
-        given(userRepository.existsById(userId)).willReturn(false);
+        given(userRepository.findByIdAndDeletedAtIsNull(userId)).willReturn(Optional.empty());
 
         // when && then
         assertFalse(userService.existsById(userId));
@@ -72,7 +72,8 @@ class UserServiceTest {
     void existsById_success() {
         //given
         Long userId = 1L;
-        given(userRepository.existsById(userId)).willReturn(true);
+        given(userRepository.findByIdAndDeletedAtIsNull(userId)).willReturn(Optional.of(user));
+
 
         // when && then
         assertTrue(userService.existsById(userId));
@@ -83,7 +84,7 @@ class UserServiceTest {
     void getMyInfo_success() {
         // given
         Long userId = 1L;
-        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(userRepository.findByIdAndDeletedAtIsNull(userId)).willReturn(Optional.of(user));
 
         // when
         var result = userService.getMyInfo(userId);
@@ -91,7 +92,7 @@ class UserServiceTest {
         // then
         assertThat(result.getEmail()).isEqualTo(user.getEmail());
         assertThat(result.getNickname()).isEqualTo(user.getNickname());
-        verify(userRepository).findById(userId);
+        verify(userRepository).findByIdAndDeletedAtIsNull(userId);
     }
 
     @Test
@@ -99,7 +100,7 @@ class UserServiceTest {
     void getMyInfo_fail_userNotFound() {
         // given
         Long userId = -1L;
-        given(userRepository.findById(userId)).willReturn(Optional.empty());
+        given(userRepository.findByIdAndDeletedAtIsNull(userId)).willReturn(Optional.empty());
 
         // when
         Throwable throwable = catchThrowable(() -> userService.getMyInfo(userId));
@@ -107,7 +108,7 @@ class UserServiceTest {
         // then
         assertThat(throwable)
                 .isInstanceOf(NotFoundException.class);
-        verify(userRepository, times(1)).findById(userId);
+        verify(userRepository, times(1)).findByIdAndDeletedAtIsNull(userId);
     }
 
     @Test
@@ -120,7 +121,7 @@ class UserServiceTest {
 
         UpdateUserRequest request = new UpdateUserRequest(newNickname, newAddress);
 
-        given(userRepository.findById(anyLong())).willReturn(Optional.of(user));
+        given(userRepository.findByIdAndDeletedAtIsNull(anyLong())).willReturn(Optional.of(user));
 
         // when
         UserResponse userResponse = userService.updateUser(userId, request);
@@ -128,7 +129,7 @@ class UserServiceTest {
         // then
         assertThat(userResponse.getNickname()).isEqualTo(newNickname);
         assertThat(userResponse.getAddress()).isEqualTo(newAddress);
-        verify(userRepository).findById(userId);
+        verify(userRepository).findByIdAndDeletedAtIsNull(userId);
     }
 
     @Test
@@ -138,7 +139,7 @@ class UserServiceTest {
         Long userId = -1L;
         UpdateUserRequest request = new UpdateUserRequest("바뀐닉넴", "제주도");
 
-        given(userRepository.findById(anyLong())).willReturn(Optional.empty());
+        given(userRepository.findByIdAndDeletedAtIsNull(anyLong())).willReturn(Optional.empty());
 
         // when && then
         NotFoundException assertThrows = assertThrows(NotFoundException.class,
@@ -155,14 +156,14 @@ class UserServiceTest {
         Long userId = 1L;
         UpdateUserRoleRequest request = new UpdateUserRoleRequest("ROLE_ADMIN");
 
-        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(userRepository.findByIdAndDeletedAtIsNull(userId)).willReturn(Optional.of(user));
 
         // when
         var result = userService.updateUserRole(userId, request);
 
         // then
         assertThat(result.getRole()).isEqualTo(UserRole.ROLE_ADMIN);
-        verify(userRepository).findById(userId);
+        verify(userRepository).findByIdAndDeletedAtIsNull(userId);
     }
 
     @Test
@@ -172,7 +173,7 @@ class UserServiceTest {
         Long userId = -1L;
         UpdateUserRoleRequest request = new UpdateUserRoleRequest("ROLE_ADMIN");
 
-        given(userRepository.findById(userId)).willReturn(Optional.empty());
+        given(userRepository.findByIdAndDeletedAtIsNull(userId)).willReturn(Optional.empty());
 
         // when && then
         NotFoundException assertThrows = assertThrows(NotFoundException.class,
@@ -189,7 +190,7 @@ class UserServiceTest {
         Long userId = 1L;
         UpdateUserRoleRequest request = new UpdateUserRoleRequest("ROLE_USER");// 요청을 변경 할 필요가없음 user-> user니까.
 
-        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(userRepository.findByIdAndDeletedAtIsNull(userId)).willReturn(Optional.of(user));
 
         // when && then
         InvalidRequestException assertThrows = assertThrows(InvalidRequestException.class,
@@ -207,16 +208,17 @@ class UserServiceTest {
         String password = "1234";
 
         ReflectionTestUtils.setField(user, "id", userId);
-        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(userRepository.findByIdAndDeletedAtIsNull(userId)).willReturn(Optional.of(user));
         given(passwordEncoder.matches(password, user.getPassword())).willReturn(true);
 
         // when
         userService.deleteUser(userId, password);
 
         // then
-        verify(userRepository).findById(userId);
+        verify(userRepository).findByIdAndDeletedAtIsNull(userId);
         verify(passwordEncoder).matches(password, user.getPassword());
-        verify(userRepository).delete(user);
+
+        assertThat(user.isDeleted()).isTrue();
     }
 
 }

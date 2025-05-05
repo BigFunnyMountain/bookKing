@@ -22,6 +22,7 @@ import xyz.tomorrowlearncamp.bookking.domain.user.entity.User;
 import xyz.tomorrowlearncamp.bookking.domain.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -40,7 +41,7 @@ public class AuthService {
 
     @Transactional
     public SignInResponse signin(LoginRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository.findByEmailAndDeletedAtIsNull(request.getEmail())
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
@@ -50,8 +51,9 @@ public class AuthService {
         String accessToken = jwtProvider.createAccessToken(user.getId(), user.getEmail(), user.getRole());
         String refreshToken = jwtProvider.createRefreshToken(user.getId(), user.getEmail(), user.getRole());
 
-        refreshTokenRepository.deleteByUserId(user.getId());
-        refreshTokenRepository.flush();
+        List<RefreshToken> tokens = refreshTokenRepository.findAllByUserIdAndDeletedAtIsNull(user.getId());
+        tokens.forEach(RefreshToken::softDelete);
+
 
         refreshTokenRepository.save(
                 RefreshToken.builder()
@@ -68,7 +70,7 @@ public class AuthService {
         // 값 넘어온거 확인
         log.info("======== [refresh] 클라이언트로부터 받은 refreshToken: {}", refreshToken);
 
-        Optional<RefreshToken> optionalToken = refreshTokenRepository.findByToken(refreshToken);
+        Optional<RefreshToken> optionalToken = refreshTokenRepository.findByTokenAndDeletedAtIsNull(refreshToken);
 
         if (optionalToken.isEmpty()) {
             log.warn("======== [refresh] DB에서 일치하는 RefreshToken을 찾지 못했음. 요청 토큰: {}", refreshToken);
@@ -85,7 +87,8 @@ public class AuthService {
             throw new InvalidRequestException(ErrorMessage.EXPIRED_REFRESH_TOKEN);
         }
 
-        User user = userRepository.findById(token.getUserId())
+        User user = userRepository.findByIdAndDeletedAtIsNull(token.getUserId())
+                //.filter(u -> !u.isDeleted()) // delete된 유저가 refresh 토큰으로 accessToken을 재발급받는 거 막음
                 .orElseThrow(() -> {
                     log.warn("======== [refresh] userId={} 에 해당하는 유저를 찾지 못했습니다.", token.getUserId());
                     return new NotFoundException(ErrorMessage.USER_NOT_FOUND);
@@ -100,7 +103,7 @@ public class AuthService {
 
     @Transactional
     public SignupResponse signup(SignupRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
+        if (userRepository.existsByEmailAndDeletedFalse(request.getEmail())) {
             throw new InvalidRequestException(ErrorMessage.EMAIL_DUPLICATED);
         }
 
@@ -112,5 +115,13 @@ public class AuthService {
 
         User saveUser = userRepository.save(user);
         return SignupResponse.of(saveUser);
+    }
+
+    @Transactional(readOnly = true)
+    public void validateEmail(String email) {
+
+        if (userRepository.existsByEmailAndDeletedFalse(email)) {
+            throw new IllegalArgumentException("이미 가입된 email 입니다.");
+        }
     }
 }

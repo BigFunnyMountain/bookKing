@@ -25,7 +25,7 @@ public class OrderService {
     @Transactional(readOnly = true)
     public Page<OrderResponse> getMyOrders(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return orderRepository.findByUserId(userId, pageable)
+        return orderRepository.findByUserIdAndDeletedAtIsNull(userId, pageable)
                 .map(OrderResponse::of);
     }
 
@@ -54,7 +54,7 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public OrderResponse getOrder(Long orderId) {
-        Order getOrder = orderRepository.findById(orderId).orElseThrow(
+        Order getOrder = orderRepository.findByIdAndDeletedAtIsNull(orderId).orElseThrow(
                 () -> new NotFoundException(ErrorMessage.ORDER_NOT_FOUND)
         );
         return OrderResponse.of(getOrder);
@@ -70,7 +70,7 @@ public class OrderService {
 
     @Transactional
     public void switchReviewStatus(Long orderId) {
-        Order order = orderRepository.findById(orderId)
+        Order order = orderRepository.findByIdAndDeletedAtIsNull(orderId)
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.ORDER_NOT_FOUND));
         order.toggleReviewed();
     }

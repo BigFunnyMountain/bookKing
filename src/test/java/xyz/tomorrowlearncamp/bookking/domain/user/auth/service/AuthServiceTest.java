@@ -8,8 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpHeaders;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import xyz.tomorrowlearncamp.bookking.common.enums.ErrorMessage;
@@ -26,6 +24,7 @@ import xyz.tomorrowlearncamp.bookking.domain.user.enums.UserRole;
 import xyz.tomorrowlearncamp.bookking.domain.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -54,13 +53,18 @@ class AuthServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private HttpServletResponse response;
+
     @Test
     @DisplayName("로그인_실패-존재하지_않는_사용자")
     void login_fail_userNotFound() {
         // given
         LoginRequest request = LoginRequest.of("notfound@email.com", "1234");
-        given(userRepository.findByEmail(request.getEmail())).willReturn(Optional.empty());
+        given(userRepository.findByEmailAndDeletedAtIsNull(request.getEmail())).willReturn(Optional.empty());
 
+        // when
+        Throwable throwable = catchThrowable(() -> authService.signin(request));
 
         // when && then
         NotFoundException assertThrows = assertThrows(NotFoundException.class,
@@ -80,7 +84,7 @@ class AuthServiceTest {
         SignupRequest temp = SignupRequest.of(email, inputPassword, "홍길동", "서울", Gender.valueOf("MALE"), 20, "길동이");
 
         User user = User.of(temp, encodedPassword, UserRole.ROLE_USER);
-        given(userRepository.findByEmail(email)).willReturn(Optional.of(user));
+        given(userRepository.findByEmailAndDeletedAtIsNull(email)).willReturn(Optional.of(user));
         given(passwordEncoder.matches(inputPassword, encodedPassword)).willReturn(false);
 
         LoginRequest request = LoginRequest.of(email, inputPassword);
@@ -108,10 +112,11 @@ class AuthServiceTest {
         User user = User.of(temp, encodedPassword, UserRole.ROLE_USER);
         setField(user, "id", userId);
 
-        given(userRepository.findByEmail(email)).willReturn(Optional.of(user));
+        given(userRepository.findByEmailAndDeletedAtIsNull(email)).willReturn(Optional.of(user));
         given(passwordEncoder.matches(password, encodedPassword)).willReturn(true);
         given(jwtProvider.createAccessToken(userId, email, user.getRole())).willReturn(accessToken);
         given(jwtProvider.createRefreshToken(userId, email, user.getRole())).willReturn(refreshToken);
+        given(refreshTokenRepository.findAllByUserIdAndDeletedAtIsNull(userId)).willReturn(List.of());
 
         LoginRequest request = LoginRequest.of(email, password);
 
@@ -122,12 +127,11 @@ class AuthServiceTest {
         assertThat(result.getAccessToken()).isEqualTo(accessToken);
         assertThat(result.getRefreshToken()).isEqualTo(refreshToken);
 
-        verify(userRepository).findByEmail(email);
+        verify(userRepository).findByEmailAndDeletedAtIsNull(email);
         verify(passwordEncoder).matches(password, encodedPassword);
         verify(jwtProvider).createAccessToken(userId, email, user.getRole());
         verify(jwtProvider).createRefreshToken(userId, email, user.getRole());
-        verify(refreshTokenRepository).deleteByUserId(userId);
-        verify(refreshTokenRepository).flush();
+        verify(refreshTokenRepository).findAllByUserIdAndDeletedAtIsNull(userId);
         verify(refreshTokenRepository).save(any(RefreshToken.class));
     }
 
@@ -137,7 +141,7 @@ class AuthServiceTest {
     void refresh_fail_tokenNotFound() {
         // given
         String refreshToken = "not_in_db_token";
-        given(refreshTokenRepository.findByToken(refreshToken)).willReturn(Optional.empty());
+        given(refreshTokenRepository.findByTokenAndDeletedAtIsNull(refreshToken)).willReturn(Optional.empty());
 
         // when && then
         InvalidRequestException assertThrows = assertThrows(InvalidRequestException.class,
@@ -159,7 +163,7 @@ class AuthServiceTest {
                 .expiredAt(LocalDateTime.now().minusMinutes(1))
                 .build();
 
-        given(refreshTokenRepository.findByToken(refreshToken)).willReturn(Optional.of(token));
+        given(refreshTokenRepository.findByTokenAndDeletedAtIsNull(refreshToken)).willReturn(Optional.of(token));
 
         // when && then
         InvalidRequestException assertThrows = assertThrows(InvalidRequestException.class,
@@ -182,8 +186,8 @@ class AuthServiceTest {
                 .build();
 
         setField(token, "id", 1L);
-        given(refreshTokenRepository.findByToken(refreshToken)).willReturn(Optional.of(token));
-        given(userRepository.findById(999L)).willReturn(Optional.empty());
+        given(refreshTokenRepository.findByTokenAndDeletedAtIsNull(refreshToken)).willReturn(Optional.of(token));
+        given(userRepository.findByIdAndDeletedAtIsNull(999L)).willReturn(Optional.empty());
 
         // when && then
         NotFoundException assertThrows = assertThrows(NotFoundException.class,
@@ -215,8 +219,8 @@ class AuthServiceTest {
         User user = User.of(temp, "password", UserRole.ROLE_USER);
         setField(user, "id", userId);
 
-        given(refreshTokenRepository.findByToken(refreshToken)).willReturn(Optional.of(token));
-        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(refreshTokenRepository.findByTokenAndDeletedAtIsNull(refreshToken)).willReturn(Optional.of(token));
+        given(userRepository.findByIdAndDeletedAtIsNull(userId)).willReturn(Optional.of(user));
         given(jwtProvider.createAccessToken(userId, email, role)).willReturn(newAccessToken);
 
         //when
@@ -226,8 +230,8 @@ class AuthServiceTest {
         assertThat(result).isNotNull();
         assertThat(result.getAccessToken()).isEqualTo(newAccessToken);
 
-        verify(refreshTokenRepository).findByToken(refreshToken);
-        verify(userRepository).findById(userId);
+        verify(refreshTokenRepository).findByTokenAndDeletedAtIsNull(refreshToken);
+        verify(userRepository).findByIdAndDeletedAtIsNull(userId);
         verify(jwtProvider).createAccessToken(userId, email, role);
     }
 
@@ -247,7 +251,7 @@ class AuthServiceTest {
                 .nickname("길동이")
                 .build();
 
-        given(userRepository.existsByEmail(email)).willReturn(true);
+        given(userRepository.existsByEmailAndDeletedFalse(email)).willReturn(true);
 
         // when && then
         InvalidRequestException assertThrows = assertThrows(InvalidRequestException.class,
@@ -278,7 +282,7 @@ class AuthServiceTest {
         User user = User.of(request, encodedPassword, UserRole.ROLE_USER);
         setField(user, "id", 1L);
 
-        given(userRepository.existsByEmail(email)).willReturn(false);
+        given(userRepository.existsByEmailAndDeletedFalse(email)).willReturn(false);
         given(passwordEncoder.encode(password)).willReturn(encodedPassword);
         given(userRepository.save(any(User.class))).willReturn(user);
 
@@ -290,8 +294,23 @@ class AuthServiceTest {
         assertThat(result.getEmail()).isEqualTo(email);
         assertThat(result.getUserId()).isEqualTo(1L);
 
-        verify(userRepository).existsByEmail(email);
+        verify(userRepository).existsByEmailAndDeletedFalse(email);
         verify(passwordEncoder).encode(password);
         verify(userRepository).save(any(User.class));
+    }
+
+    @Test
+    @DisplayName("이메일_중복_확인_성공")
+    void validateEmail_success() {
+        // given
+        String email = "newuser@email.com";
+        given(userRepository.existsByEmailAndDeletedFalse(email)).willReturn(false);
+
+        // when
+        Throwable throwable = catchThrowable(() -> authService.validateEmail(email));
+
+        // then
+        assertThat(throwable).doesNotThrowAnyException();
+        verify(userRepository).existsByEmailAndDeletedFalse(email);
     }
 }

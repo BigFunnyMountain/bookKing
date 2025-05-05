@@ -1,12 +1,18 @@
 package xyz.tomorrowlearncamp.bookking.domain.order.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import xyz.tomorrowlearncamp.bookking.common.entity.BaseEntity;
 import xyz.tomorrowlearncamp.bookking.domain.order.enums.OrderStatus;
 import xyz.tomorrowlearncamp.bookking.domain.payment.enums.PayType;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -45,6 +51,17 @@ public class Order extends BaseEntity {
 
     @Column(nullable = false)
     private PayType payType;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
+    public void softDelete() {
+        this.deletedAt = LocalDateTime.now();
+    }
+
+    public boolean isDeleted() {
+        return this.deletedAt != null;
+    }
 
     @Builder
     public Order(Long userId, Long bookId, String prePrice, Long stock, String publisher, String bookIntroductionUrl, OrderStatus status, PayType payType) {

@@ -23,13 +23,13 @@ public class ElasticBookSearchController {
 	private final ElasticBookService elasticBookService;
 	private final BookService bookService;
 
-	@GetMapping("/v1/elasticsearch")
+	@GetMapping("/v2/books/search")
 	public Response<Page<ElasticBookSearchResponse>> searchBooks(Pageable pageable) {
 		Page<ElasticBookSearchResponse> result = elasticBookService.search(pageable);
 		return Response.success(result);
 	}
 
-	@GetMapping("/v1/elasticsearch/keyword")
+	@GetMapping("/v1/books/search/keywords")
 	public Response<Page<ElasticBookSearchResponse>> searchBooksByKeyword(
    		@AuthenticationPrincipal AuthUser user,
 		@RequestParam String keyword,
@@ -39,7 +39,7 @@ public class ElasticBookSearchController {
 		return Response.success(result);
 	}
 
-	@PostMapping("/v1/elasticsearch/reindex")
+	@PostMapping("/v1/books/search/reindex")
 	public void reindexBooks(
 		@RequestParam(defaultValue = "500") int pageSize,
 		@RequestParam(defaultValue = "0") int startPage,
@@ -48,7 +48,7 @@ public class ElasticBookSearchController {
 		bookService.reindexBooks(pageSize, startPage, endPage);
 	}
 
-	@GetMapping("/v1/elasticsearch/autocomplete")
+	@GetMapping("/v1/books/search/autocomplete")
 	public Response<List<String>> searchAutoComplete(
 		@RequestParam String keyword,
 		@RequestParam(defaultValue = "10") int size
@@ -56,7 +56,7 @@ public class ElasticBookSearchController {
 		return Response.success(elasticBookService.searchAutoCompleteTitle(keyword, size));
 	}
 
-	@GetMapping("/v2/elasticsearch/autocomplete")
+	@GetMapping("/v2/books/search/autocomplete")
 	public Response<List<String>> searchAutocompleteV2(
 		@RequestParam String keyword,
 		@RequestParam(defaultValue = "5") int size
@@ -64,7 +64,7 @@ public class ElasticBookSearchController {
 		return Response.success(elasticBookService.searchAutoCompleteTitleV2(keyword, size));
 	}
 
-	@GetMapping("/v3/elasticsearch/autocomplete")
+	@GetMapping("/v3/books/search/autocomplete")
 	public Response<List<String>> searchAutocompleteV3(
 		@RequestParam String keyword,
 		@RequestParam(defaultValue = "5") int size
@@ -72,7 +72,7 @@ public class ElasticBookSearchController {
 		return Response.success(elasticBookService.searchAutoCompleteTitleV3(keyword, size));
 	}
 
-	@GetMapping("/v1/elasticsearch/relate")
+	@GetMapping("/v1/books/search/elasticsearch/relate")
 	public Response<List<String>> searchRelateKeywords(@RequestParam String keyword) {
 		List<String> relateKeywords = elasticBookService.searchRelateKeywords(keyword);
 		return Response.success(relateKeywords);

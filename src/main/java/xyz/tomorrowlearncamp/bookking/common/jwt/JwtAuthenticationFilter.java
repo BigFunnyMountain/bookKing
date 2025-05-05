@@ -130,7 +130,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			return;
 		}
 
-		RefreshToken getToken = refreshTokenRepository.findByToken(refreshToken).orElseThrow(
+		RefreshToken getToken = refreshTokenRepository.findByTokenAndDeletedAtIsNull(refreshToken).orElseThrow(
 			() -> new InvalidRequestException(ErrorMessage.INVALID_REFRESH_TOKEN)
 		);
 		if( getToken.getExpiredAt().isBefore(java.time.LocalDateTime.now()) ) {
