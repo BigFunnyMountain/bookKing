@@ -33,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
+import static xyz.tomorrowlearncamp.bookking.domain.payment.enums.PayType.CARD;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
@@ -147,7 +148,7 @@ class OrderServiceTest {
         ReflectionTestUtils.setField(book, "publisher", "테스트 출판사");
         ReflectionTestUtils.setField(book, "bookIntroductionUrl", "http://test-url.com");
         OrderStatus status = OrderStatus.COMPLETED;
-        PayType payType = PayType.CARD;
+        PayType payType = CARD;
 
         Order savedOrder = Order.builder()
                 .userId(userId)
@@ -307,38 +308,48 @@ class OrderServiceTest {
     }
 
     @Test
-    @DisplayName("주문 상태 업데이트 실패")
+    @DisplayName("주문 상태 업데이트 실패 – 주문이 존재하지 않음")
     void updateOrderStatus_failed() {
         // given
-        given(orderRepository.findById(anyLong())).willReturn(Optional.empty());
+        Long orderId = 999L;
+        given(orderRepository.findById(orderId))
+                .willReturn(Optional.empty());
 
-        // when && then
-        NotFoundException assertThrows = assertThrows(NotFoundException.class,
-            () -> orderService.getOrder(1L));
+        // when & then
+        NotFoundException ex = assertThrows(
+                NotFoundException.class,
+                () -> orderService.updateOrderStatus(orderId, OrderStatus.CANCELLED)
+        );
+        assertEquals(ErrorMessage.ORDER_NOT_FOUND, ex.getErrorMessage());
 
-        assertInstanceOf(NotFoundException.class, assertThrows);
-        assertEquals(ErrorMessage.ORDER_NOT_FOUND, assertThrows.getErrorMessage());
+        verify(orderRepository).findById(orderId);
     }
 
     @Test
-    @DisplayName("주문 상태 업데이트")
+    @DisplayName("주문 상태 업데이트 성공")
     void updateOrderStatus_success() {
         // given
+        Long orderId = 1L;
         Order order = Order.builder()
-            .userId(1L)
-            .bookId(2L)
-            .prePrice("15000")
-            .stock(3L)
-            .publisher("테스트 출판사")
-            .bookIntroductionUrl("http://test-url.com")
-            .status(OrderStatus.COMPLETED)
-            .build();
-        ReflectionTestUtils.setField(order, "id", 1L);
-        given(orderRepository.findById(anyLong())).willReturn(Optional.of(order));
+                .userId(1L)
+                .bookId(2L)
+                .prePrice("15000")
+                .stock(3L)
+                .publisher("테스트 출판사")
+                .bookIntroductionUrl("http://test-url.com")
+                .status(OrderStatus.COMPLETED)
+                .payType(PayType.CARD)
+                .build();
+        ReflectionTestUtils.setField(order, "id", orderId);
 
-        // when && then
-        orderService.getOrder(1L);
+        given(orderRepository.findById(orderId))
+                .willReturn(Optional.of(order));
 
-        verify(orderRepository,times(1)).findById(anyLong());
+        // when
+        orderService.updateOrderStatus(orderId, OrderStatus.CANCELLED);
+
+        // then
+        assertThat(order.getStatus()).isEqualTo(OrderStatus.CANCELLED);
+        verify(orderRepository).findById(orderId);
     }
 }

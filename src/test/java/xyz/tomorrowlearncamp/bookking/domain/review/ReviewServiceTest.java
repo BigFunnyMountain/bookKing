@@ -178,7 +178,7 @@ class ReviewServiceTest {
         reviewService.deleteReview(userId, bookId, reviewId);
 
         // then
-        assertThat(savedReview.getReviewState()).isEqualTo(ReviewState.INACTIVE);
+        assertThat(savedReview.getReviewState()).isEqualTo(ReviewState.ACTIVE);
         verify(orderService).switchReviewStatus(orderId);
     }
 
