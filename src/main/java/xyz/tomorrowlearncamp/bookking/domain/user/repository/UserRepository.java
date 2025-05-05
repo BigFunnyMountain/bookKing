@@ -14,7 +14,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmailAndDeletedAtIsNull(String email);
 
-    @Query("select u from User u where u.email = :email and u.deletedAt is not null")
+    @Query("select u from User u where u.email = :email and u.deletedAt is null")
     boolean existsByEmailAndDeletedFalse(String email);
 
     Optional<User> findByIdAndDeletedAtIsNull(Long id);
