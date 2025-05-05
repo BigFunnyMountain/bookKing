@@ -1,8 +1,11 @@
 spring:
   application:
-    name: count10shop
+    name: bookKing
   profiles:
-    default: dev
+    default: release
+  web:
+    resources:
+      add-mappings: false
 
 management:
   endpoint:

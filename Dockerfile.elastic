@@ -1,0 +1,16 @@
+FROM docker.elastic.co/elasticsearch/elasticsearch:8.17.4
+
+ENV discovery.type=single-node \
+    xpack.security.enabled=false \
+    xpack.security.http.ssl.enabled=false \
+    xpack.security.transport.ssl.enabled=false \
+    xpack.security.enrollment.enabled=false
+
+RUN cat <<EOF > /usr/share/elasticsearch/config/elasticsearch.yml
+cluster.name: "docker-cluster"
+network.host: 0.0.0.0
+http.port: 9200
+EOF
+
+EXPOSE 9200 9300
+

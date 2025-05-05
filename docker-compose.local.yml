@@ -1,0 +1,72 @@
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql-container
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_USERNAME=root
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=testdb
+    networks:
+      - local-test
+
+  elastic-search:
+    container_name: elasticsearch
+    build:
+      context: .
+      dockerfile: Dockerfile.elastic
+    ports:
+      - "9200:9200"
+    networks:
+      - local-test
+
+  elastic-kibana:
+    container_name: kibana
+    build:
+      context: .
+      dockerfile: Dockerfile.kibana
+    depends_on:
+      - elastic-search
+    ports:
+      - "5601:5601"
+    networks:
+      - local-test
+
+  elastic-logstash:
+    container_name: logstash-container
+    build:
+      context: .
+      dockerfile: Dockerfile.logstash
+    depends_on:
+      - elastic-search
+    ports:
+      - "4560:4560"
+    networks:
+      - local-test
+
+  redis:
+    container_name: redis-container
+    image: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - local-test
+
+  spring:
+    container_name: spring-container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILE=dev
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    networks:
+      - local-test
+
+networks:
+  local-test:
+    driver: bridge

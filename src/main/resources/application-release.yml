@@ -1,13 +1,65 @@
+server:
+  shutdown: graceful
+
 spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 30s # default
+
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${DB_URL}
-    username: ${DB_USER}
-    password: ${DB_USER_PASSWORD}
+    hikari:
+      writer:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://${WRITER_URL}:3306/${DB_NAME}
+        username: ${DB_USERNAME}
+        password: ${DB_PASSWORD}
+      reader:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://${READER_URL}:3306/${DB_NAME}
+        username: ${DB_USERNAME}
+        password: ${DB_PASSWORD}
 
   jpa:
     hibernate:
       ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
     properties:
       hibernate:
+        connection:
+          provider_disables_autocommit: false
         dialect: org.hibernate.dialect.MySQL8Dialect
+    open-in-view: false
+
+  elasticsearch:
+    uris: ${ES_URI}
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, health, metrics
+  endpoint:
+    prometheus:
+      access: unrestricted
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+cloud:
+  aws:
+    s3:
+      bucket: ${S3_BUCKET}
+    region:
+      static: ${S3_REGION}
+
+jwt:
+  secret:
+    key: ${JWT_SECRET_KEY}
+
+library:
+  api:
+    key: ${LIBRARY_API_KEY}

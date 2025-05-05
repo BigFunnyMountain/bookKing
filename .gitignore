@@ -39,3 +39,9 @@ out/
 ### .env ###
 .env
 *.env
+
+### .DS_Store ###
+.DS_Store
+
+### application-local ###
+application-local.yml

@@ -1,22 +1,70 @@
 spring:
-  h2:
-    console:
-      settings:
-        web-allow-others: true
-      enabled: true
-      path: /h2-console
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    username: sa
-    password:
+    hikari:
+      writer:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://mysql-container:3306/testdb
+        username: root
+        password: ${DB_PASSWORD}
+      reader:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://mysql-container:3306/testdb
+        username: root
+        password: ${DB_PASSWORD}
 
   jpa:
     hibernate:
       ddl-auto: create
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
     properties:
       hibernate:
+        connection:
+          provider_disables_autocommit: false
         show_sql: true
         format_sql: true
         use_sql_comments: true
-        dialect: org.hibernate.dialect.H2Dialect
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    open-in-view: false
+
+  elasticsearch:
+    uris: http://elasticsearch:9200
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  data:
+    redis:
+      host: redis://redis-container:6379
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    region:
+      static: ap-southeast-2
+    s3:
+      bucket: bigfunnybookking
+    stack:
+      auto: false
+
+logging:
+  level:
+    root: info
+    org.springframework.jdbc.core.JdbcTemplate: debug
+    org.springframework.jdbc.core.StatementCreatorUtils: trace
+
+jwt:
+  secret:
+    key: 60066e95d82266c1ae7bc5bf01828f64f4337ee0f4b4a1f29008ba63d7b3e69fb77d2abca7f2085ca7d6a8fabd224007cfd3316d0b96f714ea4215dd06988c59
+
+library:
+  api:
+    key: ${LIBRARY_API_KEY}
+
+openai:
+  api:
+    key: ${OPENAI_API_KEY}
