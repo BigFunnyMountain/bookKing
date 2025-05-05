@@ -72,7 +72,7 @@ public class ElasticBookSearchController {
 		return Response.success(elasticBookService.searchAutoCompleteTitleV3(keyword, size));
 	}
 
-	@GetMapping("/v1/books/search/elasticsearch/relate")
+	@GetMapping("/v1/books/search/relate")
 	public Response<List<String>> searchRelateKeywords(@RequestParam String keyword) {
 		List<String> relateKeywords = elasticBookService.searchRelateKeywords(keyword);
 		return Response.success(relateKeywords);
