@@ -61,7 +61,7 @@ class UserServiceTest {
     void existsById_Failed() {
         //given
         Long userId = 1L;
-        given(userRepository.existsById(userId)).willReturn(false);
+        given(userRepository.findByIdAndDeletedAtIsNull(userId)).willReturn(Optional.empty());
 
         // when && then
         assertFalse(userService.existsById(userId));
@@ -72,7 +72,8 @@ class UserServiceTest {
     void existsById_success() {
         //given
         Long userId = 1L;
-        given(userRepository.existsById(userId)).willReturn(true);
+        given(userRepository.findByIdAndDeletedAtIsNull(userId)).willReturn(Optional.of(user));
+
 
         // when && then
         assertTrue(userService.existsById(userId));
