@@ -24,6 +24,7 @@ import xyz.tomorrowlearncamp.bookking.domain.user.enums.UserRole;
 import xyz.tomorrowlearncamp.bookking.domain.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -115,6 +116,7 @@ class AuthServiceTest {
         given(passwordEncoder.matches(password, encodedPassword)).willReturn(true);
         given(jwtProvider.createAccessToken(userId, email, user.getRole())).willReturn(accessToken);
         given(jwtProvider.createRefreshToken(userId, email, user.getRole())).willReturn(refreshToken);
+        given(refreshTokenRepository.findAllByUserIdAndDeletedAtIsNull(userId)).willReturn(List.of());
 
         LoginRequest request = LoginRequest.of(email, password);
 
@@ -129,8 +131,7 @@ class AuthServiceTest {
         verify(passwordEncoder).matches(password, encodedPassword);
         verify(jwtProvider).createAccessToken(userId, email, user.getRole());
         verify(jwtProvider).createRefreshToken(userId, email, user.getRole());
-        verify(refreshTokenRepository).deleteByUserId(userId);
-        verify(refreshTokenRepository).flush();
+        verify(refreshTokenRepository).findAllByUserIdAndDeletedAtIsNull(userId);
         verify(refreshTokenRepository).save(any(RefreshToken.class));
     }
 
@@ -186,7 +187,7 @@ class AuthServiceTest {
 
         setField(token, "id", 1L);
         given(refreshTokenRepository.findByTokenAndDeletedAtIsNull(refreshToken)).willReturn(Optional.of(token));
-        given(userRepository.findById(999L)).willReturn(Optional.empty());
+        given(userRepository.findByIdAndDeletedAtIsNull(999L)).willReturn(Optional.empty());
 
         // when && then
         NotFoundException assertThrows = assertThrows(NotFoundException.class,
@@ -219,7 +220,7 @@ class AuthServiceTest {
         setField(user, "id", userId);
 
         given(refreshTokenRepository.findByTokenAndDeletedAtIsNull(refreshToken)).willReturn(Optional.of(token));
-        given(userRepository.findById(userId)).willReturn(Optional.of(user));
+        given(userRepository.findByIdAndDeletedAtIsNull(userId)).willReturn(Optional.of(user));
         given(jwtProvider.createAccessToken(userId, email, role)).willReturn(newAccessToken);
 
         //when
@@ -230,7 +231,7 @@ class AuthServiceTest {
         assertThat(result.getAccessToken()).isEqualTo(newAccessToken);
 
         verify(refreshTokenRepository).findByTokenAndDeletedAtIsNull(refreshToken);
-        verify(userRepository).findById(userId);
+        verify(userRepository).findByIdAndDeletedAtIsNull(userId);
         verify(jwtProvider).createAccessToken(userId, email, role);
     }
 
