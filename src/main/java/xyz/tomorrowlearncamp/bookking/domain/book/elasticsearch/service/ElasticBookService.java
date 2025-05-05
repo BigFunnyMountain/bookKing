@@ -23,6 +23,16 @@ import org.springframework.stereotype.Service;
 import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.document.ElasticBookDocument;
 import xyz.tomorrowlearncamp.bookking.domain.book.elasticsearch.dto.ElasticBookSearchResponse;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
+
+import xyz.tomorrowlearncamp.bookking.common.enums.LogType;
+import xyz.tomorrowlearncamp.bookking.common.util.LogUtil;
+import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.UserResponse;
+import xyz.tomorrowlearncamp.bookking.domain.user.service.UserService;
+
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
+
 import xyz.tomorrowlearncamp.bookking.common.enums.ErrorMessage;
 import xyz.tomorrowlearncamp.bookking.common.exception.ServerException;
 
@@ -31,11 +41,13 @@ import xyz.tomorrowlearncamp.bookking.common.exception.ServerException;
 @RequiredArgsConstructor
 public class ElasticBookService {
 
+
+    private final UserService userService;
+    private final ElasticsearchClient elasticsearchClient;
+
     private static final String INDEX_NAME = "books";
     private static final String FIELD_TITLE = "title";
     private static final String FIELD_AUTHOR = "author";
-
-    private final ElasticsearchClient elasticsearchClient;
 
     public void save(Book book) {
         ElasticBookDocument elasticBookDocument = ElasticBookDocument.of(book);
@@ -110,7 +122,7 @@ public class ElasticBookService {
         }
     }
 
-    public Page<ElasticBookSearchResponse> searchByKeyword(String keyword, Pageable pageable) {
+    public Page<ElasticBookSearchResponse> searchByKeyword(Long userId, String keyword, Pageable pageable) {
         try {
             List<Query> mustQueries = new ArrayList<>();
             if (keyword != null && !keyword.isBlank()) {
@@ -143,6 +155,17 @@ public class ElasticBookService {
                     .toList();
 
             long totalHits = elasticBookDocumentSearchResponse.hits().total() != null ? elasticBookDocumentSearchResponse.hits().total().value() : 0L;
+
+            if (userId != null) {
+                UserResponse user = userService.getMyInfo(userId);
+                Map<String, Object> log = new HashMap<>();
+                log.put("log_type", "search");
+                log.put("age_group", LogUtil.getAgeGroup(user.getAge()));
+                log.put("gender", user.getGender());
+                log.put("keyword", keyword);
+                log.put("timestamp", Instant.now().toString());
+                LogUtil.log(LogType.SEARCH, log);
+            }
 
             return new PageImpl<>(results, pageable, totalHits);
 

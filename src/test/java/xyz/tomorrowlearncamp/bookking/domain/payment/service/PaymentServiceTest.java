@@ -22,7 +22,9 @@ import xyz.tomorrowlearncamp.bookking.domain.order.service.OrderService;
 import xyz.tomorrowlearncamp.bookking.domain.payment.dto.response.PaymentReturnResponse;
 import xyz.tomorrowlearncamp.bookking.domain.payment.enums.PayType;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.UserResponse;
+import xyz.tomorrowlearncamp.bookking.domain.user.entity.User;
 import xyz.tomorrowlearncamp.bookking.domain.user.enums.UserRole;
+import xyz.tomorrowlearncamp.bookking.domain.user.service.UserService;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -34,6 +36,8 @@ import static org.mockito.BDDMockito.*;
 @ExtendWith(MockitoExtension.class)
 class PaymentServiceTest {
 	@Mock
+	private UserService userService;
+	@Mock
 	private BookRepository bookRepository;
 	@Mock
 	private RedissonClient redissonClient;
@@ -41,14 +45,28 @@ class PaymentServiceTest {
 	private OrderService orderService;
 	@Mock
 	private RLock rlock;
-
 	@InjectMocks
 	private PaymentService paymentService;
+
+	@Test
+	@DisplayName("없는 사용자")
+	void getUser_failed() {
+		//given
+		given(userService.existsById(anyLong())).willReturn(false);
+
+		// when && then
+		NotFoundException assertThrows = assertThrows(NotFoundException.class,
+			() -> paymentService.paymentV2(1L, 1L, 1L, 1L, PayType.KAKAO_PAY));
+
+		assertInstanceOf(NotFoundException.class, assertThrows);
+		assertEquals(ErrorMessage.USER_NOT_FOUND, assertThrows.getErrorMessage());
+	}
 
 	@Test
 	@DisplayName("레디스 페어락 실패 테스트")
 	void setFairLockFailedTest() throws InterruptedException {
 		//given
+		given(userService.existsById(anyLong())).willReturn(true);
 		given(redissonClient.getFairLock(anyString())).willReturn(rlock);
 		given(rlock.tryLock(100L, 10L, TimeUnit.SECONDS)).willReturn(false);
 
@@ -57,29 +75,27 @@ class PaymentServiceTest {
 				() -> paymentService.paymentV2(1L, 1L, 1L, 1L, PayType.KAKAO_PAY));
 
 		assertInstanceOf(ServerException.class, assertThrows);
-		assertEquals(ErrorMessage.REDIS_ERROR, assertThrows.getErrorMessage());
+		assertEquals(ErrorMessage.ERROR, assertThrows.getErrorMessage());
 	}
 
 	@Test
 	@DisplayName("단독 구매 성공 테스트")
 	void paymentSuccessTest() throws InterruptedException {
 		//given
-		UserResponse user = new UserResponse();
-		ReflectionTestUtils.setField(user, "id", 1L);
-		ReflectionTestUtils.setField(user, "email", "test@test.com");
-		ReflectionTestUtils.setField(user, "role", UserRole.ROLE_USER);
-
 		Book book = new Book();
 		ReflectionTestUtils.setField(book, "id", 1L);
 		ReflectionTestUtils.setField(book, "stock", 1L);
 		ReflectionTestUtils.setField(book, "prePrice", "1");
+		UserResponse userResponse = new UserResponse();
 
+		given(userService.existsById(anyLong())).willReturn(true);
 		given(bookRepository.findById(anyLong())).willReturn(Optional.of(book));
 		given(redissonClient.getFairLock(anyString())).willReturn(rlock);
 		given(rlock.tryLock(100L, 10L, TimeUnit.SECONDS)).willReturn(true);
+		given(userService.getMyInfo(anyLong())).willReturn(userResponse);
 
 		// when
-		paymentService.paymentV2(user.getId(), 1L, 1L, 1L, PayType.KAKAO_PAY);
+		paymentService.paymentV2(1L, 1L, 1L, 1L, PayType.KAKAO_PAY);
 
 		// then
 		verify(bookRepository, times(1)).save(any(book.getClass()));
@@ -94,6 +110,7 @@ class PaymentServiceTest {
 	@DisplayName("단독 구매 실패 테스트 : 존재 하지 않는 책")
 	void paymentFailedTest1() throws InterruptedException {
 		//given
+		given(userService.existsById(anyLong())).willReturn(true);
 		given(bookRepository.findById(anyLong())).willReturn(Optional.empty());
 		given(redissonClient.getFairLock(anyString())).willReturn(rlock);
 		given(rlock.tryLock(100L, 10L, TimeUnit.SECONDS)).willReturn(true);
@@ -115,6 +132,7 @@ class PaymentServiceTest {
 		ReflectionTestUtils.setField(book, "stock", 0L);
 		ReflectionTestUtils.setField(book, "prePrice", "1");
 
+		given(userService.existsById(anyLong())).willReturn(true);
 		given(bookRepository.findById(anyLong())).willReturn(Optional.of(book));
 		given(redissonClient.getFairLock(anyString())).willReturn(rlock);
 		given(rlock.tryLock(100L, 10L, TimeUnit.SECONDS)).willReturn(true);
@@ -136,6 +154,7 @@ class PaymentServiceTest {
 		ReflectionTestUtils.setField(book, "stock", 1L);
 		ReflectionTestUtils.setField(book, "prePrice", "1");
 
+		given(userService.existsById(anyLong())).willReturn(true);
 		given(bookRepository.findById(anyLong())).willReturn(Optional.of(book));
 		given(redissonClient.getFairLock(anyString())).willReturn(rlock);
 		given(rlock.tryLock(100L, 10L, TimeUnit.SECONDS)).willReturn(true);
@@ -161,7 +180,7 @@ class PaymentServiceTest {
 				.userId(1L)
 				.bookId(1L)
 				.prePrice("15000")
-				.stock(3L)
+				.stock(1L)
 				.publisher("테스트 출판사")
 				.bookIntroductionUrl("http://test-url.com")
 				.status(OrderStatus.COMPLETED)
@@ -170,9 +189,10 @@ class PaymentServiceTest {
 
 		Book book = new Book();
 		ReflectionTestUtils.setField(book, "id", 1L);
-		ReflectionTestUtils.setField(book, "stock", 97L);
+		ReflectionTestUtils.setField(book, "stock", 99L);
 		ReflectionTestUtils.setField(book, "prePrice", "1");
 
+		given(userService.existsById(anyLong())).willReturn(true);
 		given(bookRepository.findById(anyLong())).willReturn(Optional.of(book));
 		given(orderService.getOrder(anyLong())).willReturn(OrderResponse.of(order));
 		given(redissonClient.getFairLock(anyString())).willReturn(rlock);
@@ -183,7 +203,7 @@ class PaymentServiceTest {
 
 		// then
 		verify(bookRepository, times(1)).save(any(book.getClass()));
-		assertEquals(45000, returnResponse.getReturnMoney());
+		assertEquals(15000, returnResponse.getReturnMoney());
 		assertEquals(order.getId(), returnResponse.getOrderId());
 		assertEquals(100, book.getStock());
 	}
@@ -192,11 +212,7 @@ class PaymentServiceTest {
 	@DisplayName("단독 환불 실패 테스트 : 오더의 유저와 같은 유저가 아님")
 	void returnPaymentFailedTest1() {
 		//given
-		UserResponse user = new UserResponse();
-		ReflectionTestUtils.setField(user, "id", 1L);
-		ReflectionTestUtils.setField(user, "email", "test@test.com");
-		ReflectionTestUtils.setField(user, "role", UserRole.ROLE_USER);
-
+		Long userId = 1L;
 		Order order = Order.builder()
 				.userId(2L)
 				.bookId(1L)
@@ -208,11 +224,12 @@ class PaymentServiceTest {
 				.build();
 		ReflectionTestUtils.setField(order, "id", 1L);
 
+		given(userService.existsById(anyLong())).willReturn(true);
 		given(orderService.getOrder(anyLong())).willReturn(OrderResponse.of(order));
 
 		// when && then
 		try {
-			paymentService.returnPayment(user.getId(), order.getId());
+			paymentService.returnPayment(userId, order.getId());
 		} catch (InvalidRequestException e) {
 			assertInstanceOf(InvalidRequestException.class, e);
 			assertEquals(ErrorMessage.NO_AUTHORITY_TO_RETURN_A_PAYMENT, e.getErrorMessage());
@@ -222,14 +239,10 @@ class PaymentServiceTest {
 	}
 
 	@Test
-	@DisplayName("단독 환불 실패 테스트 : 오더의 유저와 같은 유저가 아님")
+	@DisplayName("단독 환불 실패 테스트 : 책을 조회를 할 수 없음")
 	void returnPaymentFailedTest2() throws InterruptedException {
 		//given
-		UserResponse user = new UserResponse();
-		ReflectionTestUtils.setField(user, "id", 1L);
-		ReflectionTestUtils.setField(user, "email", "test@test.com");
-		ReflectionTestUtils.setField(user, "role", UserRole.ROLE_USER);
-
+		Long userId = 1L;
 		Order order = Order.builder()
 				.userId(1L)
 				.bookId(1L)
@@ -241,13 +254,14 @@ class PaymentServiceTest {
 				.build();
 		ReflectionTestUtils.setField(order, "id", 1L);
 
+		given(userService.existsById(anyLong())).willReturn(true);
 		given(orderService.getOrder(anyLong())).willReturn(OrderResponse.of(order));
 		given(redissonClient.getFairLock(anyString())).willReturn(rlock);
 		given(rlock.tryLock(100L, 10L, TimeUnit.SECONDS)).willReturn(true);
 
 		// when && then
 		try {
-			paymentService.returnPayment(user.getId(), order.getId());
+			paymentService.returnPayment(userId, order.getId());
 		} catch (NotFoundException e) {
 			assertInstanceOf(NotFoundException.class, e);
 			assertEquals(ErrorMessage.BOOK_NOT_FOUND, e.getErrorMessage());

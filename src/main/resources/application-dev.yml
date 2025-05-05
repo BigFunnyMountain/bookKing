@@ -15,12 +15,17 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
     properties:
       hibernate:
+        connection:
+          provider_disables_autocommit: false
         show_sql: true
         format_sql: true
         use_sql_comments: true
         dialect: org.hibernate.dialect.MySQL8Dialect
+    open-in-view: false
 
   elasticsearch:
     uris: http://elasticsearch:9200

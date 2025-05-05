@@ -60,6 +60,13 @@ public class OrderService {
         return OrderResponse.of(getOrder);
     }
 
+    @Transactional
+    public void updateOrderStatus(Long orderId, OrderStatus status) {
+        Order getOrder = orderRepository.findById(orderId).orElseThrow(
+            () -> new NotFoundException(ErrorMessage.ORDER_NOT_FOUND)
+        );
+        getOrder.updateStatus(status);
+    }
 
     @Transactional
     public void switchReviewStatus(Long orderId) {

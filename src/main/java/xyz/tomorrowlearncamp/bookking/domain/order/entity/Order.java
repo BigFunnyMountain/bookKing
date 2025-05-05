@@ -79,4 +79,8 @@ public class Order extends BaseEntity {
     public void toggleReviewed() {
         this.isReviewed = !this.isReviewed;
     }
+
+    public void updateStatus(OrderStatus status) {
+        this.status = status;
+    }
 }
