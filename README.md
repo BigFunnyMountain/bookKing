@@ -132,10 +132,6 @@ BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활
 #  프로젝트 아키텍처
 ![image](https://github.com/user-attachments/assets/beb5f99e-78e9-4a69-af82-6531f2a681ad)
 
-
-<hr>
-
-
 <hr>
 
 #  기술적 의사 결정 및 트러블 슈팅
