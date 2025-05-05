@@ -1,99 +1,94 @@
 package xyz.tomorrowlearncamp.bookking.domain.book.controller;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.AddBookRequestDto;
-import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.SearchBookRequestDto;
-import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.UpdateBookRequestDto;
-import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.UpdateBookStockRequestDto;
-import xyz.tomorrowlearncamp.bookking.domain.book.dto.response.BookResponseDto;
-import xyz.tomorrowlearncamp.bookking.domain.book.dto.response.SearchBookResponseDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.AddBookRequest;
+import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.SearchBookRequest;
+import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.UpdateBookRequest;
+import xyz.tomorrowlearncamp.bookking.domain.book.dto.request.UpdateBookStockRequest;
+import xyz.tomorrowlearncamp.bookking.domain.book.dto.response.BookResponse;
+import xyz.tomorrowlearncamp.bookking.domain.book.dto.response.SearchBookResponse;
 import xyz.tomorrowlearncamp.bookking.domain.book.service.BookService;
 import xyz.tomorrowlearncamp.bookking.domain.book.service.SearchBookService;
+import xyz.tomorrowlearncamp.bookking.common.dto.Response;
+import xyz.tomorrowlearncamp.bookking.common.entity.AuthUser;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class BookController {
+
 	private final BookService bookService;
 	private final SearchBookService searchBookService;
 
-	//ToDo : 국립도서관API 호출 Post
 	@PostMapping("/v1/books/search")
-	@ResponseStatus(HttpStatus.OK)
-	public SearchBookResponseDto searchBooks(@RequestBody SearchBookRequestDto requestDto) {
-		return searchBookService.searchBooks(requestDto);
+	public Response<SearchBookResponse> searchBooks(
+		@Valid @RequestBody SearchBookRequest requestDto
+	) {
+		return Response.success(searchBookService.searchBooks(requestDto));
 	}
 
 	@PostMapping("/v1/books/import")
-	public ResponseEntity<Void> importBooks(
+	public void importBooks(
 		@RequestParam(defaultValue = "100") int pageSize,
-		@RequestParam(defaultValue = "100") int totalPage
-	){
-		searchBookService.fetchBooksFromLibraryApi(pageSize, totalPage);
-		return ResponseEntity.ok().build();
+		@RequestParam(defaultValue = "100") int totalPage,
+		@RequestParam(defaultValue = "1") int startPage
+	) {
+		searchBookService.fetchBooksFromLibraryApi(pageSize, totalPage, startPage);
 	}
 
-	//ToDo : 권한 체크 필요
 	@PostMapping("/v1/books")
-	public ResponseEntity<Long> addBook(@RequestBody @Valid AddBookRequestDto requestDto) {
-		return ResponseEntity.ok(bookService.addBook(requestDto));
+	public Response<Long> addBook(
+		@Valid @RequestBody AddBookRequest requestDto
+	) {
+		return Response.success(bookService.addBook(requestDto));
 	}
 
-	//ToDo : 권한 체크 필요
 	@PatchMapping("/v1/books/{bookId}")
-	public ResponseEntity<Void> updateBook(
+	public void updateBook(
 		@PathVariable("bookId") Long bookId,
-		@RequestBody @Valid UpdateBookRequestDto requestDto
+		@Valid @RequestBody UpdateBookRequest requestDto
 	) {
 		bookService.updateBook(bookId, requestDto);
-		return ResponseEntity.ok().build();
 	}
 
-	//ToDo : 권한 체크 필요
 	@PatchMapping("/v1/books/{bookId}/stock")
-	public ResponseEntity<Void> updateBookStock(
+	public void updateBookStock(
 		@PathVariable("bookId") Long bookId,
-		@RequestBody @Valid UpdateBookStockRequestDto requestDto
+		@RequestBody @Valid UpdateBookStockRequest requestDto
 	) {
 		bookService.updateBookStock(bookId, requestDto);
-		return ResponseEntity.ok().build();
 	}
 
-	//ToDo : 권한 체크 필요
 	@DeleteMapping("/v1/books/{bookId}")
-	public ResponseEntity<Void> deleteBook(@PathVariable("bookId") Long bookId) {
+	@ResponseStatus(HttpStatus.OK)
+	public void deleteBook(
+		@AuthenticationPrincipal AuthUser user,
+		@PathVariable("bookId") Long bookId
+	) {
 		bookService.deleteBook(bookId);
-		return ResponseEntity.ok().build();
 	}
 
 	@GetMapping("/v1/books")
-	public ResponseEntity<Page<BookResponseDto>> getAllBooks(
-		@RequestParam(defaultValue = "0") int page,
-		@RequestParam(defaultValue = "10") int size
+	public Response<Page<BookResponse>> getAllBooks(Pageable pageable) {
+		return Response.success(bookService.getAllBooks(pageable));
+	}
+
+	@GetMapping("/v1/books/keyword")
+	public Response<Page<BookResponse>> getAllBooksByKeyword(
+		@RequestParam String keyword,
+		Pageable pageable
 	) {
-		Pageable pageable = PageRequest.of(page, size);
-		return ResponseEntity.ok(bookService.getAllBooks(pageable));
+		return Response.success(bookService.getAllBooksByKeyword(keyword, pageable));
 	}
 
 	@GetMapping("/v1/books/{bookId}")
-	public ResponseEntity<BookResponseDto> getBookById(@PathVariable("bookId") Long bookId) {
-		return ResponseEntity.ok(bookService.getBookById(bookId));
+	public Response<BookResponse> getBookById(@PathVariable("bookId") Long bookId) {
+		return Response.success(bookService.getBookById(bookId));
 	}
 }

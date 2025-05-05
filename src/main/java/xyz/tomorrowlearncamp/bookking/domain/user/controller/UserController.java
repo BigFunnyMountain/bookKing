@@ -2,70 +2,61 @@ package xyz.tomorrowlearncamp.bookking.domain.user.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
-import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.AuthUser;
+import xyz.tomorrowlearncamp.bookking.common.dto.Response;
+import xyz.tomorrowlearncamp.bookking.common.entity.AuthUser;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.DeleteUserRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.UpdateUserRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.UpdateUserRoleRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.UserResponse;
 import xyz.tomorrowlearncamp.bookking.domain.user.service.UserService;
 
+import java.io.IOException;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
-/*
-TODO : ResponseEntity를 컨트롤러 곳곳에서 직접 생성하는 중, 추후 리팩토링 진행 시, 공통된 응답 형식을 따로 클래스나 유틸로 만들어서 거기서 만들어주는 것
- */
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("/v1/users/myInfo")
-    public ResponseEntity<UserResponse> getMyInfo(@AuthenticationPrincipal AuthUser authUser) {
+    @GetMapping("/v1/users/my-info")
+    public Response<UserResponse> getMyInfo(@AuthenticationPrincipal AuthUser authUser) {
         UserResponse response = userService.getMyInfo(authUser.getUserId());
-        return ResponseEntity.ok(response);
+        return Response.success(response);
     }
 
-    @PatchMapping("/v1/users/myInfo")
-    public ResponseEntity<UserResponse> updateMyInfo(@AuthenticationPrincipal AuthUser authUser, @Valid @RequestBody UpdateUserRequest updateUserRequest) {
+    @PatchMapping("/v1/users/my-info")
+    public Response<UserResponse> updateMyInfo(@AuthenticationPrincipal AuthUser authUser, @Valid @RequestBody UpdateUserRequest updateUserRequest) {
         UserResponse updatingUser = userService.updateUser(authUser.getUserId(), updateUserRequest);
-        return ResponseEntity.ok(updatingUser);
+        return Response.success(updatingUser);
     }
 
     @PatchMapping("/v1/users/{userId}/role")
-    public ResponseEntity<UserResponse> updateUserRole(
-            @AuthenticationPrincipal AuthUser authUser,
-            @PathVariable Long userId,
-            @Valid @RequestBody UpdateUserRoleRequest updateUserRoleRequest) {
-
-        if (!authUser.getUserId().equals(userId)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "경고 ! 본인 계정의 권한만 변경하실 수 있습니다.");
-        }
-
+    public Response<UserResponse> updateUserRole(
+            @PathVariable("userId") Long userId,
+            @Valid @RequestBody UpdateUserRoleRequest updateUserRoleRequest
+    ) {
         UserResponse updateUser = userService.updateUserRole(userId, updateUserRoleRequest);
-        return ResponseEntity.ok(updateUser);
+        return Response.success(updateUser);
     }
 
-    @DeleteMapping("/v1/users/{userId}")
-    public ResponseEntity<String> deleteUser(
+    @DeleteMapping("/v1/users")
+    public void deleteUser(
             @AuthenticationPrincipal AuthUser authUser,
-            @PathVariable Long userId,
-            @Valid @RequestBody DeleteUserRequest deleteUserRequest) {
-
-        userService.deleteUser(userId, authUser.getUserId(), deleteUserRequest.getPassword());
-        return ResponseEntity.ok("회원 탈퇴가 정상적으로 처리되었습니다");
+            @Valid @RequestBody DeleteUserRequest deleteUserRequest
+    ) {
+        userService.deleteUser(authUser.getUserId(), deleteUserRequest.getPassword());
     }
 
     @PostMapping("/v1/users/profile-image")
-    public ResponseEntity<String> uploadProfileImage(
+    public Response<String> uploadProfileImage(
             @AuthenticationPrincipal AuthUser authUser,
-            @RequestParam("image") MultipartFile image) throws Exception {
+            @RequestPart("image") MultipartFile image) {
 
         String imageUrl = userService.updateProfileImage(authUser.getUserId(), image);
-        return ResponseEntity.ok(imageUrl);
+        return Response.success(imageUrl);
     }
 }

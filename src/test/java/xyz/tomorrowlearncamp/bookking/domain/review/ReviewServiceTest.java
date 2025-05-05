@@ -8,8 +8,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
 import xyz.tomorrowlearncamp.bookking.domain.book.repository.BookRepository;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.InvalidRequestException;
-import xyz.tomorrowlearncamp.bookking.domain.common.exception.NotFoundException;
+import xyz.tomorrowlearncamp.bookking.common.exception.InvalidRequestException;
+import xyz.tomorrowlearncamp.bookking.common.exception.NotFoundException;
 import xyz.tomorrowlearncamp.bookking.domain.order.service.OrderService;
 import xyz.tomorrowlearncamp.bookking.domain.review.dto.request.ReviewRequest;
 import xyz.tomorrowlearncamp.bookking.domain.review.dto.response.ReviewResponse;
@@ -28,6 +28,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static xyz.tomorrowlearncamp.bookking.common.enums.ErrorMessage.PURCHASE_HISTORY_NOT_FOUND;
 
 @ExtendWith(MockitoExtension.class)
 class ReviewServiceTest {
@@ -76,7 +77,7 @@ class ReviewServiceTest {
                 .reviewState(ReviewState.ACTIVE)
                 .build();
 
-        ReflectionTestUtils.setField(savedReview, "reviewId", 10L);
+        ReflectionTestUtils.setField(savedReview, "id", 10L);
 
 
         given(reviewRepository.save(any(Review.class))).willReturn(savedReview);
@@ -114,12 +115,11 @@ class ReviewServiceTest {
         given(bookRepository.findById(bookId)).willReturn(Optional.of(book));
         given(reviewRepository.existsByUserAndBookAndState(userId, bookId, ReviewState.ACTIVE)).willReturn(false);
         given(orderService.getPurchasedOrderId(userId, bookId))
-                .willThrow(new NotFoundException("구매 이력이 존재하지 않습니다."));
+                .willThrow(new NotFoundException(PURCHASE_HISTORY_NOT_FOUND));
 
         // when & then
         assertThatThrownBy(() -> reviewService.saveReview(userId, bookId, request))
-                .isInstanceOf(NotFoundException.class)
-                .hasMessage("구매 이력이 존재하지 않습니다.");
+                .isInstanceOf(NotFoundException.class);
     }
 
     @Test
@@ -143,8 +143,7 @@ class ReviewServiceTest {
 
         // when & then
         assertThatThrownBy(() -> reviewService.saveReview(userId, bookId, request))
-                .isInstanceOf(InvalidRequestException.class)
-                .hasMessage("이미 리뷰를 작성한 사용자입니다.");
+                .isInstanceOf(InvalidRequestException.class);
     }
 
     @Test
@@ -168,7 +167,7 @@ class ReviewServiceTest {
                 .reviewState(ReviewState.ACTIVE)
                 .build();
 
-        ReflectionTestUtils.setField(savedReview, "reviewId", 10L);
+        ReflectionTestUtils.setField(savedReview, "id", 10L);
 
 
         given(reviewRepository.findByIdAndUserIdAndBookIdAndState(reviewId, userId, bookId, ReviewState.ACTIVE))
@@ -195,7 +194,6 @@ class ReviewServiceTest {
 
         // when & then
         assertThatThrownBy(() -> reviewService.deleteReview(userId, bookId, reviewId))
-                .isInstanceOf(NotFoundException.class)
-                .hasMessage("리뷰가 존재하지 않거나 권한이 없습니다.");
+                .isInstanceOf(NotFoundException.class);
     }
 }

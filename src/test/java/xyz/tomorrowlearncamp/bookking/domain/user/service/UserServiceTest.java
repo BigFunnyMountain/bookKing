@@ -10,10 +10,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.web.server.ResponseStatusException;
-import xyz.tomorrowlearncamp.bookking.domain.user.aws.S3Upload;
+import xyz.tomorrowlearncamp.bookking.common.enums.ErrorMessage;
+import xyz.tomorrowlearncamp.bookking.common.exception.InvalidRequestException;
+import xyz.tomorrowlearncamp.bookking.common.exception.NotFoundException;
+import xyz.tomorrowlearncamp.bookking.common.util.S3Upload;
+import xyz.tomorrowlearncamp.bookking.domain.user.auth.dto.SignupRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.UpdateUserRequest;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.request.UpdateUserRoleRequest;
+import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.UserResponse;
 import xyz.tomorrowlearncamp.bookking.domain.user.entity.User;
 import xyz.tomorrowlearncamp.bookking.domain.user.enums.Gender;
 import xyz.tomorrowlearncamp.bookking.domain.user.enums.UserRole;
@@ -21,7 +25,9 @@ import xyz.tomorrowlearncamp.bookking.domain.user.repository.UserRepository;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 @ActiveProfiles("dev")
@@ -44,17 +50,32 @@ class UserServiceTest {
 
     @BeforeEach
     void setup() {
-        user = User.of(
-                "test@email.com",
-                "encodedPassword",
-                "테스터",
-                UserRole.ROLE_USER,
-                "한국",
-                Gender.MALE,
-                25,
-                "tester"
-        );
+        SignupRequest temp = SignupRequest.of("email@gmail.com", "inputPassword", "홍길동", "서울", Gender.valueOf("MALE"), 20, "길동이");
+
+        user = User.of(temp, "inputPassword", UserRole.ROLE_USER);
         ReflectionTestUtils.setField(user, "id", 1L);
+    }
+
+    @Test
+    @DisplayName("존재하는 유저 실패")
+    void existsById_Failed() {
+        //given
+        Long userId = 1L;
+        given(userRepository.existsById(userId)).willReturn(false);
+
+        // when && then
+        assertFalse(userService.existsById(userId));
+    }
+
+    @Test
+    @DisplayName("존재하는 유저 성공")
+    void existsById_success() {
+        //given
+        Long userId = 1L;
+        given(userRepository.existsById(userId)).willReturn(true);
+
+        // when && then
+        assertTrue(userService.existsById(userId));
     }
 
     @Test
@@ -85,9 +106,8 @@ class UserServiceTest {
 
         // then
         assertThat(throwable)
-                .isInstanceOf(ResponseStatusException.class)
-                .hasMessageContaining("사용자를 찾을 수 없습니다");
-        verify(userRepository).findById(userId);
+                .isInstanceOf(NotFoundException.class);
+        verify(userRepository, times(1)).findById(userId);
     }
 
     @Test
@@ -100,17 +120,15 @@ class UserServiceTest {
 
         UpdateUserRequest request = new UpdateUserRequest(newNickname, newAddress);
 
-        given(userRepository.findById(userId)).willReturn(Optional.of(user));
-        given(userRepository.save(any(User.class))).willReturn(user);
+        given(userRepository.findById(anyLong())).willReturn(Optional.of(user));
 
         // when
-        var result = userService.updateUser(userId, request);
+        UserResponse userResponse = userService.updateUser(userId, request);
 
         // then
-        assertThat(result.getNickname()).isEqualTo(newNickname);
-        assertThat(result.getAddress()).isEqualTo(newAddress);
+        assertThat(userResponse.getNickname()).isEqualTo(newNickname);
+        assertThat(userResponse.getAddress()).isEqualTo(newAddress);
         verify(userRepository).findById(userId);
-        verify(userRepository).save(user);
     }
 
     @Test
@@ -120,17 +138,14 @@ class UserServiceTest {
         Long userId = -1L;
         UpdateUserRequest request = new UpdateUserRequest("바뀐닉넴", "제주도");
 
-        given(userRepository.findById(userId)).willReturn(Optional.empty());
+        given(userRepository.findById(anyLong())).willReturn(Optional.empty());
 
-        // when
-        Throwable throwable = catchThrowable(() -> userService.updateUser(userId, request));
+        // when && then
+        NotFoundException assertThrows = assertThrows(NotFoundException.class,
+                () -> userService.updateUser(userId, request));
 
-        // then
-        assertThat(throwable)
-                .isInstanceOf(ResponseStatusException.class)
-                .hasMessageContaining("사용자를 찾을 수 없습니다");
-
-        verify(userRepository).findById(userId);
+        assertInstanceOf(NotFoundException.class, assertThrows);
+        assertEquals(ErrorMessage.USER_NOT_FOUND, assertThrows.getErrorMessage());
     }
 
     @Test
@@ -141,15 +156,13 @@ class UserServiceTest {
         UpdateUserRoleRequest request = new UpdateUserRoleRequest("ROLE_ADMIN");
 
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
-        given(userRepository.save(any(User.class))).willReturn(user);
 
         // when
         var result = userService.updateUserRole(userId, request);
 
         // then
-        assertThat(result.getRole().toString()).isEqualTo("ROLE_ADMIN");
+        assertThat(result.getRole()).isEqualTo(UserRole.ROLE_ADMIN);
         verify(userRepository).findById(userId);
-        verify(userRepository).save(user);
     }
 
     @Test
@@ -161,15 +174,12 @@ class UserServiceTest {
 
         given(userRepository.findById(userId)).willReturn(Optional.empty());
 
-        // when
-        Throwable thrown = catchThrowable(() -> userService.updateUserRole(userId, request));
+        // when && then
+        NotFoundException assertThrows = assertThrows(NotFoundException.class,
+                () -> userService.updateUserRole(userId, request));
 
-        // then
-        assertThat(thrown)
-                .isInstanceOf(ResponseStatusException.class)
-                .hasMessageContaining("사용자를 찾을 수 없습니다");
-
-        verify(userRepository).findById(userId);
+        assertInstanceOf(NotFoundException.class, assertThrows);
+        assertEquals(ErrorMessage.USER_NOT_FOUND, assertThrows.getErrorMessage());
     }
 
     @Test
@@ -181,15 +191,12 @@ class UserServiceTest {
 
         given(userRepository.findById(userId)).willReturn(Optional.of(user));
 
-        // when
-        Throwable thrown = catchThrowable(() -> userService.updateUserRole(userId, request));
+        // when && then
+        InvalidRequestException assertThrows = assertThrows(InvalidRequestException.class,
+                () -> userService.updateUserRole(userId, request));
 
-        // then
-        assertThat(thrown)
-                .isInstanceOf(ResponseStatusException.class)
-                .hasMessageContaining("권한 변경이 허용되지 않습니다");
-
-        verify(userRepository).findById(userId);
+        assertInstanceOf(InvalidRequestException.class, assertThrows);
+        assertEquals(ErrorMessage.ROLE_CHANGE_NOT_ALLOWED, assertThrows.getErrorMessage());
     }
 
     @Test
@@ -197,7 +204,6 @@ class UserServiceTest {
     void deleteUser_success() {
         // given
         Long userId = 1L;
-        Long loginUserId = 1L;
         String password = "1234";
 
         ReflectionTestUtils.setField(user, "id", userId);
@@ -205,31 +211,12 @@ class UserServiceTest {
         given(passwordEncoder.matches(password, user.getPassword())).willReturn(true);
 
         // when
-        userService.deleteUser(userId, loginUserId, password);
+        userService.deleteUser(userId, password);
 
         // then
         verify(userRepository).findById(userId);
         verify(passwordEncoder).matches(password, user.getPassword());
         verify(userRepository).delete(user);
-    }
-
-    @Test
-    @DisplayName("회원_삭제_실패-로그인한_사람과_삭제_대상이_다름")
-    void deleteUser_fail_notSelf() {
-        // given
-        Long userId = 1L;
-        Long loginUserId = 2L;
-        String rawPassword = "1234";
-
-        // when
-        Throwable thrown = catchThrowable(() -> userService.deleteUser(userId, loginUserId, rawPassword));
-
-        // then
-        assertThat(thrown)
-                .isInstanceOf(ResponseStatusException.class)
-                .hasMessageContaining("본인 게정만 탈퇴가 가능합니다");
-
-        verifyNoInteractions(userRepository, passwordEncoder);
     }
 
 }
