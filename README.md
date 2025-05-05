@@ -205,7 +205,7 @@ docker-compose up -d
 
 <hr>
 
-#  팀원 소개 🙋🏻‍♂️
+#  💁‍♂️ 팀원 소개 🙋🏻‍♂️
 | <img src="https://github.com/user-attachments/assets/4d49dfa7-601c-42ee-ba36-dea4ea83c01a" width="150" height="150"/> <br>  [이은성](https://github.com/mixedsider) <br>  팀장 <br> 👉ENTP👈 <br>  구매 <br> CICD <br> AWS 인프라 <br> [블로그](https://strnetwork.tistory.com/)  | <img src="https://github.com/user-attachments/assets/143433f4-dc79-4ca4-9cb4-a16406af4783" width="150" height="150"/> <br>  [박용준](https://github.com/dereck-jun) <br>  부팀장 <br>👉ISTJ👈 <br>  AWS 인프라 구성 <br> CI/CD 구축 <br>[블로그](https://velog.io/@dereck-jun)| <img src="https://github.com/user-attachments/assets/58cbd44d-6bab-4a73-bf93-c8da2621e518" width="150" height="150"/> <br>  [문성준](https://github.com/sjMun09) <br>  팀원 <br>👉ESTP👈<br>  USER <br> Elasticsearch & <br> Kibana <br> [블로그](https://velog.io/@ohoh7391/posts) |
 |:--:|:--:|:--:|
 | <img src="https://github.com/user-attachments/assets/89b22ae8-14c1-4bef-bdd3-d6f64b98900d" width="150" height="150"/> <br>  **[유은호](https://github.com/mapleclover)** <br>  팀원 <br>👉C.U.T.E👈 <br> Book <br> Kibana & <br> Logstash 시각화<br> [블로그](https://velog.io/@mapleclover) | <img src="https://github.com/user-attachments/assets/d550a0a2-592d-4dc1-8978-df02deb22c1a" width="150" height="150"/> <br>  **[이범서](https://github.com/polaris65b)** <br>  팀원 <br>👉ENTJ👈 <br>  Order(구매목록)<br> Review<br> 키워드 추천<br> 모니터링 <br> [블로그](https://polaris65b.tistory.com/) |
