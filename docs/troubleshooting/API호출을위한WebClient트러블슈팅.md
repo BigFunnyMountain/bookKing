@@ -1,0 +1,78 @@
+### 문제상황
+
+---
+
+국립 중앙 도서관 API를 호출하여 책 정보를 받아오는 작업 도중, Error가 발생하지 않고 정상 처리되었다고 결과가 뜨지만, 원하는 데이터가 전혀 보이지 않았다.
+
+### 원인 분석
+
+---
+
+<aside>
+<img src="/icons/close_red.svg" alt="/icons/close_red.svg" width="40px" />
+
+String Append 에서 UriComponentsBuilder로 변경
+
+---
+
+혹시라도 있을 오타로 인해 작동하지 않을 수도 있어, Param의 이름과 값을 받아 자동으로 url 를 자동으로 생성해주는 기능을 이용하여 생성해보았다. 여전히 같은 문제 발생.
+
+</aside>
+
+<aside>
+<img src="/icons/close_red.svg" alt="/icons/close_red.svg" width="40px" />
+
+Url이 전부 생성되고나서 Log를 이용해 확인
+
+---
+
+Url이 제대로 생성되고 있나를 확인하기 위해 Log에 Url을 찍고 그대로 웹 주소에 입력하여 확인.
+
+웹에서는 제대로 작동하나, API호출에는 응답이 찍히지 않았다.
+
+</aside>
+
+<aside>
+<img src="/icons/checkmark-line_green.svg" alt="/icons/checkmark-line_green.svg" width="40px" />
+
+Param값을 전부 빼고 호출
+
+---
+
+Log에 찍힌 Url로의 호출과 API호출의 응답이 일치했다
+
+</aside>
+
+<aside>
+<img src="/icons/close_red.svg" alt="/icons/close_red.svg" width="40px" />
+
+Param값을 다시 입력(한글 포함)
+
+---
+
+웹에서는 제대로 작동하나, API호출에는 응답이 찍히지 않았다.
+
+</aside>
+
+<aside>
+<img src="/icons/checkmark-line_green.svg" alt="/icons/checkmark-line_green.svg" width="40px" />
+
+Param에 입력하는 값을 영어로만 작성
+
+---
+
+Log에 찍힌 Url로의 호출과 API호출의 응답이 일치했다
+
+</aside>
+
+### 해결방법 및 적용
+
+---
+
+지금까지의 시도를 바탕으로 유추해낸 결과, Url을 작성할때 특수문자나 한글을 포함했을 때 UTF-8 인코딩을 하고 있었다. 인코딩의 문제로 인해 제대로 호출이 되지 않는 것 같았다. 인코딩을 하고 있는 함수를 비활성화 하고 다시 시도해본 결과, 원하던 결과가 출력되는 것을 확인했다.
+
+### 문제 해결 및 결과
+
+---
+
+WebClient를 통해 Url로 API를 호출하는경우 Url에 특수문자나 한글이 들어가있는 경우 자동으로 인코딩을 하여 호출한다는걸 알 수 있었다.
