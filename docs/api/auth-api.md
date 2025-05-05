@@ -1,4 +1,3 @@
-<b>📌 API 명세서</b>
 ### Auth API
 | 기능 | method | URL | requestHeader | requestBody | responseBody | responseStatus |
 |:----:|:------:|:---:|:-------------:|:-----------:|:------------:|:---------------:|
