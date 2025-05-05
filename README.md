@@ -141,8 +141,8 @@ BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활
 
 <hr>
 
-# 테스트 문서
-- 
+# 테스트 가이드
+- [테스트가이드](https://docs.google.com/spreadsheets/d/186xb5rIQ0Oca_PT03rouRhObsTJQ4L1dB1qm6UW1qus/edit?gid=0#gid=0)
 
 <hr>
 
