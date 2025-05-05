@@ -131,7 +131,6 @@ BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활
 - [Order API](./docs/api/order-api.md)
 - [Payment API](./docs/api/payment-api.md)
 - [Review API](./docs/api/review-api.md)
-<br>
 
 <!--
 ![image](https://github.com/user-attachments/assets/9bea02f9-f0fa-421d-943e-fc1dcaa4bcc6) <br><br>
