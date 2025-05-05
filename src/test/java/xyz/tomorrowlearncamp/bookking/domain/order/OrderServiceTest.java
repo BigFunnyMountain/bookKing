@@ -247,14 +247,14 @@ class OrderServiceTest {
 
         ReflectionTestUtils.setField(order, "id", orderId);
 
-        given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
+        given(orderRepository.findByIdAndDeletedAtIsNull(orderId)).willReturn(Optional.of(order));
 
         // when
         orderService.switchReviewStatus(orderId);
 
         // then
         assertThat(order.isReviewed()).isTrue(); // 토글 한 번 -> true
-        verify(orderRepository).findById(orderId);
+        verify(orderRepository).findByIdAndDeletedAtIsNull(orderId);
     }
 
     @Test
@@ -262,13 +262,13 @@ class OrderServiceTest {
         // given
         Long orderId = 999L;
 
-        given(orderRepository.findById(orderId)).willReturn(Optional.empty());
+        given(orderRepository.findByIdAndDeletedAtIsNull(orderId)).willReturn(Optional.empty());
 
         // when & then
         assertThatThrownBy(() -> orderService.switchReviewStatus(orderId))
                 .isInstanceOf(NotFoundException.class);
 
-        verify(orderRepository).findById(orderId);
+        verify(orderRepository).findByIdAndDeletedAtIsNull(orderId);
     }
 
     @Test
@@ -286,7 +286,7 @@ class OrderServiceTest {
                 .build();
         ReflectionTestUtils.setField(order, "id", 1L);
 
-        given(orderRepository.findById(anyLong())).willReturn(Optional.of(order));
+        given(orderRepository.findByIdAndDeletedAtIsNull(anyLong())).willReturn(Optional.of(order));
 
         OrderResponse getOrder = orderService.getOrder(1L);
 
@@ -297,7 +297,7 @@ class OrderServiceTest {
     @DisplayName("없는 오더 가져오기")
     void 오더_엔티티_가져오기_실패() {
         // given
-        given(orderRepository.findById(anyLong())).willReturn(Optional.empty());
+        given(orderRepository.findByIdAndDeletedAtIsNull(anyLong())).willReturn(Optional.empty());
 
         // when && then
         NotFoundException assertThrows = assertThrows(NotFoundException.class,
