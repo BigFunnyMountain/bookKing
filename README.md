@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/c3e6372e-8bc5-4dbe-9387-63ade5339a1b" alt="BookKing 배너" width="1000" height="200"/>
+  <img src="https://github.com/user-attachments/assets/463b35d9-f330-4584-a91f-6d5a41233e01" alt="BookKing 배너" width="1000" height="300"/>
 </p>
 <hr>
 
