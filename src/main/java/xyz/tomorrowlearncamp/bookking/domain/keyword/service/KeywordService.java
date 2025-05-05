@@ -49,13 +49,13 @@ public class KeywordService {
                 .collect(Collectors.joining("\n"));
 
         String prompt = String.format(
-                """
-                        Based on the user's recent book purchases:%s"
-                        "Suggest 5 related book categories or topics that the user might be interested in. "
-                        "Respond in Korean. Return only the keywords separated by commas, no additional text.
-                """,
+                "Based on the user's recent book purchases: %s\n" +
+                        "Suggest 5 related book categories or topics that the user might be interested in.\n" +
+                        "Respond in Korean. Return only the keywords separated by commas, no additional text.\n" +
+                        "Remove all characters except Korean, English letters, and numbers.",
                 bookInfo
         );
+
 
         return getKeywordsFromOpenAI(prompt);
     }
