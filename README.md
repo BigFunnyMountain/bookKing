@@ -111,6 +111,12 @@ BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활
 
 <hr>
 
+# logstash 
+![image](https://github.com/user-attachments/assets/18b494ad-451d-4d52-afda-7547f1fefc2c)
+![image](https://github.com/user-attachments/assets/f6e29783-8884-4755-85c4-cb51c5f59268)
+
+<hr>
+
 #  주요 기능 및 API 명세서
 ## 📌 주요 기능
 
