@@ -3,14 +3,10 @@
 </p>
 <hr>
 
-#  1. 팀원 소개 🙋🏻‍♂️
-| <img src="https://github.com/user-attachments/assets/4d49dfa7-601c-42ee-ba36-dea4ea83c01a" width="150" height="150"/> <br>  [이은성](https://github.com/mixedsider) <br>  팀장 <br> 👉ENTP👈 <br>  구매 <br> CICD <br> AWS 인프라 <br> [블로그](https://strnetwork.tistory.com/)  | <img src="https://github.com/user-attachments/assets/143433f4-dc79-4ca4-9cb4-a16406af4783" width="150" height="150"/> <br>  [박용준](https://github.com/dereck-jun) <br>  부팀장 <br>👉ISTJ👈 <br>  AWS 인프라 구성 <br> CI/CD 구축 <br>[블로그](https://velog.io/@dereck-jun)| <img src="https://github.com/user-attachments/assets/58cbd44d-6bab-4a73-bf93-c8da2621e518" width="150" height="150"/> <br>  [문성준](https://github.com/sjMun09) <br>  팀원 <br>👉ESTP👈<br>  USER <br> Elasticsearch & <br> Kibana <br> [블로그](https://velog.io/@ohoh7391/posts) |
-|:--:|:--:|:--:|
-| <img src="https://github.com/user-attachments/assets/89b22ae8-14c1-4bef-bdd3-d6f64b98900d" width="150" height="150"/> <br>  **[유은호](https://github.com/mapleclover)** <br>  팀원 <br>👉C.U.T.E👈 <br> Book <br> Kibana & <br> Logstash 시각화<br> [블로그](https://velog.io/@mapleclover) | <img src="https://github.com/user-attachments/assets/d550a0a2-592d-4dc1-8978-df02deb22c1a" width="150" height="150"/> <br>  **[이범서](https://github.com/polaris65b)** <br>  팀원 <br>👉ENTJ👈 <br>  Order(구매목록)<br> Review<br> 키워드 추천<br> 모니터링 <br> [블로그](https://polaris65b.tistory.com/) |
 
 <hr>
 
-# 2. 프로젝트 개요
+#  프로젝트 개요
 **BookKing**, <br>
 <i><b>당신의 완벽한 책 찾기 여정을 위한 스마트 도서 검색 서비스</b></i> <br><br>
 더 이상 답답한 도서 검색에 시간을 낭비하지 마세요.<br>
@@ -41,7 +37,7 @@ BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활
 
 <hr>
 
-# 3. 기술 스택
+#  기술 스택
 <h3 align="center">Backend</h3>
 <p align="center">
   <img alt="Java" src="https://img.shields.io/badge/Java-ED8B00?logo=java&logoColor=white&style=flat-square" />
@@ -114,12 +110,12 @@ BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활
 
 <hr>
 
-# 4. ERD 설계
+#  ERD 설계
 ![image](https://github.com/user-attachments/assets/7f8bced7-7ebb-4a97-ab3d-23efbe803a07)
 
 <hr>
 
-# 5. 주요 기능 및 API 명세서
+#  주요 기능 및 API 명세서
 <b>📌 주요 기능</b>
 
 |  기능 |  설명 |
@@ -141,23 +137,22 @@ BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활
 
 <hr>
 
-# 6. 서비스 플로우
 
 <hr>
 
-# 7. 프로젝트 아키텍처
+#  프로젝트 아키텍처
 ![image](https://github.com/user-attachments/assets/beb5f99e-78e9-4a69-af82-6531f2a681ad)
 
 <hr>
 
-# 8. 기술적 의사 결정 및 트러블 슈팅
+#  기술적 의사 결정 및 트러블 슈팅
 - [노션](https://www.notion.so/teamsparta/16-Bookking-1e22dc3ef514809e91f6e1d0aef42603)
 
 테스트 후, 추후 업데이트 예정
 
 <hr>
 
-# 9. 테스트 환경 실행
+#  테스트 환경 실행
 
 <h4>실행 환경 준비</h4>
 
@@ -193,3 +188,11 @@ docker-compose down
 docker-compose -f docker-compose.local.yml build
 docker-compose up -d
 ```
+
+<hr>
+
+#  팀원 소개 🙋🏻‍♂️
+| <img src="https://github.com/user-attachments/assets/4d49dfa7-601c-42ee-ba36-dea4ea83c01a" width="150" height="150"/> <br>  [이은성](https://github.com/mixedsider) <br>  팀장 <br> 👉ENTP👈 <br>  구매 <br> CICD <br> AWS 인프라 <br> [블로그](https://strnetwork.tistory.com/)  | <img src="https://github.com/user-attachments/assets/143433f4-dc79-4ca4-9cb4-a16406af4783" width="150" height="150"/> <br>  [박용준](https://github.com/dereck-jun) <br>  부팀장 <br>👉ISTJ👈 <br>  AWS 인프라 구성 <br> CI/CD 구축 <br>[블로그](https://velog.io/@dereck-jun)| <img src="https://github.com/user-attachments/assets/58cbd44d-6bab-4a73-bf93-c8da2621e518" width="150" height="150"/> <br>  [문성준](https://github.com/sjMun09) <br>  팀원 <br>👉ESTP👈<br>  USER <br> Elasticsearch & <br> Kibana <br> [블로그](https://velog.io/@ohoh7391/posts) |
+|:--:|:--:|:--:|
+| <img src="https://github.com/user-attachments/assets/89b22ae8-14c1-4bef-bdd3-d6f64b98900d" width="150" height="150"/> <br>  **[유은호](https://github.com/mapleclover)** <br>  팀원 <br>👉C.U.T.E👈 <br> Book <br> Kibana & <br> Logstash 시각화<br> [블로그](https://velog.io/@mapleclover) | <img src="https://github.com/user-attachments/assets/d550a0a2-592d-4dc1-8978-df02deb22c1a" width="150" height="150"/> <br>  **[이범서](https://github.com/polaris65b)** <br>  팀원 <br>👉ENTJ👈 <br>  Order(구매목록)<br> Review<br> 키워드 추천<br> 모니터링 <br> [블로그](https://polaris65b.tistory.com/) |
+
