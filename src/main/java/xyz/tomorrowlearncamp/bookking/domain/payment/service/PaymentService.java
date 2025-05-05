@@ -29,20 +29,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
 
 	private final UserService userService;
-
 	private final BookRepository bookRepository;
-
 	private final OrderService orderService;
-	
 	private final RedissonClient redissonClient;
-
-	private RLock lock;
 
 	@Transactional
 	public void paymentV1(Long userId, Long bookId, Long buyStock, Long money, PayType payType) {
@@ -60,61 +54,87 @@ public class PaymentService {
 		collectAndSendLog(user, book);
 	}
 
+	@Transactional
 	public void paymentV2(Long userId, Long bookId, Long buyStock, Long money, PayType payType) {
-		if(!userService.existsById(userId)) {
+		if (!userService.existsById(userId)) {
 			throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
 		}
-		Book book = new Book();
+
+		RLock lock = redissonClient.getFairLock("book:" + bookId);
+		boolean acquired = false;
+		Book book = null;
 
 		try {
-			setFairLock(bookId);
-			book = bookRepository.findById(bookId).orElseThrow(
-				() -> new NotFoundException(ErrorMessage.BOOK_NOT_FOUND)
-			);
+			acquired = lock.tryLock(100L, 10L, TimeUnit.SECONDS);
+			if (!acquired) {
+				throw new ServerException(ErrorMessage.REDIS_ERROR);
+			}
+
+			book = bookRepository.findById(bookId)
+				.orElseThrow(() -> new NotFoundException(ErrorMessage.BOOK_NOT_FOUND));
 
 			checkPayment(book, buyStock, money);
 			book.updateStock(book.getStock() - buyStock);
 			bookRepository.save(book);
+
+		} catch (InterruptedException ex) {
+			Thread.currentThread().interrupt();
+			throw new ServerException(ErrorMessage.REDIS_ERROR);
 		} catch (NotFoundException ex) {
 			throw new NotFoundException(ex.getErrorMessage());
-		} catch (NumberFormatException ex) {
-			throw new InvalidRequestException(ErrorMessage.CALL_ADMIN);
 		} catch (InvalidRequestException ex) {
 			throw new InvalidRequestException(ex.getErrorMessage());
 		} catch (Exception ex) {
 			throw new ServerException(ErrorMessage.ERROR);
 		} finally {
-			lock.unlock();
+			if (acquired && lock.isHeldByCurrentThread()) {
+				lock.unlock();
+			}
 		}
+
 		orderService.createOrder(userId, book, buyStock, OrderStatus.COMPLETED, payType);
-
 		UserResponse user = userService.getMyInfo(userId);
-
 		collectAndSendLog(user, book);
 	}
 
+	@Transactional
 	public PaymentReturnResponse returnPayment(Long userId, Long orderId) {
 		if(!userService.existsById(userId)) {
 			throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
 		}
+
 		OrderResponse order = orderService.getOrder(orderId);
 		if(!ObjectUtils.nullSafeEquals(userId, order.getUserId())) {
 			throw new InvalidRequestException(ErrorMessage.NO_AUTHORITY_TO_RETURN_A_PAYMENT);
 		}
 
+		RLock lock = redissonClient.getFairLock("orderId:" + orderId);
+		boolean acquired = false;
+
 		try {
-			setFairLock(order.getBookId());
+			acquired = lock.tryLock(100L, 10L, TimeUnit.SECONDS);
+			if (!acquired) {
+				throw new ServerException(ErrorMessage.REDIS_ERROR);
+			}
+
 			Book book = bookRepository.findById(order.getBookId()).orElseThrow(
 					() -> new NotFoundException(ErrorMessage.BOOK_NOT_FOUND)
 			);
 			book.updateStock(book.getStock() + order.getBuyStock());
 			bookRepository.save(book);
+		} catch (InterruptedException ex) {
+			Thread.currentThread().interrupt();
+			throw new ServerException(ErrorMessage.REDIS_ERROR);
 		} catch (NotFoundException ex) {
 			throw new NotFoundException(ex.getErrorMessage());
+		} catch (InvalidRequestException ex) {
+			throw new InvalidRequestException(ex.getErrorMessage());
 		} catch (Exception ex) {
 			throw new ServerException(ErrorMessage.ERROR);
 		} finally {
-			lock.unlock();
+			if (acquired && lock.isHeldByCurrentThread()) {
+				lock.unlock();
+			}
 		}
 		orderService.updateOrderStatus(orderId, OrderStatus.REFUNDED);
 
@@ -123,21 +143,6 @@ public class PaymentService {
 				.orderId(orderId)
 				.returnMoney(order.getBuyStock() * price)
 				.build();
-	}
-
-	private void setFairLock(Long bookId) {
-		lock = redissonClient.getFairLock("book:"+bookId);
-		boolean acquired = false;
-		try {
-			acquired = lock.tryLock(100L, 10L, TimeUnit.SECONDS);
-			if (!acquired) {
-				throw new ServerException(ErrorMessage.REDIS_ERROR);
-			}
-		} catch (ServerException | InterruptedException ex) {
-			log.warn("redis Interrupted!");
-			Thread.currentThread().interrupt();
-			throw new ServerException(ErrorMessage.REDIS_ERROR);
-		}
 	}
 
 	private void checkPayment(Book book, Long buyStock, Long money) {

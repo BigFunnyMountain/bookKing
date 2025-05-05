@@ -42,7 +42,7 @@ public class SecurityConfig {
 				.configurationSource(request -> {
 					CorsConfiguration config = new CorsConfiguration();
 					config.addAllowedOriginPattern("*");
-					config.setAllowedMethods(List.of("GET", "POST", "PATCH", "DELETE"));
+					config.setAllowedMethods(List.of("GET", "POST", "PATCH", "DELETE", "OPTIONS"));
 					config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
 					config.setAllowCredentials(true);
 					return config;
@@ -64,14 +64,14 @@ public class SecurityConfig {
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers("/api/v*/auth/**").permitAll()
 				.requestMatchers("/api/v*/users/**").authenticated()
-				.requestMatchers(HttpMethod.GET, "/api/v*/books").permitAll()
+				.requestMatchers(HttpMethod.GET, "/api/v*/books/**").permitAll()
 				.requestMatchers(HttpMethod.GET, "/api/v*/elasticsearch/**").permitAll()
 				.requestMatchers(HttpMethod.PATCH, "/api/v*/users/*/role").hasAuthority(UserRole.ROLE_ADMIN.name())
 				.requestMatchers("/api/v*/books/**").hasAuthority(UserRole.ROLE_ADMIN.name())
 				.requestMatchers("/api/v1/elasticsearch/reindex").hasAuthority(UserRole.ROLE_ADMIN.name())
 				.requestMatchers("/api/test/**").hasAuthority(UserRole.ROLE_ADMIN.name())
-				.requestMatchers("/swagger", "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**",
-					"/v3/api-docs/**").permitAll()
+				.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html",
+					"/swagger-resources/**", "/webjars/**").permitAll()
 				.requestMatchers("/actuator", "/actuator/**", "/_cluster/health").permitAll()
 				.anyRequest().authenticated()
 			)
