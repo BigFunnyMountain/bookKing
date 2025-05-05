@@ -168,7 +168,7 @@ BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활
 
 #  테스트 환경 및 실행 방법
 
-<h4>실행 환경 준비</h4>
+### 실행 환경 준비
 
 .local.env 을 만들어준다.
 ```
@@ -186,7 +186,7 @@ LOGSTAH_SERVER,SPRING_PROFILE은 고정값이다.
 추가적으로 값을 넣고 싶다면 application-{이름}.yml 을 만들고 
 SPRING_PROFILE={이름} 을 넣으면 된다.
 
-<h4>실행 방법</h4>
+### 실행 방법
 
 ```
 cd {project_directory}
@@ -195,7 +195,7 @@ docker-compose -f docker-compose.local.yml build
 docker-compose up -d
 ```
 
-<h4>재 빌드</h4>
+### 재 빌드
 
 ```
 docker-compose down
