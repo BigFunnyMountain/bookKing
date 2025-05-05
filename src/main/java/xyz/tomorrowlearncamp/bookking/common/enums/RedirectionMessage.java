@@ -1,7 +1,6 @@
 package xyz.tomorrowlearncamp.bookking.common.enums;
 
 import static org.springframework.http.HttpStatus.*;
-import static org.springframework.http.HttpStatus.MOVED_PERMANENTLY;
 
 import org.springframework.http.HttpStatus;
 
