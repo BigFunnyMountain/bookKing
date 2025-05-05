@@ -251,7 +251,7 @@ class AuthServiceTest {
                 .nickname("길동이")
                 .build();
 
-        given(userRepository.existsByEmailAndDeletedFalse(email)).willReturn(true);
+        given(userRepository.existsByEmailAndDeletedAtIsNull(email)).willReturn(true);
 
         // when && then
         InvalidRequestException assertThrows = assertThrows(InvalidRequestException.class,
@@ -282,7 +282,7 @@ class AuthServiceTest {
         User user = User.of(request, encodedPassword, UserRole.ROLE_USER);
         setField(user, "id", 1L);
 
-        given(userRepository.existsByEmailAndDeletedFalse(email)).willReturn(false);
+        given(userRepository.existsByEmailAndDeletedAtIsNull(email)).willReturn(false);
         given(passwordEncoder.encode(password)).willReturn(encodedPassword);
         given(userRepository.save(any(User.class))).willReturn(user);
 
@@ -294,7 +294,7 @@ class AuthServiceTest {
         assertThat(result.getEmail()).isEqualTo(email);
         assertThat(result.getUserId()).isEqualTo(1L);
 
-        verify(userRepository).existsByEmailAndDeletedFalse(email);
+        verify(userRepository).existsByEmailAndDeletedAtIsNull(email);
         verify(passwordEncoder).encode(password);
         verify(userRepository).save(any(User.class));
     }
@@ -304,13 +304,13 @@ class AuthServiceTest {
     void validateEmail_success() {
         // given
         String email = "newuser@email.com";
-        given(userRepository.existsByEmailAndDeletedFalse(email)).willReturn(false);
+        given(userRepository.existsByEmailAndDeletedAtIsNull(email)).willReturn(false);
 
         // when
         Throwable throwable = catchThrowable(() -> authService.validateEmail(email));
 
         // then
         assertThat(throwable).doesNotThrowAnyException();
-        verify(userRepository).existsByEmailAndDeletedFalse(email);
+        verify(userRepository).existsByEmailAndDeletedAtIsNull(email);
     }
 }

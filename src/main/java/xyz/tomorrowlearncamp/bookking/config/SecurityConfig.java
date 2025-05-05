@@ -65,7 +65,7 @@ public class SecurityConfig {
 				.requestMatchers("/api/v*/auth/**").permitAll()
 				.requestMatchers("/api/v*/users/**").authenticated()
 				.requestMatchers(HttpMethod.GET, "/api/v*/books/**").permitAll()
-				.requestMatchers(HttpMethod.GET, "/api/v*/elasticsearch/**").permitAll()
+				.requestMatchers(HttpMethod.POST, "/api/v1/books/keywords/suggest").authenticated()
 				.requestMatchers(HttpMethod.PATCH, "/api/v*/users/*/role").hasAuthority(UserRole.ROLE_ADMIN.name())
 				.requestMatchers("/api/v*/books/**").hasAuthority(UserRole.ROLE_ADMIN.name())
 				.requestMatchers("/api/v1/elasticsearch/reindex").hasAuthority(UserRole.ROLE_ADMIN.name())

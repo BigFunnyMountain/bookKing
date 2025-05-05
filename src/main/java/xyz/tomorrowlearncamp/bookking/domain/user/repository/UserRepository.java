@@ -12,13 +12,13 @@ import java.util.Optional;
  * 일시 : 2025.04.03 - v1
  */
 public interface UserRepository extends JpaRepository<User, Long> {
+
     Optional<User> findByEmailAndDeletedAtIsNull(String email);
 
-    @Query("select u from User u where u.email = :email and u.deletedAt is not null")
-    boolean existsByEmailAndDeletedFalse(String email);
+    @Query("SELECT COUNT(u) > 0 FROM User u WHERE u.email = :email AND u.deletedAt IS NULL")
+    boolean existsByEmailAndDeletedAtIsNull(@Param("email") String email);
 
     Optional<User> findByIdAndDeletedAtIsNull(Long id);
-
 
     // 삭제 여부와는 상관없이 조회하는거 (관리자)
     @Query("SELECT u FROM User u WHERE u.email = :email")
