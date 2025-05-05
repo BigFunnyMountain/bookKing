@@ -94,16 +94,6 @@ BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활
   <img alt="Docker" src="https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white&style=flat-square" />
   <img alt="Jenkins" src="https://img.shields.io/badge/Jenkins-D24939?logo=jenkins&logoColor=white&style=flat-square" />
   <img alt="AWS" src="https://img.shields.io/badge/AWS-232F3E?logo=amazonaws&logoColor=white&style=flat-square" />
-  <img alt="EC2" src="https://img.shields.io/badge/EC2-FF9900?logo=amazonaws&logoColor=white&style=flat-square" />
-  <img alt="RDS" src="https://img.shields.io/badge/RDS-527FFF?logo=amazonaws&logoColor=white&style=flat-square" />
-  <img alt="ElastiCache" src="https://img.shields.io/badge/ElastiCache-4053D6?logo=amazonaws&logoColor=white&style=flat-square" />
-  <img alt="S3" src="https://img.shields.io/badge/S3-569A31?logo=amazonaws&logoColor=white&style=flat-square" />
-  <img alt="CloudFront" src="https://img.shields.io/badge/CloudFront-2293B8?logo=amazonaws&logoColor=white&style=flat-square" />
-  <img alt="Route 53" src="https://img.shields.io/badge/Route%2053-FF9900?logo=amazonaws&logoColor=white&style=flat-square" />
-  <img alt="ALB" src="https://img.shields.io/badge/ALB-0084FF?logo=amazonaws&logoColor=white&style=flat-square" />
-  <img alt="VPC" src="https://img.shields.io/badge/VPC-FF9900?logo=amazonaws&logoColor=white&style=flat-square" />
-  <img alt="ECS" src="https://img.shields.io/badge/ECS-256CFF?logo=amazonaws&logoColor=white&style=flat-square" />
-  <img alt="Aurora" src="https://img.shields.io/badge/Aurora-400090?logo=amazonaws&logoColor=white&style=flat-square" />
 </p>
 
 <hr>
