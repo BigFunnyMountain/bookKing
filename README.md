@@ -1,7 +1,8 @@
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/463b35d9-f330-4584-a91f-6d5a41233e01" alt="BookKing 배너" width="1000" height="300"/>
+  <img src="https://github.com/user-attachments/assets/21db789f-3ef1-4497-80a7-cde351fcd19a" alt="BookKing 배너" width="1000" height="400"/>
 </p>
 <hr>
+
 
 #  프로젝트 개요
 **BookKing**, <br>
