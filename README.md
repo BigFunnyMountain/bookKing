@@ -121,16 +121,16 @@ BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활
 | **인공지능 사용자 맞춤 추천** | 사용자 키워드 검색 및 구매 목록을 기반, 사용자 맞춤 책 키워드로 검색 및 추천 | 
 
 ## 📌 API 명세서 전체 보기
-👉 [API 명세서 모음](./docs/index.md)
+- [API 명세서 모음](./docs/index.md)
 ### API 명세서 목록
-- [Auth API](./api/auth-api.md)
-- [User API](./api/user-api.md)
-- [Book API](./api/book-api.md)
-- [Search API](./api/search-api.md)
-- [Keyword API](./api/keyword-api.md)
-- [Order API](./api/order-api.md)
-- [Payment API](./api/payment-api.md)
-- [Review API](./api/review-api.md)
+- [Auth API](./docs/api/auth-api.md)
+- [User API](./docs/api/user-api.md)
+- [Book API](./docs/api/book-api.md)
+- [Search API](./docs/api/search-api.md)
+- [Keyword API](./docs/api/keyword-api.md)
+- [Order API](./docs/api/order-api.md)
+- [Payment API](./docs/api/payment-api.md)
+- [Review API](./docs/api/review-api.md)
 <br>
 
 <!--
