@@ -150,7 +150,11 @@ BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활
 <hr>
 
 #  트러블 슈팅
-
+- [Elasticsearch 자동완성 기능 V1~3](https://www.notion.so/teamsparta/Elasticsearch-V1-3-1e62dc3ef514804290f5e9378fcd8e2c?pvs=4)
+- [잘되던 애플리케이션의 Health Check가 갑자기 실패한 이유](https://www.notion.so/teamsparta/Health-Check-1e62dc3ef51480278eb6c731b114dda9?pvs=4)
+- [모니터링 구축기](https://www.notion.so/teamsparta/1e62dc3ef514806ebba5ebdffcb90b85?pvs=4)
+- [API 호출을 위한 WebClient 트러블 슈팅](https://www.notion.so/teamsparta/API-WebClient-1e62dc3ef514803794aafb83c2f797ff?pvs=4)
+- [동시성 제어 시 레이스 컨디션 발생 해결](https://www.notion.so/teamsparta/1e62dc3ef514805ab456fb0773a62d36?pvs=4)
 <hr>
 
 # 테스트 결과 문서
