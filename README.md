@@ -44,40 +44,10 @@ BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활
   <img alt="Gradle" src="https://img.shields.io/badge/Gradle-02303A?logo=gradle&logoColor=white&style=flat-square" />
 </p>
 
-<h3 align="center">Test</h3>
-
-<p align="center">
-  <img alt="nGrinder" src="https://img.shields.io/badge/nGrinder-FF6D00?style=flat-square" />
-  <img alt="JUnit" src="https://img.shields.io/badge/JUnit-C21325?logo=junit&logoColor=white&style=flat-square" />
-</p>
-
 <h3 align="center">Security</h3>
 <p align="center">
   <img alt="Spring Security" src="https://img.shields.io/badge/Spring%20Security-6DB33F?logo=springsecurity&logoColor=white&style=flat-square" />
   <img alt="JWT" src="https://img.shields.io/badge/JWT-000000?logo=jsonwebtokens&logoColor=white&style=flat-square" />
-</p>
-
-<h3 align="center">Collaboration</h3>
-<p align="center">
-  <img alt="GitHub" src="https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=white&style=flat-square" />
-  <img alt="Notion" src="https://img.shields.io/badge/Notion-000000?logo=notion&logoColor=white&style=flat-square" />
-  <img alt="Slack" src="https://img.shields.io/badge/Slack-4A154B?logo=slack&logoColor=white&style=flat-square" />
-  <img alt="ERD Cloud" src="https://img.shields.io/badge/ERD%20Cloud-00AEEF?style=flat-square" />
-</p>
-
-<h3 align="center">Monitoring</h3>
-<p align="center">
-  <img alt="Prometheus" src="https://img.shields.io/badge/Prometheus-E6522C?logo=prometheus&logoColor=white&style=flat-square" />
-  <img alt="Grafana" src="https://img.shields.io/badge/Grafana-F46800?logo=grafana&logoColor=white&style=flat-square" />
-</p>
-
-<h3 align="center">Other Tools</h3>
-<p align="center">
-  <img alt="QueryDSL" src="https://img.shields.io/badge/QueryDSL-000000?style=flat-square" />
-  <img alt="Postman" src="https://img.shields.io/badge/Postman-FF6C37?logo=postman&logoColor=white&style=flat-square" />
-  <img alt="JaCoCo" src="https://img.shields.io/badge/JaCoCo-0052A5?logo=jacoco&logoColor=white&style=flat-square" />
-  <img alt="SonarQube" src="https://img.shields.io/badge/SonarQube-4E9BCD?logo=sonarqube&logoColor=white&style=flat-square" />
-  <img alt="Swagger" src="https://img.shields.io/badge/Swagger-85EA2D?logo=swagger&logoColor=white&style=flat-square" />
 </p>
 
 <h3 align="center">Database, Analysis & Optimization</h3>
@@ -95,6 +65,37 @@ BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활
   <img alt="Docker" src="https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white&style=flat-square" />
   <img alt="Jenkins" src="https://img.shields.io/badge/Jenkins-D24939?logo=jenkins&logoColor=white&style=flat-square" />
   <img alt="AWS" src="https://img.shields.io/badge/AWS-232F3E?logo=amazonaws&logoColor=white&style=flat-square" />
+</p>
+
+<h3 align="center">Test</h3>
+
+<p align="center">
+  <img alt="nGrinder" src="https://img.shields.io/badge/nGrinder-FF6D00?style=flat-square" />
+  <img alt="JUnit" src="https://img.shields.io/badge/JUnit-C21325?logo=junit&logoColor=white&style=flat-square" />
+</p>
+
+<h3 align="center">Monitoring</h3>
+<p align="center">
+  <img alt="Prometheus" src="https://img.shields.io/badge/Prometheus-E6522C?logo=prometheus&logoColor=white&style=flat-square" />
+  <img alt="Grafana" src="https://img.shields.io/badge/Grafana-F46800?logo=grafana&logoColor=white&style=flat-square" />
+</p>
+
+<h3 align="center">Other Tools</h3>
+<p align="center">
+  <img alt="QueryDSL" src="https://img.shields.io/badge/QueryDSL-000000?style=flat-square" />
+  <img alt="Postman" src="https://img.shields.io/badge/Postman-FF6C37?logo=postman&logoColor=white&style=flat-square" />
+  <img alt="JaCoCo" src="https://img.shields.io/badge/JaCoCo-0052A5?logo=jacoco&logoColor=white&style=flat-square" />
+  <img alt="SonarQube" src="https://img.shields.io/badge/SonarQube-4E9BCD?logo=sonarqube&logoColor=white&style=flat-square" />
+  <img alt="Swagger" src="https://img.shields.io/badge/Swagger-85EA2D?logo=swagger&logoColor=white&style=flat-square" />
+</p>
+
+ 
+<h3 align="center">Collaboration</h3>
+<p align="center">
+  <img alt="GitHub" src="https://img.shields.io/badge/GitHub-181717?logo=github&logoColor=white&style=flat-square" />
+  <img alt="Notion" src="https://img.shields.io/badge/Notion-000000?logo=notion&logoColor=white&style=flat-square" />
+  <img alt="Slack" src="https://img.shields.io/badge/Slack-4A154B?logo=slack&logoColor=white&style=flat-square" />
+  <img alt="ERD Cloud" src="https://img.shields.io/badge/ERD%20Cloud-00AEEF?style=flat-square" />
 </p>
 
 <hr>
