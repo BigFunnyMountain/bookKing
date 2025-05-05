@@ -143,9 +143,12 @@ BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활
 <hr>
 
 #  기술적 의사 결정
-- [노션](https://www.notion.so/teamsparta/16-Bookking-1e22dc3ef514809e91f6e1d0aef42603)
+- [ES - Low-Level로 구현한 이유](./docs/technical/ES_LowLevel로_구현한_이유.md)
+- [Aurora Cluster 사용 이유](./docs/technical/Aurora_Cluster_사용_이유.md)
+- [OpenAI API를 사용한 이유](./docs/technical/OpenAI_API_사용한_이유.md)
+- [Bulk Insert](./docs/technical/Bulk_Insert.md)
+- [Jenkins를 사용한 이유](./docs/technical/Jenkins를_사용한_이유.md)
 
-테스트 후, 추후 업데이트 예정
 
 <hr>
 
