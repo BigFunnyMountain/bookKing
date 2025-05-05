@@ -78,4 +78,8 @@ public class UserService {
 
         return imageUrl;
     }
+    @Transactional(readOnly = true)
+    public boolean existsById(Long userId) {
+        return userRepository.findByIdAndDeletedAtIsNull(userId).isPresent();
+    }
 }
