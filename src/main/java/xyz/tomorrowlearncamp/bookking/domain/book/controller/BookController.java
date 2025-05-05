@@ -79,7 +79,7 @@ public class BookController {
 		return Response.success(bookService.getAllBooks(pageable));
 	}
 
-	@GetMapping("/v1/books/keyword")
+	@GetMapping("/v1/books/keywords")
 	public Response<Page<BookResponse>> getAllBooksByKeyword(
 		@RequestParam String keyword,
 		Pageable pageable
