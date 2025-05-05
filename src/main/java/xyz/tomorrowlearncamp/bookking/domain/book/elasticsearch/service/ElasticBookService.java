@@ -187,7 +187,7 @@ public class ElasticBookService {
             Query query = Query.of(q -> q
                     .multiMatch(m -> m
                             .query(keyword)
-                            .fields("title", "subject", "author", "publisher")));
+                            .fields("title^10", "subject", "author", "publisher")));
 
             Aggregation aggregation = Aggregation.of(a -> a
                     .terms(t -> t
@@ -198,7 +198,7 @@ public class ElasticBookService {
                     .index(INDEX_NAME)
                     .query(query)
                     .aggregations("relate_keywords", aggregation)
-                    .size(0));
+                    .size(100));
 
             SearchResponse<ElasticBookDocument> elasticBookDocumentSearchResponse = elasticsearchClient.search(searchRequest, ElasticBookDocument.class);
 
