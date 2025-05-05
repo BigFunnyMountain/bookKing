@@ -103,7 +103,7 @@ public class AuthService {
 
     @Transactional
     public SignupResponse signup(SignupRequest request) {
-        if (userRepository.existsByEmailAndDeletedFalse(request.getEmail())) {
+        if (userRepository.existsByEmailAndDeletedAtIsNull(request.getEmail())) {
             throw new InvalidRequestException(ErrorMessage.EMAIL_DUPLICATED);
         }
 
@@ -120,7 +120,7 @@ public class AuthService {
     @Transactional(readOnly = true)
     public void validateEmail(String email) {
 
-        if (userRepository.existsByEmailAndDeletedFalse(email)) {
+        if (userRepository.existsByEmailAndDeletedAtIsNull(email)) {
             throw new IllegalArgumentException("이미 가입된 email 입니다.");
         }
     }
