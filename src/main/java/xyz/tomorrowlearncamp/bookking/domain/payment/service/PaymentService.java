@@ -46,7 +46,7 @@ public class PaymentService {
 
 	@Transactional
 	public void paymentV1(Long userId, Long bookId, Long buyStock, Long money, PayType payType) {
-		if(userService.existsById(userId)) {
+		if (!userService.existsById(userId)) {
 			throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
 		}
 		Book book = bookRepository.findByIdWithLock(bookId);
@@ -54,6 +54,10 @@ public class PaymentService {
 		checkPayment(book, buyStock, money);
 		book.updateStock(book.getStock() - buyStock);
 		orderService.createOrder(userId, book, buyStock, OrderStatus.COMPLETED, payType);
+
+		UserResponse user = userService.getMyInfo(userId);
+
+		collectAndSendLog(user, book);
 	}
 
 	public void paymentV2(Long userId, Long bookId, Long buyStock, Long money, PayType payType) {
@@ -86,15 +90,7 @@ public class PaymentService {
 
 		UserResponse user = userService.getMyInfo(userId);
 
-		Map<String, Object> log = new HashMap<>();
-		log.put("log_type", "buy");
-		log.put("age_group", LogUtil.getAgeGroup(user.getAge()));
-		log.put("gender", user.getGender());
-		log.put("price", book.getPrePrice());
-		log.put("book_name", book.getTitle());
-		log.put("timestamp", Instant.now().toString());
-
-		LogUtil.log(LogType.PURCHASE, log);
+		collectAndSendLog(user, book);
 	}
 
 	public PaymentReturnResponse returnPayment(Long userId, Long orderId) {
@@ -155,6 +151,18 @@ public class PaymentService {
 		if (price * buyStock > money) {
 			throw new InvalidRequestException(ErrorMessage.SHORT_ON_MONEY);
 		}
+	}
+
+	private void collectAndSendLog(UserResponse user, Book book) {
+		Map<String, Object> log = new HashMap<>();
+		log.put("log_type", "buy");
+		log.put("age_group", LogUtil.getAgeGroup(user.getAge()));
+		log.put("gender", user.getGender());
+		log.put("price", book.getPrePrice());
+		log.put("book_name", book.getTitle());
+		log.put("timestamp", Instant.now().toString());
+
+		LogUtil.log(LogType.PURCHASE, log);
 	}
 }
 
