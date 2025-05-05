@@ -100,17 +100,17 @@ BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활
 
 <hr>
 
+#  프로젝트 아키텍처
+![image](https://github.com/user-attachments/assets/beb5f99e-78e9-4a69-af82-6531f2a681ad)
+
+<hr>
+
 #  ERD 설계
 ![image](https://github.com/user-attachments/assets/7f8bced7-7ebb-4a97-ab3d-23efbe803a07)
 
 <hr>
 
-#  API 명세서 및 주요 기능
-## 📌 API 명세서 전체 보기
-👉 [API 명세서 모음](./docs/index.md)
-
-<br>
-
+#  주요 기능 및 API 명세서
 ## 📌 주요 기능
 
 |  기능 |  설명 |
@@ -119,6 +119,10 @@ BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활
 | **검색 기능** | 사용자 키워드 기반 자동 완성 기능, 연관 검색어 추천 |
 | **사용자 로그 수집** | 사용자 구매 로그 정보로 사용자 수요 조사 |
 | **인공지능 사용자 맞춤 추천** | 사용자 키워드 검색 및 구매 목록을 기반, 사용자 맞춤 책 키워드로 검색 및 추천 | 
+
+## 📌 API 명세서 전체 보기
+👉 [API 명세서 모음](./docs/index.md)
+
 <br>
 
 <!--
@@ -128,19 +132,16 @@ BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활
 ![image](https://github.com/user-attachments/assets/ae1bcfc4-5fd5-456d-b6f6-fdab2805eca7) <br><hr>
 -->
 
-
-
 <hr>
 
-#  프로젝트 아키텍처
-![image](https://github.com/user-attachments/assets/beb5f99e-78e9-4a69-af82-6531f2a681ad)
-
-<hr>
-
-#  기술적 의사 결정 및 트러블 슈팅
+#  기술적 의사 결정
 - [노션](https://www.notion.so/teamsparta/16-Bookking-1e22dc3ef514809e91f6e1d0aef42603)
 
 테스트 후, 추후 업데이트 예정
+
+<hr>
+
+#  트러블 슈팅
 
 <hr>
 
