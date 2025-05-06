@@ -111,12 +111,6 @@ BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활
 
 <hr>
 
-# logstash 
-![image](https://github.com/user-attachments/assets/18b494ad-451d-4d52-afda-7547f1fefc2c)
-![image](https://github.com/user-attachments/assets/f6e29783-8884-4755-85c4-cb51c5f59268)
-
-<hr>
-
 #  주요 기능 및 API 명세서
 ## 📌 주요 기능
 
@@ -276,6 +270,27 @@ BookKing은 단순한 도서 검색 서비스를 넘어, 당신의 독서 생활
 - 평균 응답 시간 : 226ms → 208ms(약 7.96% 감소)
 - 초당 처리량 : 211.38 → 229.36 req/sec (약 8.5% 증가)
 
+<hr>
+
+# 모니터링
+## 시스템 (grafana)
+1. 최신버전(사용중인 버전)
+![image](https://github.com/user-attachments/assets/7f929e9f-ac70-484f-82a7-3adb5565089a)
+
+2. node exporter사용 버전
+![image](https://github.com/user-attachments/assets/758113db-1f94-4c23-815b-704a5c6e0c17)
+
+
+## 서비스 (logstash)
+![image](https://github.com/user-attachments/assets/18b494ad-451d-4d52-afda-7547f1fefc2c)
+1초 단위로 수집된 사용자 도서 구매 금액 데이터를 기반으로, 실시간 트래픽 변화와 사용자 수요 패턴을 시각화했습니다. <br>
+1초 간격으로 수집된 Total Sale 데이터를 통해, 사용자 트래픽 흐름과 구매 집중 시간대를 시각적으로 파악했습니다. <br>
+이러한 데이터는 캐싱 전략, 추천 알고리즘 타이밍 조정 등 퍼포먼스 최적화와 UX 개선에 활용할 예정입니다.
+
+![image](https://github.com/user-attachments/assets/f6e29783-8884-4755-85c4-cb51c5f59268)
+사용자 연령대 및 성별에 따른 도서 구매 데이터를 시각화하여, 주 이용층의 분포를 파악했습니다.<br>
+20~50대 여성 이용자가 가장 활발하게 구매 활동을 보이며, <br>
+이러한 인사이트는 성별·연령 맞춤형 콘텐츠 추천, 마케팅 전략 수립 및 추천 알고리즘 고도화에 중요한 기준으로 활용될 수 있습니다.
 
 <hr>
 
