@@ -48,39 +48,10 @@ class PaymentServiceTest {
 	@InjectMocks
 	private PaymentService paymentService;
 
-	@Test
-	@DisplayName("없는 사용자")
-	void getUser_failed() {
-		//given
-		given(userService.existsById(anyLong())).willReturn(false);
-
-		// when && then
-		NotFoundException assertThrows = assertThrows(NotFoundException.class,
-			() -> paymentService.paymentV2(1L, 1L, 1L, 1L, PayType.KAKAO_PAY));
-
-		assertInstanceOf(NotFoundException.class, assertThrows);
-		assertEquals(ErrorMessage.USER_NOT_FOUND, assertThrows.getErrorMessage());
-	}
-
-	@Test
-	@DisplayName("레디스 페어락 실패 테스트")
-	void setFairLockFailedTest() throws InterruptedException {
-		//given
-		given(userService.existsById(anyLong())).willReturn(true);
-		given(redissonClient.getFairLock(anyString())).willReturn(rlock);
-		given(rlock.tryLock(100L, 10L, TimeUnit.SECONDS)).willReturn(false);
-
-		// when && then
-		ServerException assertThrows = assertThrows(ServerException.class,
-				() -> paymentService.paymentV2(1L, 1L, 1L, 1L, PayType.KAKAO_PAY));
-
-		assertInstanceOf(ServerException.class, assertThrows);
-		assertEquals(ErrorMessage.ERROR, assertThrows.getErrorMessage());
-	}
 
 	@Test
 	@DisplayName("단독 구매 성공 테스트")
-	void paymentSuccessTest() throws InterruptedException {
+	void paymentSuccessTest() {
 		//given
 		Book book = new Book();
 		ReflectionTestUtils.setField(book, "id", 1L);
@@ -88,10 +59,7 @@ class PaymentServiceTest {
 		ReflectionTestUtils.setField(book, "prePrice", "1");
 		UserResponse userResponse = new UserResponse();
 
-		given(userService.existsById(anyLong())).willReturn(true);
 		given(bookRepository.findById(anyLong())).willReturn(Optional.of(book));
-		given(redissonClient.getFairLock(anyString())).willReturn(rlock);
-		given(rlock.tryLock(100L, 10L, TimeUnit.SECONDS)).willReturn(true);
 		given(userService.getMyInfo(anyLong())).willReturn(userResponse);
 
 		// when
@@ -108,12 +76,9 @@ class PaymentServiceTest {
 
 	@Test
 	@DisplayName("단독 구매 실패 테스트 : 존재 하지 않는 책")
-	void paymentFailedTest1() throws InterruptedException {
+	void paymentFailedTest1() {
 		//given
-		given(userService.existsById(anyLong())).willReturn(true);
 		given(bookRepository.findById(anyLong())).willReturn(Optional.empty());
-		given(redissonClient.getFairLock(anyString())).willReturn(rlock);
-		given(rlock.tryLock(100L, 10L, TimeUnit.SECONDS)).willReturn(true);
 
 		// when && then
 		NotFoundException assertThrows = assertThrows(NotFoundException.class,
@@ -125,17 +90,14 @@ class PaymentServiceTest {
 
 	@Test
 	@DisplayName("단독 구매 실패 테스트 : 책 권수 없음")
-	void paymentFailedTest2() throws InterruptedException {
+	void paymentFailedTest2() {
 		//given
 		Book book = new Book();
 		ReflectionTestUtils.setField(book, "id", 1L);
 		ReflectionTestUtils.setField(book, "stock", 0L);
 		ReflectionTestUtils.setField(book, "prePrice", "1");
 
-		given(userService.existsById(anyLong())).willReturn(true);
 		given(bookRepository.findById(anyLong())).willReturn(Optional.of(book));
-		given(redissonClient.getFairLock(anyString())).willReturn(rlock);
-		given(rlock.tryLock(100L, 10L, TimeUnit.SECONDS)).willReturn(true);
 
 		// when && then
 		InvalidRequestException assertThrows = assertThrows(InvalidRequestException.class,
@@ -147,17 +109,14 @@ class PaymentServiceTest {
 
 	@Test
 	@DisplayName("단독 구매 실패 테스트 : 사용자의 돈 없음")
-	void paymentFailedTest3() throws InterruptedException {
+	void paymentFailedTest3() {
 		//given
 		Book book = new Book();
 		ReflectionTestUtils.setField(book, "id", 1L);
 		ReflectionTestUtils.setField(book, "stock", 1L);
 		ReflectionTestUtils.setField(book, "prePrice", "1");
 
-		given(userService.existsById(anyLong())).willReturn(true);
 		given(bookRepository.findById(anyLong())).willReturn(Optional.of(book));
-		given(redissonClient.getFairLock(anyString())).willReturn(rlock);
-		given(rlock.tryLock(100L, 10L, TimeUnit.SECONDS)).willReturn(true);
 
 		// when && then
 		InvalidRequestException assertThrows = assertThrows(InvalidRequestException.class,
@@ -169,7 +128,7 @@ class PaymentServiceTest {
 
 	@Test
 	@DisplayName("단독 환불 성공 테스트")
-	void returnPaymentSuccessTest() throws InterruptedException {
+	void returnPaymentSuccessTest() {
 		//given
 		UserResponse user = new UserResponse();
 		ReflectionTestUtils.setField(user, "id", 1L);
@@ -194,12 +153,9 @@ class PaymentServiceTest {
 
 		given(userService.existsById(anyLong())).willReturn(true);
 		given(bookRepository.findById(anyLong())).willReturn(Optional.of(book));
-		given(orderService.getOrder(anyLong())).willReturn(OrderResponse.of(order));
-		given(redissonClient.getFairLock(anyString())).willReturn(rlock);
-		given(rlock.tryLock(100L, 10L, TimeUnit.SECONDS)).willReturn(true);
 
 		// when
-		PaymentReturnResponse returnResponse = paymentService.returnPayment(user.getId(), order.getId());
+		PaymentReturnResponse returnResponse = paymentService.returnPayment(user.getId(), OrderResponse.of(order));
 
 		// then
 		verify(bookRepository, times(1)).save(any(book.getClass()));
@@ -225,11 +181,10 @@ class PaymentServiceTest {
 		ReflectionTestUtils.setField(order, "id", 1L);
 
 		given(userService.existsById(anyLong())).willReturn(true);
-		given(orderService.getOrder(anyLong())).willReturn(OrderResponse.of(order));
 
 		// when && then
 		try {
-			paymentService.returnPayment(userId, order.getId());
+			paymentService.returnPayment(userId, OrderResponse.of(order));
 		} catch (InvalidRequestException e) {
 			assertInstanceOf(InvalidRequestException.class, e);
 			assertEquals(ErrorMessage.NO_AUTHORITY_TO_RETURN_A_PAYMENT, e.getErrorMessage());
@@ -240,7 +195,7 @@ class PaymentServiceTest {
 
 	@Test
 	@DisplayName("단독 환불 실패 테스트 : 책을 조회를 할 수 없음")
-	void returnPaymentFailedTest2() throws InterruptedException {
+	void returnPaymentFailedTest2() {
 		//given
 		Long userId = 1L;
 		Order order = Order.builder()
@@ -255,13 +210,11 @@ class PaymentServiceTest {
 		ReflectionTestUtils.setField(order, "id", 1L);
 
 		given(userService.existsById(anyLong())).willReturn(true);
-		given(orderService.getOrder(anyLong())).willReturn(OrderResponse.of(order));
-		given(redissonClient.getFairLock(anyString())).willReturn(rlock);
-		given(rlock.tryLock(100L, 10L, TimeUnit.SECONDS)).willReturn(true);
+		given(bookRepository.findById(anyLong())).willReturn(Optional.empty());
 
 		// when && then
 		try {
-			paymentService.returnPayment(userId, order.getId());
+			paymentService.returnPayment(userId, OrderResponse.of(order));
 		} catch (NotFoundException e) {
 			assertInstanceOf(NotFoundException.class, e);
 			assertEquals(ErrorMessage.BOOK_NOT_FOUND, e.getErrorMessage());

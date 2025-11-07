@@ -1,21 +1,23 @@
 package xyz.tomorrowlearncamp.bookking.domain.payment.service;
 
 import jakarta.transaction.Transactional;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
-import xyz.tomorrowlearncamp.bookking.domain.book.repository.BookRepository;
-import xyz.tomorrowlearncamp.bookking.common.enums.LogType;
 import xyz.tomorrowlearncamp.bookking.common.enums.ErrorMessage;
+import xyz.tomorrowlearncamp.bookking.common.enums.LogType;
 import xyz.tomorrowlearncamp.bookking.common.exception.InvalidRequestException;
 import xyz.tomorrowlearncamp.bookking.common.exception.NotFoundException;
 import xyz.tomorrowlearncamp.bookking.common.exception.ServerException;
 import xyz.tomorrowlearncamp.bookking.common.util.LogUtil;
-
+import xyz.tomorrowlearncamp.bookking.domain.book.entity.Book;
+import xyz.tomorrowlearncamp.bookking.domain.book.repository.BookRepository;
 import xyz.tomorrowlearncamp.bookking.domain.order.dto.OrderResponse;
 import xyz.tomorrowlearncamp.bookking.domain.order.enums.OrderStatus;
 import xyz.tomorrowlearncamp.bookking.domain.order.service.OrderService;
@@ -23,11 +25,6 @@ import xyz.tomorrowlearncamp.bookking.domain.payment.dto.response.PaymentReturnR
 import xyz.tomorrowlearncamp.bookking.domain.payment.enums.PayType;
 import xyz.tomorrowlearncamp.bookking.domain.user.dto.response.UserResponse;
 import xyz.tomorrowlearncamp.bookking.domain.user.service.UserService;
-
-import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -56,91 +53,40 @@ public class PaymentService {
 
 	@Transactional
 	public void paymentV2(Long userId, Long bookId, Long buyStock, Long money, PayType payType) {
-		if (!userService.existsById(userId)) {
-			throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
-		}
-
-		RLock lock = redissonClient.getFairLock("book:" + bookId);
-		boolean acquired = false;
-		Book book = null;
-
-		try {
-			acquired = lock.tryLock(100L, 10L, TimeUnit.SECONDS);
-			if (!acquired) {
-				throw new ServerException(ErrorMessage.REDIS_ERROR);
-			}
-
-			book = bookRepository.findById(bookId)
+		UserResponse user = userService.getMyInfo(userId);
+		Book book = bookRepository.findById(bookId)
 				.orElseThrow(() -> new NotFoundException(ErrorMessage.BOOK_NOT_FOUND));
 
-			checkPayment(book, buyStock, money);
-			book.updateStock(book.getStock() - buyStock);
-			bookRepository.save(book);
-
-		} catch (InterruptedException ex) {
-			Thread.currentThread().interrupt();
-			throw new ServerException(ErrorMessage.REDIS_ERROR);
-		} catch (NotFoundException ex) {
-			throw new NotFoundException(ex.getErrorMessage());
-		} catch (InvalidRequestException ex) {
-			throw new InvalidRequestException(ex.getErrorMessage());
-		} catch (Exception ex) {
-			throw new ServerException(ErrorMessage.ERROR);
-		} finally {
-			if (acquired && lock.isHeldByCurrentThread()) {
-				lock.unlock();
-			}
-		}
+		checkPayment(book, buyStock, money);
+		book.updateStock(book.getStock() - buyStock);
+		bookRepository.save(book);
 
 		orderService.createOrder(userId, book, buyStock, OrderStatus.COMPLETED, payType);
-		UserResponse user = userService.getMyInfo(userId);
 		collectAndSendLog(user, book);
 	}
 
 	@Transactional
-	public PaymentReturnResponse returnPayment(Long userId, Long orderId) {
+	public PaymentReturnResponse returnPayment(Long userId, OrderResponse order) {
 		if(!userService.existsById(userId)) {
 			throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
 		}
 
-		OrderResponse order = orderService.getOrder(orderId);
 		if(!ObjectUtils.nullSafeEquals(userId, order.getUserId())) {
 			throw new InvalidRequestException(ErrorMessage.NO_AUTHORITY_TO_RETURN_A_PAYMENT);
 		}
 
-		RLock lock = redissonClient.getFairLock("orderId:" + orderId);
-		boolean acquired = false;
 
-		try {
-			acquired = lock.tryLock(100L, 10L, TimeUnit.SECONDS);
-			if (!acquired) {
-				throw new ServerException(ErrorMessage.REDIS_ERROR);
-			}
+		Book book = bookRepository.findById(order.getBookId()).orElseThrow(
+				() -> new NotFoundException(ErrorMessage.BOOK_NOT_FOUND)
+		);
+		book.updateStock(book.getStock() + order.getBuyStock());
+		bookRepository.save(book);
 
-			Book book = bookRepository.findById(order.getBookId()).orElseThrow(
-					() -> new NotFoundException(ErrorMessage.BOOK_NOT_FOUND)
-			);
-			book.updateStock(book.getStock() + order.getBuyStock());
-			bookRepository.save(book);
-		} catch (InterruptedException ex) {
-			Thread.currentThread().interrupt();
-			throw new ServerException(ErrorMessage.REDIS_ERROR);
-		} catch (NotFoundException ex) {
-			throw new NotFoundException(ex.getErrorMessage());
-		} catch (InvalidRequestException ex) {
-			throw new InvalidRequestException(ex.getErrorMessage());
-		} catch (Exception ex) {
-			throw new ServerException(ErrorMessage.ERROR);
-		} finally {
-			if (acquired && lock.isHeldByCurrentThread()) {
-				lock.unlock();
-			}
-		}
-		orderService.updateOrderStatus(orderId, OrderStatus.REFUNDED);
+		orderService.updateOrderStatus(order.getOrderId(), OrderStatus.REFUNDED);
 
 		Long price = Long.parseLong(order.getPrePrice());
 		return PaymentReturnResponse.builder()
-				.orderId(orderId)
+				.orderId(order.getOrderId())
 				.returnMoney(order.getBuyStock() * price)
 				.build();
 	}

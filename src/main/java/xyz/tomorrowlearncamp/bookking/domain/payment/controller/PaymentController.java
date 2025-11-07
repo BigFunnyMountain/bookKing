@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import xyz.tomorrowlearncamp.bookking.common.dto.Response;
 import xyz.tomorrowlearncamp.bookking.domain.payment.dto.request.PaymentBuyRequest;
 import xyz.tomorrowlearncamp.bookking.domain.payment.dto.response.PaymentReturnResponse;
+import xyz.tomorrowlearncamp.bookking.domain.payment.service.PaymentFacade;
 import xyz.tomorrowlearncamp.bookking.domain.payment.service.PaymentService;
 import xyz.tomorrowlearncamp.bookking.common.entity.AuthUser;
 
@@ -16,6 +17,7 @@ import xyz.tomorrowlearncamp.bookking.common.entity.AuthUser;
 public class PaymentController {
 
 	private final PaymentService paymentService;
+	private final PaymentFacade paymentFacade;
 
 	@PostMapping("/v1/payments")
 	public void paymentV1(
@@ -36,7 +38,7 @@ public class PaymentController {
 			@AuthenticationPrincipal AuthUser user,
 			@Valid @RequestBody PaymentBuyRequest paymentBuyRequest
 	) {
-		paymentService.paymentV2(
+		paymentFacade.paymentV2(
 			user.getUserId(),
 			paymentBuyRequest.getBookId(),
 			paymentBuyRequest.getBuyStock(),
@@ -50,6 +52,6 @@ public class PaymentController {
 			@AuthenticationPrincipal AuthUser user,
 			@PathVariable Long orderId
 	) {
-		return Response.success(paymentService.returnPayment(user.getUserId(), orderId));
+		return Response.success(paymentFacade.returnPayment(user.getUserId(), orderId));
 	}
 }
